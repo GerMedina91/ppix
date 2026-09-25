@@ -82,9 +82,6 @@ func _resolver(candidatos: Array, disparo: DisparoReaccion, continuacion: Callab
 			Combatiente.PoliticaReaccion.PREGUNTAR:
 				_pendiente = {"reactor": reactor, "capacidad": capacidad, "disparo": disparo,
 					"restantes": candidatos, "continuacion": continuacion}
-				if se_uso and _combate().pausar_tras_reacciones:
-					# Hubo reacciones antes de esta pregunta: se animan primero; la pregunta sigue en pie.
-					pass
 				eventos.append(_combate().emitir(EventoCombate.new(EventoCombate.Tipo.REACCION_PENDIENTE, reactor.id,
 					{"reaccion": capacidad.nombre, "disparador": disparo.actor.id})))
 				return eventos

@@ -1,7 +1,8 @@
-[gd_resource type="TileSet" load_steps=5 format=3]
+[gd_resource type="TileSet" load_steps=7 format=3]
 
 [ext_resource type="Texture2D" path="res://assets/placeholder/iso_suelo.png" id="1_suelo"]
 [ext_resource type="Texture2D" path="res://assets/placeholder/iso_pared.png" id="2_pared"]
+[ext_resource type="Texture2D" path="res://assets/placeholder/iso_zocalo.png" id="3_zocalo"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_suelo"]
 texture = ExtResource("1_suelo")
@@ -18,6 +19,13 @@ texture_region_size = Vector2i(64, 96)
 0:0/0/texture_origin = Vector2i(0, 32)
 0:0/0/custom_data_0 = false
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_zocalo"]
+texture = ExtResource("3_zocalo")
+texture_region_size = Vector2i(64, 48)
+0:0/0 = 0
+0:0/0/texture_origin = Vector2i(0, 8)
+0:0/0/custom_data_0 = false
+
 [resource]
 tile_shape = 1
 tile_layout = 5
@@ -26,3 +34,4 @@ custom_data_layer_0/name = "transitable"
 custom_data_layer_0/type = 1
 sources/0 = SubResource("TileSetAtlasSource_suelo")
 sources/1 = SubResource("TileSetAtlasSource_pared")
+sources/2 = SubResource("TileSetAtlasSource_zocalo")

@@ -64,3 +64,14 @@ func test_direccion_de_pantalla_a_grilla(pantalla: Vector2, esperado: Vector2i, 
 		[Vector2(0, 0), Vector2i(0, 0)],
 	]) -> void:
 	assert_that(_mapa.direccion_de_pantalla(pantalla)).is_equal(esperado)
+
+
+func test_bordes_hacia_la_camara_son_zocalo_y_los_del_fondo_pared_alta() -> void:
+	const FUENTE_PARED: int = 1
+	const FUENTE_ZOCALO: int = 2
+	var paredes: TileMapLayer = _mapa.get_node("Paredes")
+	assert_int(paredes.get_cell_source_id(Vector2i(10, 11))).is_equal(FUENTE_ZOCALO)  # borde inferior izquierdo
+	assert_int(paredes.get_cell_source_id(Vector2i(19, 3))).is_equal(FUENTE_ZOCALO)   # borde inferior derecho
+	assert_int(paredes.get_cell_source_id(Vector2i(10, 0))).is_equal(FUENTE_PARED)    # fondo
+	assert_int(paredes.get_cell_source_id(Vector2i(0, 5))).is_equal(FUENTE_PARED)     # fondo
+	assert_bool(_grilla.es_transitable(Vector2i(10, 11))).is_false()

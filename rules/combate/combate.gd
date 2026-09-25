@@ -84,7 +84,25 @@ func casillas_de_zancada(c: Combatiente) -> Dictionary[Vector2i, int]:
 
 
 func camino_de_zancada(c: Combatiente, destino: Vector2i) -> Array[Vector2i]:
-	return _movimiento.camino(c.celda, destino, _bloqueadas_para(c), _de_aliados_de(c))
+	return camino_de_zancada_desde(c, c.celda, destino)
+
+
+## Camino de una Zancada de `c` que empieza en `desde` (para previsualizar planes de varias Zancadas).
+func camino_de_zancada_desde(c: Combatiente, desde: Vector2i, destino: Vector2i) -> Array[Vector2i]:
+	return _movimiento.camino(desde, destino, _bloqueadas_para(c), _de_aliados_de(c))
+
+
+## Cantidad mínima de Zancadas para cada casilla, con las acciones que le quedan a `c`.
+func alcance_de_zancadas(c: Combatiente) -> Dictionary[Vector2i, int]:
+	return _movimiento.alcance_por_zancadas(c.celda, c.fuente.velocidad_pies(), c.acciones_restantes / COSTO_ZANCADA,
+		_bloqueadas_para(c), _de_aliados_de(c))
+
+
+## Dónde termina cada Zancada para llegar a `destino` (vacío si no le alcanzan las acciones).
+## Cada Zancada se hace por separado con zancada(): son acciones distintas.
+func plan_de_zancadas(c: Combatiente, destino: Vector2i) -> Array[Vector2i]:
+	return _movimiento.plan_de_zancadas(c.celda, destino, c.fuente.velocidad_pies(), c.acciones_restantes / COSTO_ZANCADA,
+		_bloqueadas_para(c), _de_aliados_de(c))
 
 
 # --- Acciones (intenciones) ---

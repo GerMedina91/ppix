@@ -35,7 +35,10 @@ var _actores: Dictionary[StringName, ActorMapa] = {}
 var _cola: Array[EventoCombate] = []
 var _animando: bool = false
 var _celda_cursor: Vector2i = _SIN_CURSOR
-var _zancada: Dictionary[Vector2i, int] = {}
+## Casilla -> cantidad mínima de Zancadas (1 a 3) en el turno del jugador.
+var _alcance: Dictionary[Vector2i, int] = {}
+## Zancadas pendientes de un movimiento de varias acciones (se ejecutan de a una, animando cada una).
+var _plan: Array[Vector2i] = []
 
 
 func _ready() -> void:
@@ -72,8 +75,36 @@ func celda_cursor() -> Vector2i:
 	return _celda_cursor
 
 
-func casillas_de_zancada_actuales() -> Dictionary[Vector2i, int]:
-	return _zancada
+## Casilla -> cantidad mínima de Zancadas, durante la decisión del jugador.
+func alcance_actual() -> Dictionary[Vector2i, int]:
+	return _alcance
+
+
+## Costo en acciones de hacer click en `celda` ahora: Zancadas necesarias o el Golpe; 0 si no se puede.
+func costo_previsto(celda: Vector2i) -> int:
+	if not esperando_decision():
+		return 0
+	var actor: Combatiente = _combate.turno_actual()
+	var objetivo: Combatiente = _combatiente_vivo_en(celda)
+	if objetivo != null:
+		if objetivo.es_aliado_de(actor) or actor.arma_principal() == null:
+			return 0
+		var valido: bool = Golpe.validar(actor, objetivo, actor.arma_principal(), _combate.vision()) == Golpe.Motivo.VALIDO
+		return Combate.COSTO_GOLPE if valido and actor.acciones_restantes >= Combate.COSTO_GOLPE else 0
+	return _alcance.get(celda, 0) * Combate.COSTO_ZANCADA
+
+
+## Camino completo (todas las Zancadas) hasta `celda`, para la previsualización.
+func camino_previsto(celda: Vector2i) -> Array[Vector2i]:
+	var camino: Array[Vector2i] = []
+	if not esperando_decision() or not _alcance.has(celda):
+		return camino
+	var actor: Combatiente = _combate.turno_actual()
+	var desde: Vector2i = actor.celda
+	for fin: Vector2i in _combate.plan_de_zancadas(actor, celda):
+		camino.append_array(_combate.camino_de_zancada_desde(actor, desde, fin))
+		desde = fin
+	return camino
 
 
 ## true si le toca decidir al jugador (turno de un miembro de la party y nada animándose).
@@ -129,7 +160,11 @@ func click_en_celda(celda: Vector2i, es_paso: bool = false) -> void:
 	elif es_paso:
 		_encolar(_combate.paso(celda))
 	else:
-		_encolar(_combate.zancada(celda))
+		_plan = _combate.plan_de_zancadas(_combate.turno_actual(), celda)
+		if _plan.is_empty():
+			_encolar(_combate.zancada(celda))  # imposible: el evento informa el motivo
+		else:
+			_encolar(_combate.zancada(_plan.pop_front()))
 
 
 func terminar_turno_jugador() -> void:
@@ -172,22 +207,28 @@ func _encolar(eventos: Array[EventoCombate]) -> void:
 
 func _procesar_cola() -> void:
 	_animando = true
-	_zancada.clear()
+	_alcance.clear()
 	_resaltados.queue_redraw()
 	while not _cola.is_empty():
 		var evento: EventoCombate = _cola.pop_front()
 		await _animador.animar(evento, _actores)
 		evento_mostrado.emit(evento)
+		if evento.tipo == EventoCombate.Tipo.ACCION_INVALIDA or evento.tipo == EventoCombate.Tipo.FIN_TURNO:
+			_plan.clear()
 	_animando = false
 	if _combate.estado != Combate.Estado.EN_CURSO:
 		_terminar()
 		return
 	var actor: Combatiente = _combate.turno_actual()
 	_camara.objetivo = _actores[actor.id]
+	if not _plan.is_empty():
+		# Siguiente Zancada de un movimiento de varias acciones (cada una es una acción aparte).
+		_encolar(_combate.zancada(_plan.pop_front()))
+		return
 	if actor.bando == Combatiente.Bando.ENEMIGOS or auto_jugar_party:
 		_encolar(IASimple.jugar_accion(_combate))
 		return
-	_zancada = _combate.casillas_de_zancada(actor)
+	_alcance = _combate.alcance_de_zancadas(actor)
 	_resaltados.queue_redraw()
 	esperando_jugador.emit()
 
@@ -203,6 +244,7 @@ func _terminar() -> void:
 				enemigo.queue_free()
 		_encuentro.resuelto = true
 	_combate = null
+	_plan.clear()
 	_resaltados.queue_redraw()
 	combate_terminado.emit(victoria)
 

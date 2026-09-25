@@ -198,3 +198,55 @@ func test_zancada_imposible_muestra_el_motivo_en_el_registro() -> void:
 	assert_bool(await _esperar(func() -> bool: return not _control.animando())).is_true()
 	assert_str(hud.lineas_registro()[-1]).is_equal("%s: Zancada imposible (fuera del alcance de la Zancada)" % actor.id)
 	assert_int(actor.acciones_restantes).is_equal(Combatiente.ACCIONES_POR_TURNO)
+
+
+func _casilla_a_zancadas(n: int) -> Vector2i:
+	var alcance: Dictionary = _control.alcance_actual()
+	var candidatas: Array = alcance.keys().filter(func(c: Vector2i) -> bool: return alcance[c] == n)
+	candidatas.sort()
+	return candidatas[0]
+
+
+func test_click_lejano_hace_dos_zancadas_seguidas_como_acciones_separadas() -> void:
+	var hud: HudCombate = _runner.find_child("HudCombate")
+	var violaciones: Array[String] = _vigilar_sincronia()
+	await _entrar_a_la_zona()
+	assert_bool(await _esperar_turno_de_la_party()).is_true()
+	assert_bool(_control.en_curso()).is_true()
+	var actor: Combatiente = _control.combate().turno_actual()
+	var destino: Vector2i = _casilla_a_zancadas(2)
+	assert_int(_control.costo_previsto(destino)).is_equal(2)
+	assert_array(_control.camino_previsto(destino)).is_not_empty()
+	var registro_antes: int = _control.combate().registro.size()
+	_control.click_en_celda(destino)
+	assert_bool(await _esperar(func() -> bool: return _control.esperando_decision() or not _control.en_curso())).is_true()
+	assert_that(actor.celda).is_equal(destino)
+	assert_int(actor.acciones_restantes).is_equal(1)
+	var movimientos: Array = _control.combate().registro.slice(registro_antes).filter(
+		func(e: EventoCombate) -> bool: return e.tipo == EventoCombate.Tipo.MOVIMIENTO)
+	assert_int(movimientos.size()).is_equal(2)
+	var lineas: PackedStringArray = hud.lineas_registro()
+	assert_str(lineas[-1]).starts_with("%s: Zancada" % actor.id)
+	assert_str(lineas[-2]).starts_with("%s: Zancada" % actor.id)
+	assert_that(_control.actor_de(actor.id).celda).is_equal(destino)
+	assert_array(violaciones).is_empty()
+
+
+func test_costo_previsto_de_un_golpe_es_una_accion() -> void:
+	await _entrar_a_la_zona()
+	assert_bool(await _esperar_turno_de_la_party()).is_true()
+	var actor: Combatiente = _control.combate().turno_actual()
+	var golpeable: Combatiente = null
+	for c: Combatiente in _control.combate().participantes:
+		if not c.es_aliado_de(actor) and Golpe.validar(actor, c, actor.arma_principal(), _control.combate().vision()) == Golpe.Motivo.VALIDO:
+			golpeable = c
+	assert_object(golpeable).override_failure_message("con la semilla 11 el primer actor (a distancia) tiene a quién golpear").is_not_null()
+	assert_int(_control.costo_previsto(golpeable.celda)).is_equal(Combate.COSTO_GOLPE)
+
+
+func test_el_alcance_distingue_una_dos_y_tres_acciones() -> void:
+	await _entrar_a_la_zona()
+	assert_bool(await _esperar_turno_de_la_party()).is_true()
+	var valores: Array = _control.alcance_actual().values()
+	for n: int in [1, 2, 3]:
+		assert_bool(valores.has(n)).override_failure_message("sin casillas a %d Zancadas" % n).is_true()

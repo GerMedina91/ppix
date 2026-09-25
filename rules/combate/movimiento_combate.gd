@@ -35,6 +35,44 @@ func alcanzables(origen: Vector2i, presupuesto_pies: int, bloqueadas: Dictionary
 	return resultado
 
 
+## Mínimo de Zancadas (hasta `zancadas_max`) para terminar en cada casilla. Cada Zancada es un
+## movimiento aparte de hasta `velocidad_pies` (la alternancia de diagonales empieza de nuevo en cada una)
+## y no puede terminar en casillas de aliados.
+func alcance_por_zancadas(origen: Vector2i, velocidad_pies: int, zancadas_max: int, bloqueadas: Dictionary, de_aliados: Dictionary) -> Dictionary[Vector2i, int]:
+	return _capas_de_zancadas(origen, velocidad_pies, zancadas_max, bloqueadas, de_aliados).zancadas
+
+
+## Casillas donde termina cada Zancada para llegar a `destino` con la menor cantidad posible
+## (el último elemento es `destino`). Vacío si no se llega con `zancadas_max`.
+func plan_de_zancadas(origen: Vector2i, destino: Vector2i, velocidad_pies: int, zancadas_max: int, bloqueadas: Dictionary, de_aliados: Dictionary) -> Array[Vector2i]:
+	var capas: Dictionary = _capas_de_zancadas(origen, velocidad_pies, zancadas_max, bloqueadas, de_aliados)
+	var plan: Array[Vector2i] = []
+	if not capas.zancadas.has(destino):
+		return plan
+	var actual: Vector2i = destino
+	while actual != origen:
+		plan.push_front(actual)
+		actual = capas.padre[actual]
+	return plan
+
+
+## BFS por Zancadas: cada capa expande con un Dijkstra de una Zancada desde las casillas nuevas.
+func _capas_de_zancadas(origen: Vector2i, velocidad_pies: int, zancadas_max: int, bloqueadas: Dictionary, de_aliados: Dictionary) -> Dictionary:
+	var zancadas: Dictionary[Vector2i, int] = {}
+	var padre: Dictionary[Vector2i, Vector2i] = {}
+	var frontera: Array[Vector2i] = [origen]
+	for n in range(1, zancadas_max + 1):
+		var nueva: Array[Vector2i] = []
+		for inicio: Vector2i in frontera:
+			for casilla: Vector2i in alcanzables(inicio, velocidad_pies, bloqueadas, de_aliados):
+				if casilla != origen and not zancadas.has(casilla):
+					zancadas[casilla] = n
+					padre[casilla] = inicio
+					nueva.append(casilla)
+		frontera = nueva
+	return {"zancadas": zancadas, "padre": padre}
+
+
 ## Camino más barato hasta `destino` (sin incluir el origen), o vacío si no se puede terminar ahí.
 func camino(origen: Vector2i, destino: Vector2i, bloqueadas: Dictionary, de_aliados: Dictionary) -> Array[Vector2i]:
 	var resultado: Array[Vector2i] = []

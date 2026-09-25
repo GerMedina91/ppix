@@ -2,6 +2,8 @@ class_name ControlParty
 extends Node2D
 ## Controla a la party en exploración: interpreta la entrada del jugador (click y teclado)
 ## y mueve al líder por la grilla. Los miembros son hijos de este nodo; el primero es el líder.
+## Los demás lo siguen en fila india (SeguimientoFila). Cada miembro se mueve por su cuenta,
+## así que separar la party a futuro es dejar de aplicar el seguimiento y dar órdenes por miembro.
 
 ## Se emite cada vez que el líder termina un paso.
 signal lider_llego_a(celda: Vector2i)
@@ -84,7 +86,19 @@ func _avanzar() -> void:
 
 
 func _dar_paso_lider(destino: Vector2i) -> void:
-	lider().dar_paso(destino, _mapa.celda_a_posicion(destino), config.segundos_por_paso)
+	var celdas_antes: Array[Vector2i] = []
+	for miembro: MiembroParty in _miembros:
+		celdas_antes.append(miembro.celda)
+	_mover(lider(), destino)
+	var destinos: Array[Vector2i] = SeguimientoFila.destinos(celdas_antes)
+	for i in destinos.size():
+		var seguidor: MiembroParty = _miembros[i + 1]
+		if destinos[i] != seguidor.celda:
+			_mover(seguidor, destinos[i])
+
+
+func _mover(miembro: MiembroParty, destino: Vector2i) -> void:
+	miembro.dar_paso(destino, _mapa.celda_a_posicion(destino), config.segundos_por_paso)
 
 
 func _al_terminar_paso_lider(celda: Vector2i) -> void:

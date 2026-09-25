@@ -32,6 +32,9 @@ func colocar(celda_nueva: Vector2i, posicion_global: Vector2) -> void:
 
 ## Se desplaza a una celda vecina en `duracion` segundos y emite `paso_terminado` al llegar.
 func dar_paso(celda_nueva: Vector2i, posicion_global: Vector2, duracion: float) -> void:
+	# Si todavía no terminó el paso anterior, se corta y el nuevo arranca desde donde está.
+	if _tween:
+		_tween.kill()
 	celda = celda_nueva
 	_moviendose = true
 	_tween = create_tween()

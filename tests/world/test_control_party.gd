@@ -57,3 +57,15 @@ func test_teclado_cancela_el_camino_del_click() -> void:
 	await _runner.simulate_frames(20)
 	assert_bool(_party.lider().esta_moviendose()).is_false()
 	assert_that(_party.celda_lider()).is_not_equal(Vector2i(18, 5))
+
+
+func test_la_party_sigue_en_fila_india() -> void:
+	# Desde (3,5) hasta (7,5) en línea recta: 4 pasos, alcanza para desplegar a los 4 miembros.
+	_party.ir_a_celda(Vector2i(7, 5))
+	await _runner.await_func_on(_party, "celda_lider").wait_until(ESPERA_MS).is_equal(Vector2i(7, 5))
+	await _esperar_quieto()
+	await _runner.simulate_frames(5)
+	var celdas: Array[Vector2i] = []
+	for miembro: Node in _party.get_children():
+		celdas.append((miembro as MiembroParty).celda)
+	assert_array(celdas).is_equal([Vector2i(7, 5), Vector2i(6, 5), Vector2i(5, 5), Vector2i(4, 5)])

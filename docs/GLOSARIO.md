@@ -4,7 +4,8 @@ Términos de reglas en castellano, según la edición oficial en castellano de l
 **Obligatorio** en código (identificadores de dominio), UI y textos del juego. Ver `CLAUDE.md`.
 
 - **Confirmado:** validado por el director.
-- **A verificar:** usado provisoriamente; confirmar contra la edición oficial antes de mostrarlo en UI o textos.
+- **Provisorio:** elegido por el director para usar ya (código, UI y textos), pendiente de verificar contra la edición en castellano.
+- **A verificar:** usado provisoriamente en código; confirmar contra la edición oficial antes de mostrarlo en UI o textos.
   Si se corrige, renombrar también en el código.
 
 | Inglés (Remaster) | Castellano | En código | Estado |
@@ -27,17 +28,17 @@ Términos de reglas en castellano, según la edición oficial en castellano de l
 | fortune | fortuna | `fortuna` | Confirmado |
 | misfortune | infortunio | `infortunio` | Confirmado |
 | degree of success | grado de éxito | `GradoExito` | A verificar |
-| check | prueba | `Prueba` | A verificar |
-| saving throw | salvación | `Salvacion` | A verificar |
+| check | prueba | `Prueba` | Provisorio |
+| saving throw | tirada de salvación | `Salvacion` | Provisorio |
 | proficiency / proficiency rank | competencia / rango de competencia | `Competencia`, `Rango` | A verificar |
 | proficiency bonus | bonificador por competencia | `bonificador()` | A verificar |
 | attribute modifier | modificador de atributo | — | A verificar |
-| Strength / Dexterity / Constitution | Fuerza / Destreza / Constitución | `fuerza`, `destreza`, `constitucion` | A verificar |
-| Intelligence / Wisdom / Charisma | Inteligencia / Sabiduría / Carisma | `inteligencia`, `sabiduria`, `carisma` | A verificar |
+| Strength / Dexterity / Constitution | Fuerza / Destreza / Constitución | `fuerza`, `destreza`, `constitucion` | Provisorio |
+| Intelligence / Wisdom / Charisma | Inteligencia / Sabiduría / Carisma | `inteligencia`, `sabiduria`, `carisma` | Provisorio |
 | bonus / penalty | bonificador / penalizador | — | A verificar |
-| circumstance / status / item | de circunstancia / de estado / de objeto | `CIRCUNSTANCIA`, `ESTADO`, `OBJETO` | A verificar |
+| circumstance / status / item bonus | bonificador por circunstancia / de estatus / de objeto | `CIRCUNSTANCIA`, `ESTATUS`, `OBJETO` | Provisorio |
 | untyped (penalty) | sin tipo | `SIN_TIPO` | A verificar |
-| Hit Points (HP) | Puntos de Golpe (PG) | `pg` | A verificar |
+| Hit Points (HP) | Puntos de Golpe (PG) | `pg` | Provisorio |
 | class DC | CD de clase | `cd_clase` | A verificar |
 | key attribute | atributo clave | `atributo_clave` | A verificar |
 | Dexterity cap (armor) | tope de Destreza | `tope_destreza` | A verificar |

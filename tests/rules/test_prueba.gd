@@ -17,7 +17,7 @@ func test_total_suma_d20_atributo_competencia_y_modificadores() -> void:
 	prueba.modificadores = [
 		Modificador.new(2, Modificador.Tipo.CIRCUNSTANCIA, "Cobertura"),
 		Modificador.new(1, Modificador.Tipo.CIRCUNSTANCIA, "Ayuda"),
-		Modificador.new(-1, Modificador.Tipo.ESTADO, "Asustado"),
+		Modificador.new(-1, Modificador.Tipo.ESTATUS, "Asustado"),
 	]
 	var resultado: ResultadoPrueba = prueba.resolver(DadosFijos.new([10]), 15)
 	assert_int(resultado.total).is_equal(10 + 3 + 3 + 2 - 1)

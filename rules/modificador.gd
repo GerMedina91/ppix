@@ -1,12 +1,12 @@
 class_name Modificador
 extends RefCounted
-## Bonificador (valor > 0) o penalizador (valor < 0) con tipo, para apilar según las reglas
+## Bonificador (valor > 0) o penalizador (valor < 0) con tipo (por circunstancia, de estatus, de objeto), para apilar según las reglas
 ## (ver SumaModificadores). Los bonificadores siempre tienen tipo; solo los penalizadores
 ## pueden ser sin tipo. `fuente` es para mostrar el desglose (p. ej. "Flanqueado").
 ## El modificador de atributo y el bonificador por competencia no son Modificadores:
 ## se suman aparte, siempre.
 
-enum Tipo { SIN_TIPO, CIRCUNSTANCIA, ESTADO, OBJETO }
+enum Tipo { SIN_TIPO, CIRCUNSTANCIA, ESTATUS, OBJETO }
 
 var valor: int = 0
 var tipo: Tipo = Tipo.SIN_TIPO

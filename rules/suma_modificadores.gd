@@ -1,7 +1,7 @@
 class_name SumaModificadores
 extends RefCounted
 ## Apilamiento de bonificadores y penalizadores de PF2e:
-## - Del mismo tipo (circunstancia, estado, objeto) solo aplica el mayor bonificador y el peor penalizador.
+## - Del mismo tipo (por circunstancia, de estatus, de objeto) solo aplica el mayor bonificador y el peor penalizador.
 ## - Bonificadores y penalizadores de distinto tipo se suman.
 ## - Los penalizadores sin tipo se suman todos.
 ## - Los modificadores de valor 0 no aplican.

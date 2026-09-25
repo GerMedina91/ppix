@@ -43,6 +43,10 @@ func bonificador_danio(_arma: DefinicionArma) -> int:
 	return _criatura.bonificador_danio
 
 
+func prueba_habilidad(habilidad: Habilidad.Tipo) -> Prueba:
+	return Prueba.fija(Habilidad.nombre(habilidad), Habilidad.nombre(habilidad), _criatura.habilidades.get(habilidad, 0))
+
+
 func remata_caidos() -> bool:
 	return _criatura.remata_caidos
 

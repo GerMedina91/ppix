@@ -13,6 +13,9 @@ extends Resource
 @export var reflejos: int = 0
 @export var voluntad: int = 0
 
+## Modificadores totales de habilidad (las que no figuran: +0).
+@export var habilidades: Dictionary[Habilidad.Tipo, int] = {}
+
 @export_group("Ofensiva")
 @export var percepcion: int = 0
 @export var velocidad_pies: int = 25

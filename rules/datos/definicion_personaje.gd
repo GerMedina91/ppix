@@ -29,6 +29,9 @@ extends Resource
 ## Competencia en armas específicas por id (p. ej. el arma predilecta de la entidad del clérigo).
 @export var armas_con_competencia: Dictionary[StringName, Competencia.Rango] = {}
 
+## Competencia en habilidades (las que no figuran: no entrenado).
+@export var habilidades: Dictionary[Habilidad.Tipo, Competencia.Rango] = {}
+
 @export_group("Puntos de Golpe")
 ## PG que da la ascendencia (una sola vez).
 @export var pg_ascendencia: int = 0

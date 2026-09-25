@@ -73,3 +73,12 @@ Términos de reglas en castellano, según la edición oficial en castellano de l
 | travel / dreams (dominios) | viaje / sueños | `viaje`, `suenos` | Provisorio |
 | halberd | alabarda | `alabarda` | Provisorio |
 | Occultism | Ocultismo | `ocultismo` | Provisorio |
+| skill | habilidad | `Habilidad` | Provisorio |
+| Acrobatics / Arcana / Athletics / Crafting | Acrobacias / Arcanos / Atletismo / Artesanía | `ACROBACIAS`, `ARCANOS`, `ATLETISMO`, `ARTESANIA` | Provisorio |
+| Deception / Diplomacy / Intimidation / Lore | Engaño / Diplomacia / Intimidación / Saber | `ENGANO`, `DIPLOMACIA`, `INTIMIDACION` | Provisorio |
+| Medicine / Nature / Performance / Religion | Medicina / Naturaleza / Interpretación / Religión | `MEDICINA`, `NATURALEZA`, `INTERPRETACION`, `RELIGION` | Provisorio |
+| Society / Stealth / Survival / Thievery | Sociedad / Sigilo / Supervivencia / Latrocinio | `SOCIEDAD`, `SIGILO`, `SUPERVIVENCIA`, `LATROCINIO` | Provisorio |
+| check penalty (armor) | penalizador a pruebas | `penalizador_pruebas` | Provisorio |
+| simple / martial / advanced weapons / unarmed | armas simples / marciales / avanzadas / sin armas | `SIMPLE`, `MARCIAL`, `AVANZADA`, `SIN_ARMAS` | Provisorio |
+| unarmored / light / medium / heavy armor | sin armadura / ligera / media / pesada | `SIN_ARMADURA`, `LIGERA`, `MEDIA`, `PESADA` | Provisorio |
+| deadly / versatile / thrown / reach | letal / versátil / arrojadiza / alcance | `letal_caras`, `versatil`, `arrojadiza_incremento_pies`, `alcance_pies` | Provisorio |

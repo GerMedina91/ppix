@@ -49,5 +49,9 @@ func prueba_salvacion(salvacion: Estadisticas.Salvacion) -> Prueba:
 	return Estadisticas.prueba_salvacion(_personaje, salvacion)
 
 
+func prueba_habilidad(habilidad: Habilidad.Tipo) -> Prueba:
+	return Estadisticas.prueba_habilidad(_personaje, habilidad)
+
+
 func usa_reglas_de_moribundo() -> bool:
 	return true

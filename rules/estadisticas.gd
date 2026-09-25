@@ -86,6 +86,18 @@ static func bonificador_danio(personaje: DefinicionPersonaje, arma: DefinicionAr
 	return 0 if arma.a_distancia else personaje.fuerza
 
 
+## Prueba de habilidad. Con armadura, las de Fuerza y Destreza llevan el penalizador a pruebas (sin tipo),
+## salvo que la Fuerza llegue al requisito o que la prueba tenga el rasgo ataque.
+static func prueba_habilidad(personaje: DefinicionPersonaje, habilidad: Habilidad.Tipo, con_rasgo_ataque: bool = false) -> Prueba:
+	var rango: Competencia.Rango = personaje.habilidades.get(habilidad, Competencia.Rango.NO_ENTRENADO)
+	var prueba: Prueba = _prueba(Habilidad.nombre(habilidad), personaje, Habilidad.ATRIBUTO[habilidad], rango)
+	var armadura: DefinicionArmadura = personaje.armadura
+	if armadura != null and armadura.penalizador_pruebas < 0 and Habilidad.es_fisica(habilidad) \
+			and not con_rasgo_ataque and personaje.fuerza < armadura.requisito_fuerza:
+		prueba.modificadores.append(Modificador.new(armadura.penalizador_pruebas, Modificador.Tipo.SIN_TIPO, armadura.nombre))
+	return prueba
+
+
 static func ca(personaje: DefinicionPersonaje) -> int:
 	return defensa(personaje).cd()
 

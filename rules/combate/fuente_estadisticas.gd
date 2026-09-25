@@ -46,6 +46,10 @@ func prueba_salvacion(_salvacion: Estadisticas.Salvacion) -> Prueba:
 	return Prueba.plana("Tirada de salvación")
 
 
+func prueba_habilidad(habilidad: Habilidad.Tipo) -> Prueba:
+	return Prueba.plana(Habilidad.nombre(habilidad))
+
+
 ## Perfil de IA: si también ataca a personajes caídos.
 func remata_caidos() -> bool:
 	return false

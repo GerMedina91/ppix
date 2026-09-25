@@ -8,6 +8,14 @@ extends Node
 ##   El punto estable define dónde reaparece el Eco al morir, no a qué momento se vuelve.
 
 
+func _ready() -> void:
+	EventBus.mapa_cambiado.connect(_al_cambiar_mapa)
+
+
+func _al_cambiar_mapa(_id_mapa: StringName) -> void:
+	autoguardar()
+
+
 ## Guarda la partida al activar un punto estable y lo registra como punto de reaparición.
 func guardar_en_punto_estable(id_punto: StringName) -> void:
 	push_warning("SaveSystem.guardar_en_punto_estable: no implementado (%s)" % id_punto)

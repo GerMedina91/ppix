@@ -31,6 +31,8 @@ var estado: Estado = Estado.SIN_INICIAR
 var ronda: int = 0
 var registro: Array[EventoCombate] = []
 var reacciones: GestorReacciones = GestorReacciones.new(self)
+## Zancada y Paso (se crea con la grilla).
+var movimiento: AccionesMovimiento
 ## La presentación lo activa: después de usar una reacción, la acción interrumpida no sigue sola; espera
 ## continuar(), así se puede animar la reacción con el estado del combate en ese punto.
 var pausar_tras_reacciones: bool = false
@@ -39,7 +41,6 @@ var _indice_turno: int = 0
 var _dados: Dados
 var _grilla: GrillaMapa
 var _vision: LineaVision
-var _movimiento: MovimientoCombate
 
 
 func _init(combatientes: Array[Combatiente], grilla: GrillaMapa, dados: Dados) -> void:
@@ -47,7 +48,7 @@ func _init(combatientes: Array[Combatiente], grilla: GrillaMapa, dados: Dados) -
 	_grilla = grilla
 	_dados = dados
 	_vision = LineaVision.new(grilla)
-	_movimiento = MovimientoCombate.new(grilla)
+	movimiento = AccionesMovimiento.new(self, grilla)
 
 
 func iniciar() -> Array[EventoCombate]:
@@ -112,17 +113,16 @@ func grilla() -> GrillaMapa:
 
 ## Casillas donde puede terminar una Zancada del combatiente, con su costo en pies.
 func casillas_de_zancada(c: Combatiente) -> Dictionary[Vector2i, int]:
-	return _movimiento.alcanzables(c.celda, c.fuente.velocidad_pies(), _bloqueadas_para(c), _de_aliados_de(c))
+	return movimiento.casillas_de_zancada(c)
 
 
 func camino_de_zancada(c: Combatiente, destino: Vector2i) -> Array[Vector2i]:
-	return _movimiento.camino(c.celda, destino, _bloqueadas_para(c), _de_aliados_de(c))
+	return movimiento.camino_de_zancada(c, destino)
 
 
 ## Alcance de `c` con las Zancadas que le permiten sus acciones: casillas, plan y recorrido de cada una.
 func alcance_de_zancadas(c: Combatiente) -> AlcanceZancadas:
-	return _movimiento.alcance_de_zancadas(c.celda, c.fuente.velocidad_pies(), c.acciones_restantes / COSTO_ZANCADA,
-		_bloqueadas_para(c), _de_aliados_de(c))
+	return movimiento.alcance_de_zancadas(c, c.acciones_restantes / COSTO_ZANCADA)
 
 
 # --- Acciones (intenciones) ---
@@ -130,44 +130,21 @@ func alcance_de_zancadas(c: Combatiente) -> AlcanceZancadas:
 ## `recorrido`: casillas por las que pasa (p. ej. el tramo previsto de un plan de varias Zancadas);
 ## si falta, va por el camino más barato.
 func zancada(destino: Vector2i, recorrido: Array[Vector2i] = []) -> Array[EventoCombate]:
-	var actor: Combatiente = turno_actual()
-	var invalido: EventoCombate = _validar_accion(actor, COSTO_ZANCADA, ACCION_ZANCADA)
-	if invalido != null:
-		return [invalido]
-	var camino: Array[Vector2i] = recorrido if not recorrido.is_empty() else camino_de_zancada(actor, destino)
-	var valido: bool = _movimiento.es_camino_valido(actor.celda, camino, _bloqueadas_para(actor), _de_aliados_de(actor)) \
-		and camino.back() == destino and MovimientoCombate.costo_de(actor.celda, camino) <= actor.fuente.velocidad_pies()
-	if not valido:
-		return [_invalida(actor, ACCION_ZANCADA, "fuera del alcance de la Zancada")]
-	if not ReglasCondiciones.movimiento_permitido(self, actor, actor.celda, destino):
-		return [_invalida(actor, ACCION_ZANCADA, MOTIVO_HUYENDO)]
-	actor.gastar_acciones(COSTO_ZANCADA)
-	return _avanzar_zancada(actor, camino, 0, false)
+	return movimiento.zancada(destino, recorrido)
 
 
 func paso(destino: Vector2i) -> Array[EventoCombate]:
-	var actor: Combatiente = turno_actual()
-	var invalido: EventoCombate = _validar_accion(actor, COSTO_PASO, ACCION_PASO)
-	if invalido != null:
-		return [invalido]
-	var d: Vector2i = destino - actor.celda
-	if absi(d.x) > 1 or absi(d.y) > 1 or d == Vector2i.ZERO or _ocupada(destino) or not _grilla.puede_dar_paso(actor.celda, destino):
-		return [_invalida(actor, ACCION_PASO, "solo a una casilla libre adyacente")]
-	if not ReglasCondiciones.movimiento_permitido(self, actor, actor.celda, destino):
-		return [_invalida(actor, ACCION_PASO, MOTIVO_HUYENDO)]
-	actor.gastar_acciones(COSTO_PASO)
-	var camino: Array[Vector2i] = [destino]
-	return _mover(actor, camino, "paso")
+	return movimiento.paso(destino)
 
 
 func golpe(id_objetivo: StringName, arma: DefinicionArma = null) -> Array[EventoCombate]:
 	var actor: Combatiente = turno_actual()
-	var invalido: EventoCombate = _validar_accion(actor, COSTO_GOLPE, ACCION_GOLPE)
+	var invalido: EventoCombate = validar_accion(actor, COSTO_GOLPE, ACCION_GOLPE)
 	if invalido != null:
 		return [invalido]
 	var objetivo: Combatiente = combatiente(id_objetivo)
 	if objetivo == null:
-		return [_invalida(actor, ACCION_GOLPE, "objetivo inexistente")]
+		return [invalida(actor, ACCION_GOLPE, "objetivo inexistente")]
 	var arma_usada: DefinicionArma = arma if arma != null else actor.arma_principal()
 	var motivo: Golpe.Motivo = Golpe.validar(actor, objetivo, arma_usada, _vision)
 	if motivo != Golpe.Motivo.VALIDO:
@@ -198,11 +175,11 @@ func golpe_de_reaccion(reactor: Combatiente, objetivo: Combatiente, arma: Defini
 ## Arcadas: 1 acción para intentar bajar indispuesto (salvación de Fortaleza contra la CD del efecto).
 func arcadas() -> Array[EventoCombate]:
 	var actor: Combatiente = turno_actual()
-	var invalido: EventoCombate = _validar_accion(actor, COSTO_ARCADAS, ACCION_ARCADAS)
+	var invalido: EventoCombate = validar_accion(actor, COSTO_ARCADAS, ACCION_ARCADAS)
 	if invalido != null:
 		return [invalido]
 	if not actor.condiciones.tiene(Condiciones.Tipo.INDISPUESTO):
-		return [_invalida(actor, ACCION_ARCADAS, "no está indispuesto")]
+		return [invalida(actor, ACCION_ARCADAS, "no está indispuesto")]
 	actor.gastar_acciones(COSTO_ARCADAS)
 	return ReglasCondiciones.arcadas(self, actor, _dados)
 
@@ -256,39 +233,6 @@ func _avanzar_turno() -> Array[EventoCombate]:
 	return eventos
 
 
-## Avanza la Zancada casilla por casilla desde `indice`; antes de salir de cada casilla ofrece las
-## reacciones (salvo `disparo_resuelto`, que evita volver a ofrecerlas en la casilla donde se retoma).
-## Si el que se mueve queda fuera de combate, el movimiento se corta ahí.
-func _avanzar_zancada(actor: Combatiente, camino: Array[Vector2i], indice: int, disparo_resuelto: bool) -> Array[EventoCombate]:
-	var eventos: Array[EventoCombate] = []
-	var desde: Vector2i = actor.celda
-	var recorrido: Array[Vector2i] = []
-	var i: int = indice
-	var resuelto: bool = disparo_resuelto
-	while i < camino.size() and actor.condiciones.en_pie() and estado == Estado.EN_CURSO:
-		if not resuelto:
-			var disparo: DisparoReaccion = DisparoReaccion.sale_de_casilla(actor, actor.celda)
-			if reacciones.hay_candidatos(disparo):
-				if not recorrido.is_empty():
-					eventos.append(_evento_movimiento(actor, desde, recorrido, indice > 0 or disparo_resuelto))
-				var siguiente: int = i
-				eventos.append_array(reacciones.procesar(disparo,
-					func() -> Array[EventoCombate]: return _avanzar_zancada(actor, camino, siguiente, true)))
-				return eventos
-		actor.celda = camino[i]
-		recorrido.append(camino[i])
-		i += 1
-		resuelto = false
-	if not recorrido.is_empty():
-		eventos.append(_evento_movimiento(actor, desde, recorrido, indice > 0 or disparo_resuelto))
-	return eventos
-
-
-func _evento_movimiento(actor: Combatiente, desde: Vector2i, recorrido: Array[Vector2i], continua: bool) -> EventoCombate:
-	return emitir(EventoCombate.new(EventoCombate.Tipo.MOVIMIENTO, actor.id,
-		{"desde": desde, "camino": recorrido.duplicate(), "tipo": "zancada", "continua": continua}))
-
-
 ## Tira el Golpe si el atacante sigue en pie después de las reacciones (si cayó, el ataque se pierde).
 func _tirar_golpe(actor: Combatiente, objetivo: Combatiente, arma: DefinicionArma, disparo: DisparoReaccion) -> Array[EventoCombate]:
 	if estado != Estado.EN_CURSO or not actor.condiciones.puede_actuar() or objetivo.condiciones.muerto:
@@ -302,13 +246,6 @@ func _tirar_golpe(actor: Combatiente, objetivo: Combatiente, arma: DefinicionArm
 	eventos.append_array(_eventos_de_estado(objetivo, estaba_en_pie))
 	eventos.append_array(_verificar_fin())
 	return eventos
-
-
-func _mover(actor: Combatiente, camino: Array[Vector2i], tipo: String) -> Array[EventoCombate]:
-	var desde: Vector2i = actor.celda
-	actor.celda = camino.back()
-	return [_emitir(EventoCombate.new(EventoCombate.Tipo.MOVIMIENTO, actor.id,
-		{"desde": desde, "camino": camino, "tipo": tipo}))]
 
 
 func _eventos_de_estado(objetivo: Combatiente, estaba_en_pie: bool) -> Array[EventoCombate]:
@@ -336,54 +273,34 @@ func _verificar_fin() -> Array[EventoCombate]:
 	return [_emitir(EventoCombate.new(EventoCombate.Tipo.FIN_COMBATE, &"", {"estado": estado}))]
 
 
-func _validar_accion(actor: Combatiente, costo: int, accion: String) -> EventoCombate:
+## Evento de acción imposible si `actor` no puede usar ahora una acción de `costo` (null si puede).
+## También lo usan las clases de acciones (AccionesMovimiento).
+func validar_accion(actor: Combatiente, costo: int, accion: String) -> EventoCombate:
 	if estado != Estado.EN_CURSO or actor == null:
 		return EventoCombate.new(EventoCombate.Tipo.ACCION_INVALIDA, &"", {"accion": accion, "motivo": "el combate no está en curso"})
 	if hay_reaccion_pendiente() or hay_continuacion():
-		return _invalida(actor, accion, "esperando una reacción")
+		return invalida(actor, accion, "esperando una reacción")
 	if not actor.condiciones.puede_actuar():
-		return _invalida(actor, accion, "no puede actuar")
+		return invalida(actor, accion, "no puede actuar")
 	if actor.condiciones.tiene(Condiciones.Tipo.HUYENDO) and accion != ACCION_ZANCADA and accion != ACCION_PASO:
-		return _invalida(actor, accion, MOTIVO_HUYENDO)
+		return invalida(actor, accion, MOTIVO_HUYENDO)
 	if actor.acciones_restantes < costo:
 		if accion == ACCION_GOLPE:
 			return _golpe_invalido(actor, Golpe.Motivo.SIN_ACCIONES)
-		return _invalida(actor, accion, Golpe.texto_motivo(Golpe.Motivo.SIN_ACCIONES))
+		return invalida(actor, accion, Golpe.texto_motivo(Golpe.Motivo.SIN_ACCIONES))
 	return null
 
 
 ## Acción imposible: {"accion": "Golpe" | "Zancada" | "Paso", "motivo": texto para mostrar}.
-func _invalida(actor: Combatiente, accion: String, motivo: String) -> EventoCombate:
+func invalida(actor: Combatiente, accion: String, motivo: String) -> EventoCombate:
 	return EventoCombate.new(EventoCombate.Tipo.ACCION_INVALIDA, actor.id, {"accion": accion, "motivo": motivo})
 
 
 ## Golpe imposible: además del texto, el Golpe.Motivo.
 func _golpe_invalido(actor: Combatiente, motivo: Golpe.Motivo) -> EventoCombate:
-	var evento: EventoCombate = _invalida(actor, ACCION_GOLPE, Golpe.texto_motivo(motivo))
+	var evento: EventoCombate = invalida(actor, ACCION_GOLPE, Golpe.texto_motivo(motivo))
 	evento.datos["motivo_golpe"] = motivo
 	return evento
-
-
-## Casillas de oponentes que no murieron: no se pueden atravesar.
-func _bloqueadas_para(c: Combatiente) -> Dictionary:
-	var bloqueadas: Dictionary = {}
-	for otro: Combatiente in participantes:
-		if not otro.es_aliado_de(c) and not otro.condiciones.muerto:
-			bloqueadas[otro.celda] = true
-	return bloqueadas
-
-
-## Casillas de aliados (se atraviesan, no se termina ahí).
-func _de_aliados_de(c: Combatiente) -> Dictionary:
-	var aliadas: Dictionary = {}
-	for otro: Combatiente in participantes:
-		if otro != c and otro.es_aliado_de(c) and not otro.condiciones.muerto:
-			aliadas[otro.celda] = true
-	return aliadas
-
-
-func _ocupada(casilla: Vector2i) -> bool:
-	return participantes.any(func(c: Combatiente) -> bool: return c.celda == casilla and not c.condiciones.muerto)
 
 
 func _va_antes(a: Combatiente, b: Combatiente, tiradas: Dictionary[Combatiente, int]) -> bool:

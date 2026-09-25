@@ -53,6 +53,7 @@ docs/
 - Si una decisión de implementación afecta el diseño, anotarla en `docs/GDD.md` → "Registro de decisiones".
 
 ## PF2e y licencia
+- **Terminología:** es obligatorio respetar `docs/GLOSARIO.md` en código (identificadores de dominio), UI y textos. Términos nuevos se agregan ahí antes de usarlos; los marcados "a verificar" no van a UI ni textos hasta confirmarse.
 - Usar únicamente reglas de los libros Remaster (Player Core, Player Core 2, GM Core, Monster Core). Nada pre-Remaster (OGL).
 - Prohibido usar material reservado de Paizo: Golarion, sus dioses, regiones, personajes, organizaciones, ni nombres propios del setting. Si un item/conjuro/dote nombra algo del setting, se usa la mecánica con otro nombre.
 - No usar la marca "Pathfinder" en textos del juego.

@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/characters/miembro_party.gd" id="1_e4l5a"]
+
+[node name="MiembroParty" type="Node2D" unique_id=1005019094]
+script = ExtResource("1_e4l5a")

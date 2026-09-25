@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="CatalogoMapas" format=3]
+
+[ext_resource type="Script" path="res://scripts/recursos/definicion_mapa.gd" id="1_t3e0k"]
+[ext_resource type="Resource" path="res://data/mapas/mapa_prueba_a.tres" id="2_c3ydf"]
+[ext_resource type="Script" path="res://scripts/recursos/catalogo_mapas.gd" id="3_mtpph"]
+
+[resource]
+script = ExtResource("3_mtpph")
+mapas = Array[ExtResource("1_t3e0k")]([ExtResource("2_c3ydf")])

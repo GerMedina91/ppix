@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="DefinicionMapa" format=3]
+
+[ext_resource type="Script" path="res://scripts/recursos/definicion_mapa.gd" id="1_tkgbm"]
+
+[resource]
+script = ExtResource("1_tkgbm")
+id = &"mapa_prueba_a"
+ruta_escena = "res://scenes/world/mapas/mapa_prueba_a.tscn"

@@ -48,6 +48,7 @@ static func armar(build: DefinicionBuild) -> DefinicionPersonaje:
 	p.capacidades.append_array(clase.capacidades_nivel_1)
 	if build.subclase != null:
 		p.capacidades.append_array(build.subclase.capacidades)
+	p.capacidades.append_array(build.dotes)
 	return p
 
 

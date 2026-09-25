@@ -29,6 +29,9 @@ extends Resource
 @export var habilidades_libres: Array[Habilidad.Tipo] = []
 @export var habilidad_trasfondo: Habilidad.Tipo = Habilidad.Tipo.ACROBACIAS
 
+## Dotes fijas del build (sin elección para el slice), como capacidades.
+@export var dotes: Array[Capacidad] = []
+
 @export_group("Equipo")
 @export var armas: Array[DefinicionArma] = []
 @export var armadura: DefinicionArmadura

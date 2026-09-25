@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="CapacidadGolpeReactivo" format=3]
+
+[ext_resource type="Script" path="res://rules/capacidades/capacidad_golpe_reactivo.gd" id="1_ihw56"]
+
+[resource]
+script = ExtResource("1_ihw56")
+id = &"golpe_reactivo"
+nombre = "Golpe reactivo"

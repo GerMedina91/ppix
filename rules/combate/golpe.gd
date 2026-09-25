@@ -64,18 +64,23 @@ static func validar(atacante: Combatiente, objetivo: Combatiente, arma: Definici
 	return Motivo.VALIDO
 
 
+## `modificadores_defensa`: bonificadores a la CA solo para este ataque (p. ej. Esquiva ágil).
+## `cuenta_para_pam`: false en un Golpe reactivo (no sufre ni suma al penalizador por ataque múltiple).
 static func resolver(atacante: Combatiente, objetivo: Combatiente, arma: DefinicionArma, dados: Dados,
-		participantes: Array[Combatiente], vision: LineaVision) -> ResultadoGolpe:
+		participantes: Array[Combatiente], vision: LineaVision, modificadores_defensa: Array[Modificador] = [],
+		cuenta_para_pam: bool = true) -> ResultadoGolpe:
 	var resultado: ResultadoGolpe = ResultadoGolpe.new()
 	resultado.motivo = validar(atacante, objetivo, arma, vision)
 	if not resultado.es_valido():
 		return resultado
-	var prueba: Prueba = prueba_de_ataque(atacante, objetivo, arma)
+	var prueba: Prueba = prueba_de_ataque(atacante, objetivo, arma, cuenta_para_pam)
 	resultado.flanqueando = Flanqueo.atacante_flanquea(atacante, objetivo, participantes)
 	var defensa: Prueba = objetivo.defensa_contra(resultado.flanqueando)
+	defensa.modificadores.append_array(modificadores_defensa)
 	var cd: int = defensa.cd()
 	resultado.prueba = prueba.resolver(dados, cd)
-	atacante.ataques_en_turno += 1
+	if cuenta_para_pam:
+		atacante.ataques_en_turno += 1
 	var grado: GradoExito.Grado = resultado.prueba.grado
 	if grado == GradoExito.Grado.EXITO or grado == GradoExito.Grado.EXITO_CRITICO:
 		resultado.critico = grado == GradoExito.Grado.EXITO_CRITICO
@@ -103,9 +108,9 @@ static func resolver(atacante: Combatiente, objetivo: Combatiente, arma: Definic
 
 
 ## Prueba de ataque con el penalizador por ataque múltiple y el de rango ya aplicados (para previsualizar).
-static func prueba_de_ataque(atacante: Combatiente, objetivo: Combatiente, arma: DefinicionArma) -> Prueba:
+static func prueba_de_ataque(atacante: Combatiente, objetivo: Combatiente, arma: DefinicionArma, cuenta_para_pam: bool = true) -> Prueba:
 	var prueba: Prueba = atacante.fuente.prueba_ataque(arma)
-	var pam: int = penalizador_ataque_multiple(arma, atacante.ataques_en_turno)
+	var pam: int = penalizador_ataque_multiple(arma, atacante.ataques_en_turno if cuenta_para_pam else 0)
 	if pam != 0:
 		prueba.modificadores.append(Modificador.new(pam, Modificador.Tipo.SIN_TIPO, "ataque múltiple"))
 	var extra: int = incrementos_extra(arma, Medicion.pies_entre(atacante.celda, objetivo.celda))

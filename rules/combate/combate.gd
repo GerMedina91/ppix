@@ -6,6 +6,9 @@ extends RefCounted
 ## - Turno: 3 acciones. Zancada, Paso y Golpe cuestan 1. Moribundo: prueba de recuperación al empezar.
 ##   Quien no puede actuar (inconsciente o muerto) pierde el turno.
 ## - Fin: victoria si todos los enemigos murieron; derrota si toda la party está fuera de combate.
+## - Reacciones (GestorReacciones): la Zancada se procesa casilla por casilla y el Golpe avisa antes de
+##   tirar; si una reacción necesita la decisión del jugador, el combate queda en pausa con una pregunta
+##   pendiente hasta responder_reaccion().
 ## Reproducible: con la misma semilla en Dados y las mismas intenciones, el registro es idéntico.
 
 enum Estado { SIN_INICIAR, EN_CURSO, VICTORIA, DERROTA }
@@ -23,7 +26,7 @@ var orden: Array[Combatiente] = []
 var estado: Estado = Estado.SIN_INICIAR
 var ronda: int = 0
 var registro: Array[EventoCombate] = []
-var reacciones: Array[Reaccion] = []
+var reacciones: GestorReacciones = GestorReacciones.new(self)
 
 var _indice_turno: int = 0
 var _dados: Dados
@@ -72,6 +75,19 @@ func vision() -> LineaVision:
 	return _vision
 
 
+func hay_reaccion_pendiente() -> bool:
+	return reacciones.hay_pendiente()
+
+
+## {"reactor", "capacidad", "disparo"} de la reacción que espera respuesta, o vacío.
+func pregunta_de_reaccion() -> Dictionary:
+	return reacciones.pregunta()
+
+
+func responder_reaccion(usar: bool) -> Array[EventoCombate]:
+	return reacciones.responder(usar)
+
+
 func grilla() -> GrillaMapa:
 	return _grilla
 
@@ -116,7 +132,7 @@ func zancada(destino: Vector2i) -> Array[EventoCombate]:
 	if camino.is_empty() or MovimientoCombate.costo_de(actor.celda, camino) > actor.fuente.velocidad_pies():
 		return [_invalida(actor, ACCION_ZANCADA, "fuera del alcance de la Zancada")]
 	actor.gastar_acciones(COSTO_ZANCADA)
-	return _mover(actor, camino, "zancada")
+	return _avanzar_zancada(actor, camino, 0, false)
 
 
 func paso(destino: Vector2i) -> Array[EventoCombate]:
@@ -141,13 +157,27 @@ func golpe(id_objetivo: StringName, arma: DefinicionArma = null) -> Array[Evento
 	if objetivo == null:
 		return [_invalida(actor, ACCION_GOLPE, "objetivo inexistente")]
 	var arma_usada: DefinicionArma = arma if arma != null else actor.arma_principal()
-	var estaba_en_pie: bool = objetivo.condiciones.puede_actuar()
-	var resultado: ResultadoGolpe = Golpe.resolver(actor, objetivo, arma_usada, _dados, participantes, _vision)
-	if not resultado.es_valido():
-		return [_golpe_invalido(actor, resultado.motivo)]
+	var motivo: Golpe.Motivo = Golpe.validar(actor, objetivo, arma_usada, _vision)
+	if motivo != Golpe.Motivo.VALIDO:
+		return [_golpe_invalido(actor, motivo)]
 	actor.gastar_acciones(COSTO_GOLPE)
-	var eventos: Array[EventoCombate] = [_emitir(EventoCombate.new(EventoCombate.Tipo.GOLPE, actor.id,
-		{"objetivo": objetivo.id, "resultado": resultado}))]
+	# Antes de tirar: reacciones al ataque a distancia (p. ej. Golpe reactivo) y al ser objetivo (Esquiva ágil).
+	var al_objetivo: DisparoReaccion = DisparoReaccion.objetivo_de_ataque(actor, objetivo, arma_usada)
+	var tirar: Callable = func() -> Array[EventoCombate]: return _tirar_golpe(actor, objetivo, arma_usada, al_objetivo)
+	var avisar_objetivo: Callable = func() -> Array[EventoCombate]: return reacciones.procesar(al_objetivo, tirar)
+	if arma_usada.a_distancia:
+		return reacciones.procesar(DisparoReaccion.ataque_a_distancia(actor, arma_usada), avisar_objetivo)
+	return avisar_objetivo.call()
+
+
+## Golpe de una reacción (Golpe reactivo): no gasta acciones ni cuenta para el penalizador por ataque múltiple.
+func golpe_de_reaccion(reactor: Combatiente, objetivo: Combatiente, arma: DefinicionArma) -> Array[EventoCombate]:
+	var estaba_en_pie: bool = objetivo.condiciones.puede_actuar()
+	var resultado: ResultadoGolpe = Golpe.resolver(reactor, objetivo, arma, _dados, participantes, _vision, [], false)
+	if not resultado.es_valido():
+		return []
+	var eventos: Array[EventoCombate] = [emitir(EventoCombate.new(EventoCombate.Tipo.GOLPE, reactor.id,
+		{"objetivo": objetivo.id, "resultado": resultado, "reaccion": true}))]
 	eventos.append_array(_eventos_de_estado(objetivo, estaba_en_pie))
 	eventos.append_array(_verificar_fin())
 	return eventos
@@ -155,7 +185,7 @@ func golpe(id_objetivo: StringName, arma: DefinicionArma = null) -> Array[Evento
 
 func terminar_turno() -> Array[EventoCombate]:
 	var actor: Combatiente = turno_actual()
-	if actor == null:
+	if actor == null or hay_reaccion_pendiente():
 		return []
 	var eventos: Array[EventoCombate] = [_emitir(EventoCombate.new(EventoCombate.Tipo.FIN_TURNO, actor.id))]
 	eventos.append_array(_avanzar_turno())
@@ -199,6 +229,54 @@ func _avanzar_turno() -> Array[EventoCombate]:
 	return eventos
 
 
+## Avanza la Zancada casilla por casilla desde `indice`; antes de salir de cada casilla ofrece las
+## reacciones (salvo `disparo_resuelto`, que evita volver a ofrecerlas en la casilla donde se retoma).
+## Si el que se mueve queda fuera de combate, el movimiento se corta ahí.
+func _avanzar_zancada(actor: Combatiente, camino: Array[Vector2i], indice: int, disparo_resuelto: bool) -> Array[EventoCombate]:
+	var eventos: Array[EventoCombate] = []
+	var desde: Vector2i = actor.celda
+	var recorrido: Array[Vector2i] = []
+	var i: int = indice
+	var resuelto: bool = disparo_resuelto
+	while i < camino.size() and actor.condiciones.puede_actuar() and estado == Estado.EN_CURSO:
+		if not resuelto:
+			var disparo: DisparoReaccion = DisparoReaccion.sale_de_casilla(actor, actor.celda)
+			if reacciones.hay_candidatos(disparo):
+				if not recorrido.is_empty():
+					eventos.append(_evento_movimiento(actor, desde, recorrido, indice > 0 or disparo_resuelto))
+				var siguiente: int = i
+				eventos.append_array(reacciones.procesar(disparo,
+					func() -> Array[EventoCombate]: return _avanzar_zancada(actor, camino, siguiente, true)))
+				return eventos
+		actor.celda = camino[i]
+		recorrido.append(camino[i])
+		i += 1
+		resuelto = false
+	if not recorrido.is_empty():
+		eventos.append(_evento_movimiento(actor, desde, recorrido, indice > 0 or disparo_resuelto))
+	return eventos
+
+
+func _evento_movimiento(actor: Combatiente, desde: Vector2i, recorrido: Array[Vector2i], continua: bool) -> EventoCombate:
+	return emitir(EventoCombate.new(EventoCombate.Tipo.MOVIMIENTO, actor.id,
+		{"desde": desde, "camino": recorrido.duplicate(), "tipo": "zancada", "continua": continua}))
+
+
+## Tira el Golpe si el atacante sigue en pie después de las reacciones (si cayó, el ataque se pierde).
+func _tirar_golpe(actor: Combatiente, objetivo: Combatiente, arma: DefinicionArma, disparo: DisparoReaccion) -> Array[EventoCombate]:
+	if estado != Estado.EN_CURSO or not actor.condiciones.puede_actuar() or objetivo.condiciones.muerto:
+		return []
+	var estaba_en_pie: bool = objetivo.condiciones.puede_actuar()
+	var resultado: ResultadoGolpe = Golpe.resolver(actor, objetivo, arma, _dados, participantes, _vision, disparo.bonificadores_ca)
+	if not resultado.es_valido():
+		return [_golpe_invalido(actor, resultado.motivo)]
+	var eventos: Array[EventoCombate] = [emitir(EventoCombate.new(EventoCombate.Tipo.GOLPE, actor.id,
+		{"objetivo": objetivo.id, "resultado": resultado}))]
+	eventos.append_array(_eventos_de_estado(objetivo, estaba_en_pie))
+	eventos.append_array(_verificar_fin())
+	return eventos
+
+
 func _mover(actor: Combatiente, camino: Array[Vector2i], tipo: String) -> Array[EventoCombate]:
 	var desde: Vector2i = actor.celda
 	actor.celda = camino.back()
@@ -234,6 +312,8 @@ func _verificar_fin() -> Array[EventoCombate]:
 func _validar_accion(actor: Combatiente, costo: int, accion: String) -> EventoCombate:
 	if estado != Estado.EN_CURSO or actor == null:
 		return EventoCombate.new(EventoCombate.Tipo.ACCION_INVALIDA, &"", {"accion": accion, "motivo": "el combate no está en curso"})
+	if hay_reaccion_pendiente():
+		return _invalida(actor, accion, "esperando una reacción")
 	if not actor.condiciones.puede_actuar():
 		return _invalida(actor, accion, "no puede actuar")
 	if actor.acciones_restantes < costo:
@@ -285,9 +365,11 @@ func _va_antes(a: Combatiente, b: Combatiente, tiradas: Dictionary[Combatiente, 
 	return participantes.find(a) < participantes.find(b)
 
 
-## Registra el evento y se lo ofrece a las reacciones (ninguna en M3).
-func _emitir(evento: EventoCombate) -> EventoCombate:
+## Registra el evento (también lo usa el GestorReacciones).
+func emitir(evento: EventoCombate) -> EventoCombate:
 	registro.append(evento)
-	for reaccion: Reaccion in reacciones:
-		registro.append_array(reaccion.al_evento(evento, self))
 	return evento
+
+
+func _emitir(evento: EventoCombate) -> EventoCombate:
+	return emitir(evento)

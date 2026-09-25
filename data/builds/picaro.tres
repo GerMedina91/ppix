@@ -6,7 +6,9 @@
 [ext_resource type="Resource" path="res://data/ascendencias/humano.tres" id="4_topi1"]
 [ext_resource type="Resource" path="res://data/clases/picaro.tres" id="5_paw0t"]
 [ext_resource type="Script" path="res://rules/datos/definicion_build.gd" id="6_rjj82"]
+[ext_resource type="Script" path="res://rules/capacidades/capacidad.gd" id="6_rva43"]
 [ext_resource type="Resource" path="res://data/subclases/tejemaneje_ladron.tres" id="7_5dsqp"]
+[ext_resource type="Resource" path="res://data/capacidades/esquiva_agil.tres" id="7_topi1"]
 
 [resource]
 script = ExtResource("6_rjj82")
@@ -21,5 +23,6 @@ mejoras_trasfondo = Array[int]([1, 3])
 mejoras_libres = Array[int]([1, 2, 4, 5])
 habilidades_libres = Array[int]([0, 4, 5, 6, 12, 3, 14, 10])
 habilidad_trasfondo = 7
+dotes = Array[ExtResource("6_rva43")]([ExtResource("7_topi1")])
 armas = Array[ExtResource("2_jh0em")]([ExtResource("3_rva43")])
 armadura = ExtResource("1_m5xf5")

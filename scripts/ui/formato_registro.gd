@@ -14,7 +14,13 @@ static func texto(evento: EventoCombate, combate: Combate) -> String:
 		EventoCombate.Tipo.MOVIMIENTO:
 			var pies: int = MovimientoCombate.costo_de(evento.datos.desde, evento.datos.camino)
 			var accion: String = "Paso" if evento.datos.tipo == "paso" else "Zancada"
+			if evento.datos.get("continua", false):
+				return "%s: sigue la %s (%d pies)" % [actor, accion, pies]
 			return "%s: %s (%d pies)" % [actor, accion, pies]
+		EventoCombate.Tipo.REACCION_PENDIENTE:
+			return "%s puede usar %s contra %s" % [actor, evento.datos.reaccion, evento.datos.disparador]
+		EventoCombate.Tipo.REACCION:
+			return "%s usa %s (reacción)" % [actor, evento.datos.reaccion]
 		EventoCombate.Tipo.GOLPE:
 			return _golpe(actor, String(evento.datos.objetivo), evento.datos.resultado)
 		EventoCombate.Tipo.CAIDO:

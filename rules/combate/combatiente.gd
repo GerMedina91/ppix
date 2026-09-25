@@ -4,6 +4,8 @@ extends RefCounted
 ## Sus números salen de una FuenteEstadisticas (personaje o criatura); la definición no se modifica.
 
 enum Bando { PARTY, ENEMIGOS }
+## Cómo decide sus reacciones: PREGUNTAR detiene el combate hasta que el jugador responda.
+enum PoliticaReaccion { PREGUNTAR, SIEMPRE, NUNCA }
 
 const ACCIONES_POR_TURNO: int = 3
 const PENALIZADOR_DESPREVENIDO: int = -2
@@ -25,6 +27,8 @@ var acciones_restantes: int = 0
 var reaccion_disponible: bool = false
 ## Ataques hechos en el turno actual (para el penalizador por ataque múltiple).
 var ataques_en_turno: int = 0
+## Party: PREGUNTAR; enemigos: SIEMPRE (los decide la IA).
+var politica_reacciones: PoliticaReaccion = PoliticaReaccion.PREGUNTAR
 
 var fuente: FuenteEstadisticas
 var condiciones: Condiciones = Condiciones.new()
@@ -36,6 +40,7 @@ func _init(id_combatiente: StringName, fuente_estadisticas: FuenteEstadisticas, 
 	bando = bando_combatiente
 	celda = celda_inicial
 	pg = fuente.pg_maximos()
+	politica_reacciones = PoliticaReaccion.PREGUNTAR if bando == Bando.PARTY else PoliticaReaccion.SIEMPRE
 
 
 static func desde_personaje(id_combatiente: StringName, personaje: DefinicionPersonaje, celda_inicial: Vector2i) -> Combatiente:

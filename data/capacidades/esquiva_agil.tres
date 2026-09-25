@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="CapacidadEsquivaAgil" format=3]
+
+[ext_resource type="Script" path="res://rules/capacidades/capacidad_esquiva_agil.gd" id="1_jwde8"]
+
+[resource]
+script = ExtResource("1_jwde8")
+id = &"esquiva_agil"
+nombre = "Esquiva ágil"

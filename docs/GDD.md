@@ -68,13 +68,16 @@ Al morir, el Eco se rearma con menos recuerdos: pierde algo concreto (un fragmen
 
 ### 4.4 Exploración
 Mundo no lineal, muchos mapas conectados, mínimos o nulos marcadores de misión.
-- **Control:** click en una celda con pathfinding (8 direcciones, sin cortar esquinas) + teclado en 4 direcciones.
+- **Control:** click en una celda con pathfinding (8 direcciones, sin cortar esquinas) + teclado en direcciones de pantalla (W arriba, D derecha, etc.). Cada tecla es un paso diagonal de la grilla; combinando dos teclas salen los ortogonales (8 direcciones).
 - **Party:** los 4 miembros caminan en fila india detrás del líder. El seguimiento se diseña para poder desactivarlo y controlar a cada miembro por separado (ver 4.1).
 
 ## 5. Dirección de arte
 - **Vista isométrica.** Tiles en rombo de 64×32 (1 celda = 5 pies). La lógica sigue siendo una grilla cuadrada; isométrico es solo la proyección.
-- **Resolución nativa: en evaluación.** 640×360 (×3 a 1080p, ×4 a 1440p, ×6 a 4K) o 960×540 (×2 a 1080p, ×4 a 4K). Ver comparación en `docs/propuestas/`.
-- Personajes: tamaño a redefinir para la vista isométrica. Retratos de diálogo 96–128 px.
+- **Resolución nativa: 960×540**, escalado entero (×2 a 1080p, ×4 a 4K). Se ven ~450 celdas y hasta 50–60 pies desde el centro, casi todo el rango de 60 pies (comparación con 640×360 en `docs/propuestas/`).
+  - Contra: en web, dentro de una ventana de navegador no llega a ×2 y queda a ×1. **La versión web necesita un botón de pantalla completa.**
+  - Contra: en 1440p queda a ×2 con franjas negras grandes.
+  - **[a evaluar]** Steam Deck (1280×800) queda a ×1; evaluar más adelante un zoom de cámara.
+- Personajes: placeholder 32×56; tamaño final a definir con el sprite canónico del Eco. Retratos de diálogo 96–128 px.
 - **Y-sort** desde el principio: todo lo que se para sobre el mapa (party, paredes, objetos) se ordena por la posición de su base.
 - **[planificado]** Transparencia de paredes cuando un miembro de la party queda detrás. Por eso las paredes van en una capa propia, separada del suelo.
 - Generación con PixelLab + retoque en Aseprite. Todo asset final se pasa a modo indexado con la paleta del proyecto.
@@ -137,3 +140,6 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
 | 2026-09-25 | Placeholders de colores planos permitidos en `assets/placeholder/` (a reemplazar por arte final). |
 | 2026-09-25 | Vista isométrica (reemplaza top-down ¾). Rombo 64×32. La grilla lógica sigue siendo cuadrada: isométrico es solo la proyección. |
 | 2026-09-25 | Y-sort desde el inicio; paredes en capa propia; transparencia de paredes prevista (sin implementar). |
+| 2026-09-25 | Resolución nativa 960×540 (×2 a 1080p), ventana de desarrollo 1920×1080. Contras: web necesita pantalla completa, 1440p con franjas, Steam Deck a evaluar con zoom. |
+| 2026-09-25 | Teclado en direcciones de pantalla, 8 direcciones combinando teclas (reemplaza "teclado 4 direcciones"). |
+| 2026-09-25 | Personaje placeholder 32×56; tamaño final con el sprite canónico del Eco. |

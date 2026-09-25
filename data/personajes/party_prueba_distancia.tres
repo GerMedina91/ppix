@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="DefinicionPersonaje" format=3]
+
+[ext_resource type="Script" path="res://rules/datos/definicion_armadura.gd" id="1_u1bsf"]
+[ext_resource type="Script" path="res://rules/datos/definicion_arma.gd" id="2_n6vij"]
+[ext_resource type="Resource" path="res://data/armas/arma_prueba_distancia.tres" id="3_capww"]
+[ext_resource type="Script" path="res://rules/datos/definicion_personaje.gd" id="4_ro11f"]
+
+[sub_resource type="Resource" id="Resource_43182"]
+script = ExtResource("1_u1bsf")
+nombre = "TODO_LORE: armadura ligera de prueba"
+bonificador_ca = 1
+tope_destreza = 4
+
+[resource]
+script = ExtResource("4_ro11f")
+nombre = "TODO_LORE: combatiente a distancia de prueba"
+fuerza = 1
+destreza = 4
+constitucion = 1
+sabiduria = 2
+percepcion = 2
+fortaleza = 1
+reflejos = 2
+voluntad = 1
+defensa = 1
+cd_clase = 1
+atributo_clave = 1
+ataque = 1
+pg_ascendencia = 8
+pg_clase_por_nivel = 8
+armadura = SubResource("Resource_43182")
+armas = Array[ExtResource("2_n6vij")]([ExtResource("3_capww")])

@@ -24,6 +24,8 @@ extends Resource
 @export var defensa: Competencia.Rango = Competencia.Rango.NO_ENTRENADO
 @export var cd_clase: Competencia.Rango = Competencia.Rango.NO_ENTRENADO
 @export var atributo_clave: Atributo.Tipo = Atributo.Tipo.FUERZA
+## Competencia en los ataques con sus armas.
+@export var ataque: Competencia.Rango = Competencia.Rango.NO_ENTRENADO
 
 @export_group("Puntos de Golpe")
 ## PG que da la ascendencia (una sola vez).
@@ -31,9 +33,13 @@ extends Resource
 ## PG que da la clase por nivel (se les suma la Constitución).
 @export var pg_clase_por_nivel: int = 0
 
+@export_group("Movimiento")
+@export var velocidad_pies: int = 25
+
 @export_group("Equipo")
 ## null = sin armadura.
 @export var armadura: DefinicionArmadura
+@export var armas: Array[DefinicionArma] = []
 
 
 ## Nivel mínimo y máximo de personaje en PF2e.
@@ -47,8 +53,12 @@ func errores_de_datos() -> PackedStringArray:
 		errores.append("Personaje %s: nivel fuera de rango (%d)" % [nombre, nivel])
 	if pg_ascendencia < 0 or pg_clase_por_nivel < 0:
 		errores.append("Personaje %s: los PG de ascendencia y de clase no pueden ser negativos" % nombre)
+	if velocidad_pies < 0 or velocidad_pies % Medicion.PIES_POR_CASILLA != 0:
+		errores.append("Personaje %s: la Velocidad tiene que ser múltiplo de 5 pies" % nombre)
 	if armadura != null:
 		errores.append_array(armadura.errores_de_datos())
+	for arma: DefinicionArma in armas:
+		errores.append_array(arma.errores_de_datos())
 	return errores
 
 

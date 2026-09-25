@@ -42,6 +42,24 @@ static func prueba_clase(personaje: DefinicionPersonaje) -> Prueba:
 	return _prueba("CD de clase", personaje, personaje.atributo_clave, personaje.cd_clase)
 
 
+## Prueba de ataque con un arma: Fuerza; Destreza si es a distancia; la mejor de las dos si es sutil.
+static func prueba_ataque(personaje: DefinicionPersonaje, arma: DefinicionArma) -> Prueba:
+	return _prueba("Golpe (%s)" % arma.nombre, personaje, atributo_de_ataque(personaje, arma), personaje.ataque)
+
+
+static func atributo_de_ataque(personaje: DefinicionPersonaje, arma: DefinicionArma) -> Atributo.Tipo:
+	if arma.a_distancia:
+		return Atributo.Tipo.DESTREZA
+	if arma.sutil and personaje.destreza > personaje.fuerza:
+		return Atributo.Tipo.DESTREZA
+	return Atributo.Tipo.FUERZA
+
+
+## Bonificador fijo al daño: Fuerza en cuerpo a cuerpo; nada a distancia.
+static func bonificador_danio(personaje: DefinicionPersonaje, arma: DefinicionArma) -> int:
+	return 0 if arma.a_distancia else personaje.fuerza
+
+
 static func ca(personaje: DefinicionPersonaje) -> int:
 	return defensa(personaje).cd()
 

@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="DefinicionCriatura" format=3]
+
+[ext_resource type="Script" path="res://rules/datos/definicion_arma.gd" id="1_fub3o"]
+[ext_resource type="Resource" path="res://data/armas/arma_prueba_proyectil.tres" id="2_rrmjf"]
+[ext_resource type="Script" path="res://rules/datos/definicion_criatura.gd" id="3_8m53x"]
+
+[resource]
+script = ExtResource("3_8m53x")
+nombre = "TODO_LORE: enemigo a distancia de prueba"
+ca = 15
+pg = 15
+fortaleza = 5
+reflejos = 8
+voluntad = 5
+percepcion = 7
+bonificador_ataque = 8
+bonificador_danio = 2
+armas = Array[ExtResource("1_fub3o")]([ExtResource("2_rrmjf")])

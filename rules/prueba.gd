@@ -19,6 +19,8 @@ var nivel: int = 1
 var modificadores: Array[Modificador] = []
 var fortuna: bool = false
 var infortunio: bool = false
+## false en pruebas sin competencia (planas o con bonificador fijo de criatura): no se muestra en el desglose.
+var usa_competencia: bool = true
 
 
 func _init(nombre_prueba: String, atributo: String, valor_atributo: int, rango_competencia: Competencia.Rango, nivel_personaje: int) -> void:
@@ -29,7 +31,23 @@ func _init(nombre_prueba: String, atributo: String, valor_atributo: int, rango_c
 	nivel = nivel_personaje
 
 
+## Prueba con un bonificador fijo en lugar de atributo + competencia (p. ej. el ataque de una criatura).
+static func fija(nombre_prueba: String, fuente: String, bonificador: int) -> Prueba:
+	var prueba: Prueba = Prueba.new(nombre_prueba, fuente, bonificador, Competencia.Rango.NO_ENTRENADO, 1)
+	prueba.usa_competencia = false
+	return prueba
+
+
+## Prueba plana: solo el d20, sin modificadores (p. ej. la prueba de recuperación).
+static func plana(nombre_prueba: String) -> Prueba:
+	var prueba: Prueba = Prueba.new(nombre_prueba, "", 0, Competencia.Rango.NO_ENTRENADO, 1)
+	prueba.usa_competencia = false
+	return prueba
+
+
 func bonificador_competencia() -> int:
+	if not usa_competencia:
+		return 0
 	return Competencia.bonificador(rango, nivel)
 
 
@@ -58,10 +76,11 @@ func resolver(dados: Dados, cd_objetivo: int) -> ResultadoPrueba:
 
 ## Partes que se suman al d20, para mostrarlas: atributo, competencia y modificadores que aplican.
 func desglose() -> Array[Dictionary]:
-	var partes: Array[Dictionary] = [
-		{"fuente": nombre_atributo, "valor": modificador_atributo},
-		{"fuente": "competencia (%s)" % Competencia.nombre(rango), "valor": bonificador_competencia()},
-	]
+	var partes: Array[Dictionary] = []
+	if not nombre_atributo.is_empty():
+		partes.append({"fuente": nombre_atributo, "valor": modificador_atributo})
+	if usa_competencia:
+		partes.append({"fuente": "competencia (%s)" % Competencia.nombre(rango), "valor": bonificador_competencia()})
 	for modificador: Modificador in SumaModificadores.aplicados(modificadores):
 		partes.append({"fuente": modificador.fuente, "valor": modificador.valor})
 	return partes

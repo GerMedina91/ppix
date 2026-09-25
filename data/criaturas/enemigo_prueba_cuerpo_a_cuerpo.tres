@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="DefinicionCriatura" format=3]
+
+[ext_resource type="Script" path="res://rules/datos/definicion_arma.gd" id="1_qhver"]
+[ext_resource type="Resource" path="res://data/armas/arma_prueba_garras.tres" id="2_7xctt"]
+[ext_resource type="Script" path="res://rules/datos/definicion_criatura.gd" id="3_fegbf"]
+
+[resource]
+script = ExtResource("3_fegbf")
+nombre = "TODO_LORE: enemigo cuerpo a cuerpo de prueba"
+ca = 16
+pg = 20
+fortaleza = 8
+reflejos = 5
+voluntad = 5
+percepcion = 6
+bonificador_ataque = 9
+bonificador_danio = 3
+armas = Array[ExtResource("1_qhver")]([ExtResource("2_7xctt")])

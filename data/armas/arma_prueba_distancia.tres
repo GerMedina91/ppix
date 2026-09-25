@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="DefinicionArma" format=3]
+
+[ext_resource type="Script" path="res://rules/datos/definicion_arma.gd" id="1_e24fw"]
+
+[resource]
+script = ExtResource("1_e24fw")
+nombre = "TODO_LORE: arma a distancia de prueba"
+tipo_danio = 1
+a_distancia = true
+incremento_rango_pies = 60

@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="DefinicionPersonaje" format=3]
+
+[ext_resource type="Script" path="res://rules/datos/definicion_armadura.gd" id="1_a1asc"]
+[ext_resource type="Script" path="res://rules/datos/definicion_arma.gd" id="2_ihbql"]
+[ext_resource type="Resource" path="res://data/armas/arma_prueba_cuerpo_a_cuerpo.tres" id="3_h8otm"]
+[ext_resource type="Script" path="res://rules/datos/definicion_personaje.gd" id="4_571kh"]
+
+[sub_resource type="Resource" id="Resource_bcsfs"]
+script = ExtResource("1_a1asc")
+nombre = "TODO_LORE: armadura pesada de prueba"
+bonificador_ca = 4
+tope_destreza = 1
+
+[resource]
+script = ExtResource("4_571kh")
+nombre = "TODO_LORE: combatiente cuerpo a cuerpo de prueba"
+fuerza = 4
+destreza = 1
+constitucion = 2
+sabiduria = 1
+percepcion = 1
+fortaleza = 2
+reflejos = 1
+voluntad = 1
+defensa = 1
+cd_clase = 1
+ataque = 1
+pg_ascendencia = 8
+pg_clase_por_nivel = 10
+armadura = SubResource("Resource_bcsfs")
+armas = Array[ExtResource("2_ihbql")]([ExtResource("3_h8otm")])

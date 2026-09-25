@@ -57,3 +57,33 @@ func test_funciona_con_cualquier_actor_del_grupo() -> void:
 	actor.global_position = _mapa.celda_a_posicion(Vector2i(13, 3))  # justo detrás del muro vertical (13,4)
 	await _runner.simulate_frames(3)
 	assert_array(_paredes.celdas_transparentes()).contains([Vector2i(13, 4)])
+
+
+func test_actor_al_lado_de_una_pared_no_la_transparenta() -> void:
+	await _llevar_party_a(Vector2i(12, 8))
+	var actor: ActorDePrueba = auto_free(ActorDePrueba.new())
+	actor.add_to_group(OclusionParedes.GRUPO_VISIBLES)
+	_runner.scene().add_child(actor)
+	# Al costado del muro vertical (13,4..6): celda (14,3), a la misma altura de pantalla que (13,4).
+	actor.global_position = _mapa.celda_a_posicion(Vector2i(14, 3))
+	await _runner.simulate_frames(3)
+	assert_array(_paredes.celdas_transparentes()).not_contains([Vector2i(13, 4)])
+	# Entre celdas, rozando solo la esquina vacía de la textura de (13,4).
+	actor.global_position = _mapa.celda_a_posicion(Vector2i(13, 4)) + Vector2(36, -78)
+	await _runner.simulate_frames(3)
+	assert_array(_paredes.celdas_transparentes()).not_contains([Vector2i(13, 4)])
+
+
+func test_al_alejarse_las_paredes_quedan_intactas() -> void:
+	# El arreglo del redibujado borra y vuelve a poner celdas: no tiene que perder paredes.
+	var antes: Dictionary = {}
+	for celda: Vector2i in _paredes.get_used_cells():
+		antes[celda] = _paredes.get_cell_source_id(celda)
+	await _llevar_party_a(Vector2i(6, 2))
+	await _llevar_party_a(Vector2i(15, 9))
+	assert_array(_paredes.celdas_transparentes()).is_empty()
+	var despues: Dictionary = {}
+	for celda: Vector2i in _paredes.get_used_cells():
+		despues[celda] = _paredes.get_cell_source_id(celda)
+	assert_dict(despues).is_equal(antes)
+	assert_bool(_mapa.construir_grilla().es_transitable(Vector2i(6, 3))).is_false()

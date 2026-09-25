@@ -63,3 +63,13 @@ Términos de reglas en castellano, según la edición oficial en castellano de l
 | initiative | iniciativa | `iniciativa` | Provisorio |
 | reaction | reacción | `reaccion` | Provisorio |
 | line of sight | línea de visión | `LineaVision` | Provisorio |
+| deity (en el mundo propio) | entidad | `DefinicionEntidad` | Provisorio |
+| divine font | fuente divina | `fuente_divina` | Provisorio |
+| heal / harm (fuente) | curar / dañar | `CURAR`, `DANAR` | Provisorio |
+| domain | dominio | `dominios` | Provisorio |
+| edicts / anathema | edictos / anatemas | `edictos`, `anatemas` | Provisorio |
+| divine skill | habilidad divina | `habilidad_divina` | Provisorio |
+| favored weapon | arma predilecta | `arma_predilecta` | Provisorio |
+| travel / dreams (dominios) | viaje / sueños | `viaje`, `suenos` | Provisorio |
+| halberd | alabarda | `alabarda` | Provisorio |
+| Occultism | Ocultismo | `ocultismo` | Provisorio |

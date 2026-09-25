@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="DefinicionEntidad" format=3]
+
+[ext_resource type="Script" path="res://rules/datos/definicion_entidad.gd" id="1_lgenp"]
+
+[resource]
+script = ExtResource("1_lgenp")
+nombre = "El Umbral"
+descripcion = "Entidad del plano espiritual que habita el borde donde se tocan los planos. Nadie sabe si es un ser o un lugar."
+arma_predilecta = &"alabarda"
+dominios = Array[StringName]([&"viaje", &"suenos"])
+dominios_a_verificar = Array[StringName]([&"vigilia"])
+habilidad_divina = &"ocultismo"
+edictos = PackedStringArray("guiar a los perdidos", "abrir lo sellado", "acompañar a los que mueren hasta el borde")
+anatemas = PackedStringArray("cerrar un camino que otro abrió", "retener a un muerto que quiere irse", "cruzar un umbral consagrado sin anunciarte")

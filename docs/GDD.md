@@ -146,6 +146,7 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
 - Qué provocó la Convergencia.
 - Facciones principales.
 - Qué ascendencias de PF2e entran en el slice (las clases ya están decididas, ver registro).
+- Dominio **vigilia** de El Umbral: no está en el Player Core Remaster (posiblemente en *Divine Mysteries*, fuera de los libros permitidos). ¿Se reemplaza por otro dominio o se amplía la lista de libros?
 - Justificación en el lore de la party de 4 (¿otros Ecos? ¿mercenarios?).
 - Muerte en party: qué pasa si cae el Eco pero sobreviven los demás, y qué pierden (si algo) los otros miembros al morir.
 - Paleta definitiva.
@@ -195,3 +196,4 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
 | 2026-09-25 | **M3 cerrado.** |
 | 2026-09-25 | Clases del slice: guerrero, pícaro, clérigo y bruja (Player Core, Remaster), nivel 1. |
 | 2026-09-25 | `remata_caidos`: **decidido**, depende de cada criatura (perfil de IA en `DefinicionCriatura`). |
+| 2026-09-25 | Entidad del clérigo del slice: El Umbral (lore en `docs/lore/entidades.md`, datos en `data/entidades/el_umbral.tres`). |

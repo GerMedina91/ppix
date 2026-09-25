@@ -186,3 +186,42 @@ func _simular(semilla: int) -> Array[String]:
 	for c: Combatiente in participantes:
 		texto.append("%s pg=%d" % [c.id, c.pg])
 	return texto
+
+
+func test_golpe_fuera_de_alcance_informa_el_motivo() -> void:
+	var participantes: Array[Combatiente] = [_pj(&"pj", Vector2i(2, 2)), _enemigo(&"e", Vector2i(8, 2))]
+	var combate: Combate = Combate.new(participantes, _grilla(), DadosFijos.new([15, 5]))
+	combate.iniciar()
+	var evento: EventoCombate = combate.golpe(&"e")[0]
+	assert_int(evento.tipo).is_equal(T.INVALIDA)
+	assert_int(evento.datos.motivo_golpe).is_equal(Golpe.Motivo.FUERA_DE_ALCANCE)
+	assert_str(evento.datos.motivo).is_equal("fuera de alcance")
+	assert_str(evento.datos.accion).is_equal("Golpe")
+	assert_int(combate.turno_actual().acciones_restantes).is_equal(3)
+
+
+func test_golpe_sin_linea_de_vision_informa_el_motivo() -> void:
+	var grilla: GrillaMapa = _grilla()
+	grilla.set_transitable(Vector2i(5, 2), false)
+	var participantes: Array[Combatiente] = [_pj(&"pj", Vector2i(2, 2), DIST), _enemigo(&"e", Vector2i(8, 2))]
+	var combate: Combate = Combate.new(participantes, grilla, DadosFijos.new([19, 1]))
+	combate.iniciar()
+	var evento: EventoCombate = combate.golpe(&"e")[0]
+	assert_int(evento.datos.motivo_golpe).is_equal(Golpe.Motivo.SIN_LINEA_DE_VISION)
+
+
+func test_golpe_sin_acciones_informa_el_motivo() -> void:
+	var combate: Combate = _duelo([2, 2, 2])
+	for i in 3:
+		combate.golpe(&"e")
+	var evento: EventoCombate = combate.golpe(&"e")[0]
+	assert_int(evento.datos.motivo_golpe).is_equal(Golpe.Motivo.SIN_ACCIONES)
+	assert_str(evento.datos.motivo).is_equal("sin acciones")
+
+
+func test_zancada_imposible_informa_el_motivo() -> void:
+	var combate: Combate = _duelo()
+	var evento: EventoCombate = combate.zancada(Vector2i(11, 7))[0]
+	assert_str(evento.datos.accion).is_equal("Zancada")
+	assert_str(evento.datos.motivo).is_equal("fuera del alcance de la Zancada")
+	assert_str(FormatoRegistro.texto(evento, combate)).is_equal("pj: Zancada imposible (fuera del alcance de la Zancada)")

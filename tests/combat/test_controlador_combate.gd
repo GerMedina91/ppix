@@ -152,3 +152,50 @@ func test_f4_restaura_a_la_party_fuera_y_dentro_del_combate() -> void:
 			assert_int(c.pg).is_equal(c.pg_maximos())
 			assert_bool(c.condiciones.puede_actuar()).is_true()
 			assert_int(c.condiciones.herido).is_equal(0)
+
+
+func _esperar_turno_de_la_party() -> bool:
+	return await _esperar(func() -> bool: return _control.esperando_decision() or not _control.en_curso())
+
+
+func test_en_el_turno_de_la_party_se_ve_la_ayuda_de_controles() -> void:
+	var hud: HudCombate = _runner.find_child("HudCombate")
+	await _entrar_a_la_zona()
+	assert_bool(await _esperar_turno_de_la_party()).is_true()
+	assert_bool(_control.en_curso()).override_failure_message("con la semilla 11 el combate sigue en el primer turno de la party").is_true()
+	assert_bool(hud.ayuda_visible()).is_true()
+	assert_str(hud.texto_ayuda()).is_equal(HudCombate.AYUDA)
+	_control.terminar_turno_jugador()
+	await _runner.simulate_frames(1)
+	if _control.en_curso() and _control.combate().turno_actual().bando == Combatiente.Bando.ENEMIGOS:
+		assert_bool(hud.ayuda_visible()).is_false()
+
+
+func test_golpe_imposible_muestra_el_motivo_en_el_registro() -> void:
+	var hud: HudCombate = _runner.find_child("HudCombate")
+	await _entrar_a_la_zona()
+	assert_bool(await _esperar_turno_de_la_party()).is_true()
+	assert_bool(_control.en_curso()).is_true()
+	var actor: Combatiente = _control.combate().turno_actual()
+	var enemigo: Combatiente = null
+	for c: Combatiente in _control.combate().participantes:
+		if not c.es_aliado_de(actor) and not c.condiciones.muerto:
+			enemigo = c
+	assert_object(enemigo).is_not_null()
+	# Sin acciones: el Golpe es imposible y el motivo llega al registro sin gastar nada.
+	actor.acciones_restantes = 0
+	_control.click_en_celda(enemigo.celda)
+	assert_bool(await _esperar(func() -> bool: return not _control.animando())).is_true()
+	assert_str(hud.lineas_registro()[-1]).is_equal("%s: Golpe imposible (sin acciones)" % actor.id)
+
+
+func test_zancada_imposible_muestra_el_motivo_en_el_registro() -> void:
+	var hud: HudCombate = _runner.find_child("HudCombate")
+	await _entrar_a_la_zona()
+	assert_bool(await _esperar_turno_de_la_party()).is_true()
+	assert_bool(_control.en_curso()).is_true()
+	var actor: Combatiente = _control.combate().turno_actual()
+	_control.click_en_celda(Vector2i(0, 0))  # pared del borde del mapa B
+	assert_bool(await _esperar(func() -> bool: return not _control.animando())).is_true()
+	assert_str(hud.lineas_registro()[-1]).is_equal("%s: Zancada imposible (fuera del alcance de la Zancada)" % actor.id)
+	assert_int(actor.acciones_restantes).is_equal(Combatiente.ACCIONES_POR_TURNO)

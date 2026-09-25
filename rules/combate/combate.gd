@@ -13,6 +13,10 @@ enum Estado { SIN_INICIAR, EN_CURSO, VICTORIA, DERROTA }
 const COSTO_ZANCADA: int = 1
 const COSTO_PASO: int = 1
 const COSTO_GOLPE: int = 1
+## Nombres de las acciones para los eventos de acción imposible (según docs/GLOSARIO.md).
+const ACCION_ZANCADA: String = "Zancada"
+const ACCION_PASO: String = "Paso"
+const ACCION_GOLPE: String = "Golpe"
 
 var participantes: Array[Combatiente] = []
 var orden: Array[Combatiente] = []
@@ -87,24 +91,24 @@ func camino_de_zancada(c: Combatiente, destino: Vector2i) -> Array[Vector2i]:
 
 func zancada(destino: Vector2i) -> Array[EventoCombate]:
 	var actor: Combatiente = turno_actual()
-	var invalido: EventoCombate = _validar_accion(actor, COSTO_ZANCADA)
+	var invalido: EventoCombate = _validar_accion(actor, COSTO_ZANCADA, ACCION_ZANCADA)
 	if invalido != null:
 		return [invalido]
 	var camino: Array[Vector2i] = camino_de_zancada(actor, destino)
 	if camino.is_empty() or MovimientoCombate.costo_de(actor.celda, camino) > actor.fuente.velocidad_pies():
-		return [_invalida(actor, "destino fuera de la Zancada")]
+		return [_invalida(actor, ACCION_ZANCADA, "fuera del alcance de la Zancada")]
 	actor.gastar_acciones(COSTO_ZANCADA)
 	return _mover(actor, camino, "zancada")
 
 
 func paso(destino: Vector2i) -> Array[EventoCombate]:
 	var actor: Combatiente = turno_actual()
-	var invalido: EventoCombate = _validar_accion(actor, COSTO_PASO)
+	var invalido: EventoCombate = _validar_accion(actor, COSTO_PASO, ACCION_PASO)
 	if invalido != null:
 		return [invalido]
 	var d: Vector2i = destino - actor.celda
 	if absi(d.x) > 1 or absi(d.y) > 1 or d == Vector2i.ZERO or _ocupada(destino) or not _grilla.puede_dar_paso(actor.celda, destino):
-		return [_invalida(actor, "el Paso es a una casilla libre adyacente")]
+		return [_invalida(actor, ACCION_PASO, "solo a una casilla libre adyacente")]
 	actor.gastar_acciones(COSTO_PASO)
 	var camino: Array[Vector2i] = [destino]
 	return _mover(actor, camino, "paso")
@@ -112,17 +116,17 @@ func paso(destino: Vector2i) -> Array[EventoCombate]:
 
 func golpe(id_objetivo: StringName, arma: DefinicionArma = null) -> Array[EventoCombate]:
 	var actor: Combatiente = turno_actual()
-	var invalido: EventoCombate = _validar_accion(actor, COSTO_GOLPE)
+	var invalido: EventoCombate = _validar_accion(actor, COSTO_GOLPE, ACCION_GOLPE)
 	if invalido != null:
 		return [invalido]
 	var objetivo: Combatiente = combatiente(id_objetivo)
 	if objetivo == null:
-		return [_invalida(actor, "objetivo inexistente")]
+		return [_invalida(actor, ACCION_GOLPE, "objetivo inexistente")]
 	var arma_usada: DefinicionArma = arma if arma != null else actor.arma_principal()
 	var estaba_en_pie: bool = objetivo.condiciones.puede_actuar()
 	var resultado: ResultadoGolpe = Golpe.resolver(actor, objetivo, arma_usada, _dados, participantes, _vision)
 	if not resultado.es_valido():
-		return [_invalida(actor, "golpe inválido: %s" % Golpe.Motivo.keys()[resultado.motivo])]
+		return [_golpe_invalido(actor, resultado.motivo)]
 	actor.gastar_acciones(COSTO_GOLPE)
 	var eventos: Array[EventoCombate] = [_emitir(EventoCombate.new(EventoCombate.Tipo.GOLPE, actor.id,
 		{"objetivo": objetivo.id, "resultado": resultado}))]
@@ -209,18 +213,28 @@ func _verificar_fin() -> Array[EventoCombate]:
 	return [_emitir(EventoCombate.new(EventoCombate.Tipo.FIN_COMBATE, &"", {"estado": estado}))]
 
 
-func _validar_accion(actor: Combatiente, costo: int) -> EventoCombate:
+func _validar_accion(actor: Combatiente, costo: int, accion: String) -> EventoCombate:
 	if estado != Estado.EN_CURSO or actor == null:
-		return EventoCombate.new(EventoCombate.Tipo.ACCION_INVALIDA, &"", {"motivo": "el combate no está en curso"})
+		return EventoCombate.new(EventoCombate.Tipo.ACCION_INVALIDA, &"", {"accion": accion, "motivo": "el combate no está en curso"})
 	if not actor.condiciones.puede_actuar():
-		return _invalida(actor, "no puede actuar")
+		return _invalida(actor, accion, "no puede actuar")
 	if actor.acciones_restantes < costo:
-		return _invalida(actor, "sin acciones suficientes")
+		if accion == ACCION_GOLPE:
+			return _golpe_invalido(actor, Golpe.Motivo.SIN_ACCIONES)
+		return _invalida(actor, accion, Golpe.texto_motivo(Golpe.Motivo.SIN_ACCIONES))
 	return null
 
 
-func _invalida(actor: Combatiente, motivo: String) -> EventoCombate:
-	return EventoCombate.new(EventoCombate.Tipo.ACCION_INVALIDA, actor.id, {"motivo": motivo})
+## Acción imposible: {"accion": "Golpe" | "Zancada" | "Paso", "motivo": texto para mostrar}.
+func _invalida(actor: Combatiente, accion: String, motivo: String) -> EventoCombate:
+	return EventoCombate.new(EventoCombate.Tipo.ACCION_INVALIDA, actor.id, {"accion": accion, "motivo": motivo})
+
+
+## Golpe imposible: además del texto, el Golpe.Motivo.
+func _golpe_invalido(actor: Combatiente, motivo: Golpe.Motivo) -> EventoCombate:
+	var evento: EventoCombate = _invalida(actor, ACCION_GOLPE, Golpe.texto_motivo(motivo))
+	evento.datos["motivo_golpe"] = motivo
+	return evento
 
 
 ## Casillas de oponentes que no murieron: no se pueden atravesar.

@@ -15,7 +15,8 @@ const COLOR_MUERTO: Color = Color(0.45, 0.45, 0.45)
 const COLOR_FONDO: Color = Color(0.0, 0.0, 0.0, 0.55)
 const PIP_LLENO: String = "◆"
 const PIP_VACIO: String = "◇"
-const AYUDA: String = "Click: Zancada / Golpe · Shift+click: Paso · Espacio: terminar turno"
+## Ayuda de controles (placeholder), visible durante el turno de la party.
+const AYUDA: String = "Click en el suelo: Zancada (1 acción) · Click en un enemigo: Golpe\nShift+click: Paso · Espacio: terminar turno"
 
 @export var controlador: ControladorCombate
 
@@ -41,6 +42,14 @@ func lineas_registro() -> PackedStringArray:
 
 func texto_activo() -> String:
 	return _activo.text
+
+
+func ayuda_visible() -> bool:
+	return _ayuda.visible and visible
+
+
+func texto_ayuda() -> String:
+	return _ayuda.text
 
 
 func _al_iniciar() -> void:

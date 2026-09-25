@@ -30,7 +30,7 @@ static func texto(evento: EventoCombate, combate: Combate) -> String:
 		EventoCombate.Tipo.FIN_COMBATE:
 			return "Victoria" if evento.datos.estado == Combate.Estado.VICTORIA else "Derrota"
 		EventoCombate.Tipo.ACCION_INVALIDA:
-			return "%s: no se puede (%s)" % [actor, evento.datos.motivo]
+			return "%s: %s imposible (%s)" % [actor, evento.datos.get("accion", "acción"), evento.datos.motivo]
 	return ""
 
 

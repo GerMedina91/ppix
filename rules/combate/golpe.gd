@@ -7,7 +7,18 @@ extends RefCounted
 ## - Daño: dados + bonificador (mínimo 1 si impacta); éxito crítico, el doble.
 ## El costo en acciones lo maneja Combate.
 
-enum Motivo { VALIDO, SIN_ARMA, OBJETIVO_ALIADO, OBJETIVO_MUERTO, FUERA_DE_ALCANCE, SIN_LINEA_DE_VISION }
+enum Motivo { VALIDO, SIN_ARMA, OBJETIVO_ALIADO, OBJETIVO_MUERTO, FUERA_DE_ALCANCE, SIN_LINEA_DE_VISION, SIN_ACCIONES }
+
+## Texto para mostrar al jugador por qué no se puede hacer el Golpe.
+const _TEXTO_MOTIVO: Dictionary[Motivo, String] = {
+	Motivo.VALIDO: "",
+	Motivo.SIN_ARMA: "sin arma",
+	Motivo.OBJETIVO_ALIADO: "es un aliado",
+	Motivo.OBJETIVO_MUERTO: "ya está muerto",
+	Motivo.FUERA_DE_ALCANCE: "fuera de alcance",
+	Motivo.SIN_LINEA_DE_VISION: "sin línea de visión",
+	Motivo.SIN_ACCIONES: "sin acciones",
+}
 
 const PENALIZADORES_ATAQUE_MULTIPLE: Array[int] = [0, -5, -10]
 const PENALIZADORES_ATAQUE_MULTIPLE_AGIL: Array[int] = [0, -4, -8]
@@ -15,6 +26,10 @@ const PENALIZADOR_POR_INCREMENTO: int = -2
 const INCREMENTOS_MAXIMOS: int = 6
 const DANIO_MINIMO: int = 1
 const MULTIPLICADOR_CRITICO: int = 2
+
+
+static func texto_motivo(motivo: Motivo) -> String:
+	return _TEXTO_MOTIVO[motivo]
 
 
 static func penalizador_ataque_multiple(arma: DefinicionArma, ataques_previos: int) -> int:

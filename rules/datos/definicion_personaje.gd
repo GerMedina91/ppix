@@ -36,6 +36,22 @@ extends Resource
 @export var armadura: DefinicionArmadura
 
 
+## Nivel mínimo y máximo de personaje en PF2e.
+const NIVEL_MINIMO: int = 1
+const NIVEL_MAXIMO: int = 20
+
+
+func errores_de_datos() -> PackedStringArray:
+	var errores: PackedStringArray = PackedStringArray()
+	if nivel < NIVEL_MINIMO or nivel > NIVEL_MAXIMO:
+		errores.append("Personaje %s: nivel fuera de rango (%d)" % [nombre, nivel])
+	if pg_ascendencia < 0 or pg_clase_por_nivel < 0:
+		errores.append("Personaje %s: los PG de ascendencia y de clase no pueden ser negativos" % nombre)
+	if armadura != null:
+		errores.append_array(armadura.errores_de_datos())
+	return errores
+
+
 func modificador(atributo: Atributo.Tipo) -> int:
 	match atributo:
 		Atributo.Tipo.FUERZA: return fuerza

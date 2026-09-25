@@ -12,6 +12,7 @@ config_version=5
 
 config/name="ppix"
 config/description="TODO_LORE: título definitivo del juego"
+run/main_scene="res://scenes/debug/grilla_prueba.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 
 [autoload]

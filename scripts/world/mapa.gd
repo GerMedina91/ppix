@@ -83,11 +83,35 @@ func configurar_transparencia(alfa: float) -> void:
 
 
 func celda_de_entrada(id_entrada: StringName) -> Vector2i:
+	var entrada: EntradaMapa = _entrada(id_entrada)
+	if entrada == null:
+		push_error("Mapa %s: no existe la entrada '%s'" % [name, id_entrada])
+		return Vector2i.ZERO
+	return posicion_a_celda(entrada.global_position)
+
+
+func _entrada(id_entrada: StringName) -> EntradaMapa:
 	for entrada: EntradaMapa in _entradas.get_children():
 		if entrada.id == id_entrada:
-			return posicion_a_celda(entrada.global_position)
-	push_error("Mapa %s: no existe la entrada '%s'" % [name, id_entrada])
-	return Vector2i.ZERO
+			return entrada
+	return null
+
+
+## Casillas de formación para `cantidad` miembros al entrar por `id_entrada` (líder primero).
+## Usa la formación de la entrada si la tiene; si no, la calcula. Si faltan casillas, repite la última.
+func celdas_de_formacion(id_entrada: StringName, cantidad: int, grilla: GrillaMapa) -> Array[Vector2i]:
+	var celdas: Array[Vector2i] = []
+	var entrada: EntradaMapa = _entrada(id_entrada)
+	if entrada != null and not entrada.formacion.is_empty():
+		celdas.assign(entrada.formacion)
+	else:
+		var salidas: Array[Vector2i] = []
+		for salida: SalidaMapa in _salidas.get_children():
+			salidas.append(posicion_a_celda(salida.global_position))
+		celdas = Formacion.cadena(grilla, celda_de_entrada(id_entrada), cantidad, salidas)
+	while celdas.size() < cantidad:
+		celdas.append(celdas.back())
+	return celdas.slice(0, cantidad)
 
 
 ## Devuelve la salida ubicada en `celda`, o null si no hay ninguna.

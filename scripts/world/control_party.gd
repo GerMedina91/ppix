@@ -45,15 +45,19 @@ func celda_lider() -> Vector2i:
 	return lider().celda
 
 
-## Ubica a toda la party en `celda` del mapa nuevo.
-func entrar_a_mapa(mapa: Mapa, grilla: GrillaMapa, celda: Vector2i) -> void:
+func miembros() -> Array[MiembroParty]:
+	return _miembros
+
+
+## Ubica a la party en el mapa nuevo: el miembro i en celdas[i] (formación en cadena, líder primero).
+func entrar_a_mapa(mapa: Mapa, grilla: GrillaMapa, celdas: Array[Vector2i]) -> void:
 	_mapa = mapa
 	_grilla = grilla
 	_camino.clear()
 	for seguimiento: SeguimientoFila in _seguimientos:
 		seguimiento.limpiar()
-	for miembro: MiembroParty in _miembros:
-		miembro.colocar(celda, mapa.celda_a_posicion(celda))
+	for i in _miembros.size():
+		_miembros[i].colocar(celdas[i], mapa.celda_a_posicion(celdas[i]))
 
 
 ## Lleva al líder hasta `destino` por el camino más corto. Si no hay camino, no hace nada.

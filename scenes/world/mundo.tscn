@@ -6,6 +6,8 @@
 [ext_resource type="Resource" path="res://data/config/config_exploracion.tres" id="4_h2l7i"]
 [ext_resource type="PackedScene" path="res://scenes/characters/miembro_party.tscn" id="5_dsmiq"]
 [ext_resource type="Script" path="res://scripts/world/camara_mundo.gd" id="6_kn5no"]
+[ext_resource type="Resource" path="res://data/personajes/party_prueba_cuerpo_a_cuerpo.tres" id="6_na3uo"]
+[ext_resource type="Resource" path="res://data/personajes/party_prueba_distancia.tres" id="7_fcn4g"]
 [ext_resource type="PackedScene" path="res://scenes/ui/fundido.tscn" id="7_t8boj"]
 [ext_resource type="Script" path="res://scripts/ui/control_ventana.gd" id="8_h2l7i"]
 [ext_resource type="Script" path="res://scripts/debug/overlay_depuracion.gd" id="9_dsmiq"]
@@ -28,15 +30,19 @@ config = ExtResource("4_h2l7i")
 
 [node name="Miembro1" parent="Party" unique_id=1005019094 instance=ExtResource("5_dsmiq")]
 color_placeholder = Color(0.85, 0.75, 0.35, 1)
+definicion = ExtResource("6_na3uo")
 
 [node name="Miembro2" parent="Party" unique_id=430451014 instance=ExtResource("5_dsmiq")]
 color_placeholder = Color(0.35, 0.6, 0.85, 1)
+definicion = ExtResource("6_na3uo")
 
 [node name="Miembro3" parent="Party" unique_id=1362231908 instance=ExtResource("5_dsmiq")]
 color_placeholder = Color(0.75, 0.35, 0.35, 1)
+definicion = ExtResource("7_fcn4g")
 
 [node name="Miembro4" parent="Party" unique_id=814235133 instance=ExtResource("5_dsmiq")]
 color_placeholder = Color(0.45, 0.75, 0.45, 1)
+definicion = ExtResource("7_fcn4g")
 
 [node name="Camara" type="Camera2D" parent="." unique_id=970090675]
 script = ExtResource("6_kn5no")

@@ -11,6 +11,8 @@ signal paso_terminado(celda: Vector2i)
 const TAMANO_PLACEHOLDER: Vector2 = Vector2(32, 56)
 
 @export var color_placeholder: Color = Color.WHITE
+## Números de reglas del miembro (hoy personajes de prueba; a futuro, armados desde clase y ascendencia).
+@export var definicion: DefinicionPersonaje
 
 ## Celda que ocupa, o hacia la que se está moviendo.
 var celda: Vector2i = Vector2i.ZERO

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="DefinicionArma" format=3]
+
+[ext_resource type="Script" path="res://rules/datos/definicion_arma.gd" id="1_lino1"]
+
+[resource]
+script = ExtResource("1_lino1")
+id = &"daga"
+nombre = "Daga"
+caras_dado = 4
+tipo_danio = 1
+agil = true
+sutil = true
+versatil = true
+arrojadiza_incremento_pies = 10

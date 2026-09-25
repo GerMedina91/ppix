@@ -50,3 +50,13 @@ Remaster del **Player Core**). Solo números y referencias; no se copia texto de
 ## Dominios (para El Umbral)
 - En Player Core: Viaje (`/Domains.aspx?ID=93`) y Sueños (`ID=72`).
 - **Reposo** y **Vigilia**: la versión Remaster está en *Divine Mysteries* (`ID=116`, `ID=123`), **no en Player Core**.
+
+## Builds fijos del slice (resultado de `ArmadorPersonaje`, testeado)
+Humano, nivel 1. Trasfondo: solo 2 mejoras + 1 habilidad (su dote de habilidad queda para más adelante).
+
+| Build | Fue Des Con Int Sab Car | PG | CA | Ataque | Percepción | Fort / Ref / Vol | Equipo |
+|---|---|---|---|---|---|---|---|
+| Guerrero | 4 1 2 0 2 0 | 20 | 18 | espadón +9 (1d12+4) | +7 | +7 / +6 / +5 | cota de malla |
+| Pícaro (Ladrón) | 0 4 1 1 1 2 | 17 | 18 | estoque +7 (1d6; Des al daño en C2) | +6 | +4 / +9 / +6 | armadura de cuero |
+| Clérigo (Enclaustrado, El Umbral) | 1 1 2 0 4 1 | 18 | 14 | alabarda +4 (1d10+1, alcance 10) | +7 | +5 / +4 / +9 | — |
+| Bruja (El Rencor) | 0 2 1 4 2 0 | 15 | 15 | daga +5 (1d4) | +5 | +4 / +5 / +7 | — |

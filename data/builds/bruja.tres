@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="DefinicionBuild" format=3]
+
+[ext_resource type="Script" path="res://rules/datos/definicion_arma.gd" id="1_swh5n"]
+[ext_resource type="Resource" path="res://data/armas/daga.tres" id="2_mm2ux"]
+[ext_resource type="Resource" path="res://data/ascendencias/humano.tres" id="3_0kkxt"]
+[ext_resource type="Resource" path="res://data/clases/bruja.tres" id="4_dd1sy"]
+[ext_resource type="Script" path="res://rules/datos/definicion_build.gd" id="5_vhdqe"]
+[ext_resource type="Resource" path="res://data/patrones/el_rencor.tres" id="6_1mm5y"]
+
+[resource]
+script = ExtResource("5_vhdqe")
+id = &"bruja"
+nombre = "TODO_LORE: bruja de prueba"
+clase = ExtResource("4_dd1sy")
+ascendencia = ExtResource("3_0kkxt")
+subclase = ExtResource("6_1mm5y")
+atributo_clave = 3
+mejoras_ascendencia = Array[int]([3, 1])
+mejoras_trasfondo = Array[int]([3, 4])
+mejoras_libres = Array[int]([3, 1, 2, 4])
+habilidades_libres = Array[int]([1, 3, 12, 7, 8, 11, 4])
+habilidad_trasfondo = 5
+armas = Array[ExtResource("1_swh5n")]([ExtResource("2_mm2ux")])

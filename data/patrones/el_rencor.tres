@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="DefinicionPatron" format=3]
+
+[ext_resource type="Script" path="res://rules/datos/definicion_patron.gd" id="1_0y5di"]
+
+[resource]
+script = ExtResource("1_0y5di")
+mecanica_base = "The Resentment (Player Core)"
+id = &"el_rencor"
+nombre = "El Rencor"
+habilidades = Array[int]([9])

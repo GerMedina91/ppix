@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="DefinicionBuild" format=3]
+
+[ext_resource type="Resource" path="res://data/armaduras/cota_de_malla.tres" id="1_7kak5"]
+[ext_resource type="Script" path="res://rules/datos/definicion_arma.gd" id="2_k8ole"]
+[ext_resource type="Resource" path="res://data/armas/espadon.tres" id="3_vujjd"]
+[ext_resource type="Resource" path="res://data/ascendencias/humano.tres" id="4_31oeh"]
+[ext_resource type="Resource" path="res://data/clases/guerrero.tres" id="5_vx711"]
+[ext_resource type="Script" path="res://rules/datos/definicion_build.gd" id="6_qvkld"]
+
+[resource]
+script = ExtResource("6_qvkld")
+id = &"guerrero"
+nombre = "TODO_LORE: guerrero de prueba"
+clase = ExtResource("5_vx711")
+ascendencia = ExtResource("4_31oeh")
+mejoras_ascendencia = Array[int]([0, 2])
+mejoras_trasfondo = Array[int]([0, 4])
+mejoras_libres = Array[int]([0, 1, 2, 4])
+habilidad_una_de = 2
+habilidades_libres = Array[int]([6, 0, 14])
+habilidad_trasfondo = 5
+armas = Array[ExtResource("2_k8ole")]([ExtResource("3_vujjd")])
+armadura = ExtResource("1_7kak5")

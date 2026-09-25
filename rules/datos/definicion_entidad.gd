@@ -16,7 +16,7 @@ enum FuenteDivina { CURAR, DANAR }
 @export var dominios: Array[StringName] = []
 ## Dominios pedidos por diseño que todavía no se verificaron en los libros permitidos.
 @export var dominios_a_verificar: Array[StringName] = []
-@export var habilidad_divina: StringName = &""
+@export var habilidad_divina: Habilidad.Tipo = Habilidad.Tipo.RELIGION
 @export var edictos: PackedStringArray = PackedStringArray()
 @export var anatemas: PackedStringArray = PackedStringArray()
 
@@ -29,6 +29,6 @@ func errores_de_datos() -> PackedStringArray:
 		errores.append("Entidad %s: necesita al menos un dominio verificado" % nombre)
 	if edictos.is_empty() or anatemas.is_empty():
 		errores.append("Entidad %s: necesita edictos y anatemas" % nombre)
-	if arma_predilecta == &"" or habilidad_divina == &"":
-		errores.append("Entidad %s: faltan arma predilecta o habilidad divina" % nombre)
+	if arma_predilecta == &"":
+		errores.append("Entidad %s: falta el arma predilecta" % nombre)
 	return errores

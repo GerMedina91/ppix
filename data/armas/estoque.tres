@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="DefinicionArma" format=3]
+
+[ext_resource type="Script" path="res://rules/datos/definicion_arma.gd" id="1_utxy2"]
+
+[resource]
+script = ExtResource("1_utxy2")
+id = &"estoque"
+nombre = "Estoque"
+categoria = 1
+caras_dado = 6
+tipo_danio = 1
+sutil = true
+letal_caras = 8

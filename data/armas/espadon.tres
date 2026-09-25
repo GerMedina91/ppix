@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="DefinicionArma" format=3]
+
+[ext_resource type="Script" path="res://rules/datos/definicion_arma.gd" id="1_et38m"]
+
+[resource]
+script = ExtResource("1_et38m")
+id = &"espadon"
+nombre = "Espadón"
+categoria = 1
+manos = 2
+caras_dado = 12
+versatil = true
+tipo_versatil = 1

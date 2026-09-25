@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="DefinicionClase" format=3]
+
+[ext_resource type="Script" path="res://rules/datos/definicion_clase.gd" id="1_5woct"]
+
+[resource]
+script = ExtResource("1_5woct")
+id = &"guerrero"
+nombre = "Guerrero"
+pg_por_nivel = 10
+atributos_clave = Array[int]([0, 1])
+percepcion = 2
+fortaleza = 2
+reflejos = 2
+ataques = Dictionary[int, int]({
+0: 2,
+1: 2,
+2: 1,
+3: 2
+})
+defensas = Dictionary[int, int]({
+0: 1,
+1: 1,
+2: 1,
+3: 1
+})
+habilidades_una_de = Array[int]([0, 2])
+habilidades_libres_base = 3

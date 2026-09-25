@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="DefinicionAscendencia" format=3]
+
+[ext_resource type="Script" path="res://rules/datos/definicion_ascendencia.gd" id="1_028qp"]
+
+[resource]
+script = ExtResource("1_028qp")
+id = &"humano"
+nombre = "Humano"
+mejoras_libres = 2

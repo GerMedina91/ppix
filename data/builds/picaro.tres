@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="DefinicionBuild" format=3]
+
+[ext_resource type="Resource" path="res://data/armaduras/armadura_de_cuero.tres" id="1_m5xf5"]
+[ext_resource type="Script" path="res://rules/datos/definicion_arma.gd" id="2_jh0em"]
+[ext_resource type="Resource" path="res://data/armas/estoque.tres" id="3_rva43"]
+[ext_resource type="Resource" path="res://data/ascendencias/humano.tres" id="4_topi1"]
+[ext_resource type="Resource" path="res://data/clases/picaro.tres" id="5_paw0t"]
+[ext_resource type="Script" path="res://rules/datos/definicion_build.gd" id="6_rjj82"]
+[ext_resource type="Resource" path="res://data/subclases/tejemaneje_ladron.tres" id="7_5dsqp"]
+
+[resource]
+script = ExtResource("6_rjj82")
+id = &"picaro"
+nombre = "TODO_LORE: pícaro de prueba"
+clase = ExtResource("5_paw0t")
+ascendencia = ExtResource("4_topi1")
+subclase = ExtResource("7_5dsqp")
+atributo_clave = 1
+mejoras_ascendencia = Array[int]([1, 5])
+mejoras_trasfondo = Array[int]([1, 3])
+mejoras_libres = Array[int]([1, 2, 4, 5])
+habilidades_libres = Array[int]([0, 4, 5, 6, 12, 3, 14, 10])
+habilidad_trasfondo = 7
+armas = Array[ExtResource("2_jh0em")]([ExtResource("3_rva43")])
+armadura = ExtResource("1_m5xf5")

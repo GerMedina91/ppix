@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="DefinicionClase" format=3]
+
+[ext_resource type="Script" path="res://rules/datos/definicion_clase.gd" id="1_vmobp"]
+
+[resource]
+script = ExtResource("1_vmobp")
+id = &"clerigo"
+nombre = "Clérigo"
+atributos_clave = Array[int]([4])
+voluntad = 2
+ataques = Dictionary[int, int]({
+0: 1,
+3: 1
+})
+defensas = Dictionary[int, int]({
+0: 1
+})
+conjuros = 1
+habilidades_fijas = Array[int]([11])
+habilidades_libres_base = 2

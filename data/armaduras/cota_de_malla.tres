@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="DefinicionArmadura" format=3]
+
+[ext_resource type="Script" path="res://rules/datos/definicion_armadura.gd" id="1_566g1"]
+
+[resource]
+script = ExtResource("1_566g1")
+id = &"cota_de_malla"
+nombre = "Cota de malla"
+categoria = 2
+bonificador_ca = 4
+tope_destreza = 1
+requisito_fuerza = 3
+penalizador_pruebas = -2
+penalizador_velocidad_pies = 5

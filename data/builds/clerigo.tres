@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="DefinicionBuild" format=3]
+
+[ext_resource type="Script" path="res://rules/datos/definicion_arma.gd" id="1_1mvi3"]
+[ext_resource type="Resource" path="res://data/armas/alabarda.tres" id="2_ndecv"]
+[ext_resource type="Resource" path="res://data/ascendencias/humano.tres" id="3_vxn8f"]
+[ext_resource type="Resource" path="res://data/clases/clerigo.tres" id="4_070h6"]
+[ext_resource type="Resource" path="res://data/entidades/el_umbral.tres" id="5_qwe8x"]
+[ext_resource type="Script" path="res://rules/datos/definicion_build.gd" id="6_ol2p1"]
+[ext_resource type="Resource" path="res://data/subclases/doctrina_enclaustrado.tres" id="7_uqdfe"]
+
+[resource]
+script = ExtResource("6_ol2p1")
+id = &"clerigo"
+nombre = "TODO_LORE: clérigo de prueba"
+clase = ExtResource("4_070h6")
+ascendencia = ExtResource("3_vxn8f")
+subclase = ExtResource("7_uqdfe")
+entidad = ExtResource("5_qwe8x")
+atributo_clave = 4
+mejoras_ascendencia = Array[int]([4, 2])
+mejoras_trasfondo = Array[int]([4, 5])
+mejoras_libres = Array[int]([4, 0, 2, 1])
+habilidades_libres = Array[int]([7, 5])
+habilidad_trasfondo = 8
+armas = Array[ExtResource("1_1mvi3")]([ExtResource("2_ndecv")])

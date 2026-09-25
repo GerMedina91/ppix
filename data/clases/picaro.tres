@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="DefinicionClase" format=3]
+
+[ext_resource type="Script" path="res://rules/datos/definicion_clase.gd" id="1_xak1q"]
+
+[resource]
+script = ExtResource("1_xak1q")
+id = &"picaro"
+nombre = "Pícaro"
+atributos_clave = Array[int]([1])
+percepcion = 2
+reflejos = 2
+voluntad = 2
+ataques = Dictionary[int, int]({
+0: 1,
+1: 1,
+3: 1
+})
+defensas = Dictionary[int, int]({
+0: 1,
+1: 1
+})
+habilidades_fijas = Array[int]([13])
+habilidades_libres_base = 7

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="DefinicionArma" format=3]
+
+[ext_resource type="Script" path="res://rules/datos/definicion_arma.gd" id="1_aflbo"]
+
+[resource]
+script = ExtResource("1_aflbo")
+id = &"alabarda"
+nombre = "Alabarda"
+categoria = 1
+manos = 2
+caras_dado = 10
+tipo_danio = 1
+versatil = true
+alcance_pies = 10

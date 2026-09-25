@@ -33,6 +33,7 @@ static func inicio_de_turno(combate: Combate, actor: Combatiente) -> Array[Event
 
 static func fin_de_turno(combate: Combate, actor: Combatiente) -> Array[EventoCombate]:
 	var antes: Dictionary = _valores(combate)
+	actor.terminar_turno()
 	actor.condiciones.reducir(Condiciones.Tipo.ASUSTADO, 1)
 	for c: Combatiente in combate.participantes:
 		c.condiciones.descontar_turno(actor.id, false)
@@ -62,6 +63,16 @@ static func fuente_de_huida(combate: Combate, actor: Combatiente) -> Combatiente
 static func movimiento_permitido(combate: Combate, actor: Combatiente, desde: Vector2i, destino: Vector2i) -> bool:
 	var fuente: Combatiente = fuente_de_huida(combate, actor)
 	return fuente == null or Medicion.pies_entre(destino, fuente.celda) > Medicion.pies_entre(desde, fuente.celda)
+
+
+## Valores de condiciones de todos (para cambios_desde()).
+static func valores(combate: Combate) -> Dictionary:
+	return _valores(combate)
+
+
+## Eventos CONDICION de lo que cambió desde `antes` (sacado con valores()).
+static func cambios_desde(combate: Combate, antes: Dictionary) -> Array[EventoCombate]:
+	return _cambios(combate, antes)
 
 
 static func _valores(combate: Combate) -> Dictionary:

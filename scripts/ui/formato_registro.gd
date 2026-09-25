@@ -44,10 +44,35 @@ static func texto(evento: EventoCombate, combate: Combate) -> String:
 		EventoCombate.Tipo.ACCIONES_PERDIDAS:
 			return "%s pierde %d %s por %s" % [actor, evento.datos.cantidad,
 				"acción" if evento.datos.cantidad == 1 else "acciones", Condiciones.nombre(evento.datos.condicion)]
+		EventoCombate.Tipo.LANZAMIENTO:
+			var conjuro: DefinicionConjuro = evento.datos.conjuro
+			if evento.datos.objetivo == evento.actor:
+				return "%s lanza %s" % [actor, conjuro.nombre]
+			return "%s lanza %s sobre %s" % [actor, conjuro.nombre, evento.datos.objetivo]
+		EventoCombate.Tipo.EFECTO_CONJURO:
+			return _efecto_conjuro(evento)
+		EventoCombate.Tipo.CONJURO_FALLIDO:
+			return "%s de %s no tiene efecto (%s)" % [(evento.datos.conjuro as DefinicionConjuro).nombre, actor, evento.datos.motivo]
+		EventoCombate.Tipo.SOSTENER:
+			return "%s sostiene %s" % [actor, (evento.datos.conjuro as DefinicionConjuro).nombre]
+		EventoCombate.Tipo.FIN_CONJURO:
+			return "Termina %s de %s" % [(evento.datos.conjuro as DefinicionConjuro).nombre, actor]
 		EventoCombate.Tipo.ARCADAS:
 			var a: ResultadoPrueba = evento.datos.resultado
 			return "%s: Arcadas, Fortaleza %d contra CD %d: %s (indispuesto %d)" % [
 				actor, a.total, a.cd, GradoExito.nombre(a.grado), evento.datos.valor]
+	return ""
+
+
+## "e: Voluntad 12 contra CD 17: fallo"; sobre uno mismo, el bonificador que da.
+static func _efecto_conjuro(evento: EventoCombate) -> String:
+	var conjuro: DefinicionConjuro = evento.datos.conjuro
+	var r: ResultadoPrueba = evento.datos.resultado
+	if r != null:
+		return "%s: %s %d contra CD %d: %s" % [evento.datos.objetivo, Estadisticas.nombre_salvacion(conjuro.salvacion()),
+			r.total, r.cd, GradoExito.nombre(r.grado)]
+	if conjuro.bonificador_velocidad > 0:
+		return "%s: +%d pies de Velocidad hasta el final del turno" % [evento.actor, conjuro.bonificador_velocidad]
 	return ""
 
 

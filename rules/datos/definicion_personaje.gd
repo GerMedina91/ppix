@@ -52,6 +52,12 @@ extends Resource
 ## Capacidades de clase y subclase (ataque furtivo, Destreza al daño...).
 @export var capacidades: Array[Capacidad] = []
 
+@export_group("Conjuros")
+@export var trucos: Array[DefinicionConjuro] = []
+## Uno por espacio de conjuro.
+@export var conjuros_preparados: Array[DefinicionConjuro] = []
+@export var conjuros_foco: Array[DefinicionConjuro] = []
+
 
 ## Nivel mínimo y máximo de personaje en PF2e.
 const NIVEL_MINIMO: int = 1

@@ -46,7 +46,7 @@ func _plan_aleja(combate: Combate, casilla: Vector2i) -> bool:
 
 static func firma(combate: Combate) -> Array:
 	var actor: Combatiente = combate.turno_actual()
-	var datos: Array = [actor.id, actor.acciones_restantes, actor.condiciones.tiene(Condiciones.Tipo.HUYENDO)]
+	var datos: Array = [actor.id, actor.acciones_restantes, actor.condiciones.tiene(Condiciones.Tipo.HUYENDO), actor.velocidad_pies()]
 	for c: Combatiente in combate.participantes:
 		datos.append_array([c.celda, c.condiciones.muerto])
 	return datos

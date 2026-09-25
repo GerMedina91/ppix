@@ -19,6 +19,12 @@ extends Resource
 @export var cd_clase: Competencia.Rango = Competencia.Rango.ENTRENADO
 ## Ataque y CD de conjuros (no entrenado en clases que no lanzan conjuros).
 @export var conjuros: Competencia.Rango = Competencia.Rango.NO_ENTRENADO
+@export_group("Lanzamiento")
+## Tradición de la clase (la bruja la toma de su patrón).
+@export var tradicion: Tradicion.Tipo = Tradicion.Tipo.DIVINA
+## A nivel 1: espacios de rango 1 y trucos preparados.
+@export var espacios_rango_1: int = 0
+@export var trucos_maximos: int = 0
 
 @export_group("Capacidades")
 ## Capacidades de la clase a nivel 1 (p. ej. ataque furtivo del pícaro).

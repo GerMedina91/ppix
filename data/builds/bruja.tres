@@ -4,8 +4,11 @@
 [ext_resource type="Resource" path="res://data/armas/daga.tres" id="2_mm2ux"]
 [ext_resource type="Resource" path="res://data/ascendencias/humano.tres" id="3_0kkxt"]
 [ext_resource type="Resource" path="res://data/clases/bruja.tres" id="4_dd1sy"]
+[ext_resource type="Script" path="res://rules/datos/definicion_conjuro.gd" id="5_dd1sy"]
 [ext_resource type="Script" path="res://rules/datos/definicion_build.gd" id="5_vhdqe"]
 [ext_resource type="Resource" path="res://data/patrones/el_rencor.tres" id="6_1mm5y"]
+[ext_resource type="Resource" path="res://data/conjuros/debilitar.tres" id="6_vhdqe"]
+[ext_resource type="Script" path="res://rules/capacidades/capacidad.gd" id="7_1mm5y"]
 
 [resource]
 script = ExtResource("5_vhdqe")
@@ -20,4 +23,5 @@ mejoras_trasfondo = Array[int]([3, 4])
 mejoras_libres = Array[int]([3, 1, 2, 4])
 habilidades_libres = Array[int]([1, 3, 12, 7, 8, 11, 4])
 habilidad_trasfondo = 5
+conjuros_preparados = Array[ExtResource("5_dd1sy")]([ExtResource("6_vhdqe")])
 armas = Array[ExtResource("1_swh5n")]([ExtResource("2_mm2ux")])

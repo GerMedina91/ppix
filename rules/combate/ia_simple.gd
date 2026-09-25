@@ -8,6 +8,7 @@ extends RefCounted
 ## 3. A distancia: si empieza pegado a un oponente, primero se aleja con un Paso (si hay dónde).
 ## Caídos (inconscientes): solo los ataca si su perfil de IA tiene `remata_caidos` (por defecto no).
 ## Huyendo: Zancada a la casilla más lejana de la fuente (si lo aleja); si no puede, termina el turno.
+## Indispuesto: si no puede golpear a nadie este turno (ni desde donde está ni tras una Zancada), Arcadas.
 
 ## Tope de seguridad de decisiones por turno (cada una gasta al menos una acción o termina).
 const _DECISIONES_MAXIMAS: int = 6
@@ -37,6 +38,10 @@ static func jugar_accion(combate: Combate) -> Array[EventoCombate]:
 	var huida: Combatiente = ReglasCondiciones.fuente_de_huida(combate, actor)
 	if huida != null:
 		return _huir(combate, actor, huida)
+	if actor.condiciones.tiene(Condiciones.Tipo.INDISPUESTO) and not _puede_golpear_este_turno(combate, actor, arma):
+		var arcadas: Array[EventoCombate] = combate.arcadas()
+		if arcadas.back().tipo != EventoCombate.Tipo.ACCION_INVALIDA:
+			return arcadas
 	if arma == null:
 		return combate.terminar_turno()
 	if arma.a_distancia and actor.acciones_restantes == Combatiente.ACCIONES_POR_TURNO:
@@ -62,6 +67,26 @@ static func _huir(combate: Combate, actor: Combatiente, fuente: Combatiente) -> 
 	if mejor == actor.celda:
 		return combate.terminar_turno()
 	return combate.zancada(mejor)
+
+
+## true si puede Golpear a alguien ya, o después de una Zancada (le tienen que quedar 2 acciones).
+static func _puede_golpear_este_turno(combate: Combate, actor: Combatiente, arma: DefinicionArma) -> bool:
+	if arma == null:
+		return false
+	if _objetivo_golpeable(combate, actor, arma) != null:
+		return true
+	if actor.acciones_restantes < Combate.COSTO_ZANCADA + Combate.COSTO_GOLPE:
+		return false
+	var oponentes: Array[Combatiente] = _oponentes(combate, actor)
+	var celda_original: Vector2i = actor.celda
+	var puede: bool = false
+	for casilla: Vector2i in combate.casillas_de_zancada(actor):
+		actor.celda = casilla
+		if oponentes.any(func(o: Combatiente) -> bool: return Golpe.validar(actor, o, arma, combate.vision()) == Golpe.Motivo.VALIDO):
+			puede = true
+			break
+	actor.celda = celda_original
+	return puede
 
 
 ## Oponentes vivos que la IA considera: en pie, o también caídos si su perfil remata caídos.

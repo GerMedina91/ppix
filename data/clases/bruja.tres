@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="DefinicionClase" format=3]
 
+[ext_resource type="Script" path="res://rules/capacidades/capacidad.gd" id="1_fcauq"]
 [ext_resource type="Script" path="res://rules/datos/definicion_clase.gd" id="1_p6jj2"]
 
 [resource]
@@ -17,4 +18,7 @@ defensas = Dictionary[int, int]({
 0: 1
 })
 conjuros = 1
+tradicion = 2
+espacios_rango_1 = 2
+trucos_maximos = 5
 habilidades_libres_base = 3

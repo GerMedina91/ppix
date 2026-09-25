@@ -124,3 +124,34 @@ func test_el_personaje_armado_funciona_en_combate() -> void:
 	assert_int(c.pg).is_equal(20)
 	assert_int(c.fuente.defensa().cd()).is_equal(18)
 	assert_int(c.fuente.velocidad_pies()).is_equal(25)
+
+
+func test_conjuros_de_los_builds() -> void:
+	var bruja: DefinicionPersonaje = ArmadorPersonaje.armar(load("res://data/builds/bruja.tres"))
+	var clerigo: DefinicionPersonaje = ArmadorPersonaje.armar(load("res://data/builds/clerigo.tres"))
+	assert_bool(bruja.trucos.has(load("res://data/conjuros/mal_de_ojo.tres"))).is_true()  # del patrón
+	assert_array(bruja.conjuros_preparados).is_equal([load("res://data/conjuros/debilitar.tres")])
+	assert_array(clerigo.conjuros_foco).is_equal([load("res://data/conjuros/pies_agiles.tres")])
+
+
+func test_un_conjuro_de_otra_tradicion_no_se_puede_preparar() -> void:
+	var build: DefinicionBuild = (load("res://data/builds/bruja.tres") as DefinicionBuild).duplicate()
+	var divino: DefinicionConjuro = (load("res://data/conjuros/debilitar.tres") as DefinicionConjuro).duplicate()
+	divino.tradiciones = [Tradicion.Tipo.DIVINA]
+	build.conjuros_preparados = [divino]
+	assert_str(" ".join(ArmadorPersonaje.validar(build))).contains("no es de su tradición")
+
+
+func test_no_se_preparan_mas_conjuros_que_espacios() -> void:
+	var build: DefinicionBuild = (load("res://data/builds/bruja.tres") as DefinicionBuild).duplicate()
+	var debilitar: DefinicionConjuro = load("res://data/conjuros/debilitar.tres")
+	build.conjuros_preparados = [debilitar, debilitar, debilitar]
+	assert_str(" ".join(ArmadorPersonaje.validar(build))).contains("espacios de rango 1")
+
+
+func test_el_conjuro_de_dominio_tiene_que_ser_de_la_entidad() -> void:
+	var build: DefinicionBuild = (load("res://data/builds/clerigo.tres") as DefinicionBuild).duplicate()
+	var ajeno: DefinicionConjuro = (load("res://data/conjuros/pies_agiles.tres") as DefinicionConjuro).duplicate()
+	ajeno.dominio = &"fuego"
+	build.conjuros_foco = [ajeno]
+	assert_str(" ".join(ArmadorPersonaje.validar(build))).contains("dominio que su entidad no tiene")

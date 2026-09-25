@@ -6,6 +6,7 @@ extends RefCounted
 ## - Turno: 3 acciones. Zancada, Paso, Golpe y Arcadas cuestan 1. Moribundo: prueba de recuperación al
 ##   empezar. Quien no puede actuar (inconsciente, muerto o aturdido sin acciones) pierde el turno.
 ## - Condiciones con valor (duraciones, asustado, aturdido, huyendo): ver ReglasCondiciones.
+## - Movimiento (Zancada, Paso): AccionesMovimiento. Conjuros (lanzar, Sostener): AccionesConjuro.
 ## - Fin: victoria si todos los enemigos murieron; derrota si toda la party está fuera de combate.
 ## - Reacciones (GestorReacciones): la Zancada se procesa casilla por casilla y el Golpe avisa antes de
 ##   tirar; si una reacción necesita la decisión del jugador, el combate queda en pausa con una pregunta
@@ -33,6 +34,7 @@ var registro: Array[EventoCombate] = []
 var reacciones: GestorReacciones = GestorReacciones.new(self)
 ## Zancada y Paso (se crea con la grilla).
 var movimiento: AccionesMovimiento
+var conjuros: AccionesConjuro = AccionesConjuro.new(self)
 ## La presentación lo activa: después de usar una reacción, la acción interrumpida no sigue sola; espera
 ## continuar(), así se puede animar la reacción con el estado del combate en ese punto.
 var pausar_tras_reacciones: bool = false
@@ -109,6 +111,10 @@ func grilla() -> GrillaMapa:
 	return _grilla
 
 
+func dados() -> Dados:
+	return _dados
+
+
 # --- Consultas para la presentación ---
 
 ## Casillas donde puede terminar una Zancada del combatiente, con su costo en pies.
@@ -135,6 +141,16 @@ func zancada(destino: Vector2i, recorrido: Array[Vector2i] = []) -> Array[Evento
 
 func paso(destino: Vector2i) -> Array[EventoCombate]:
 	return movimiento.paso(destino)
+
+
+## Lanza `conjuro`: sobre `id_objetivo`, o sobre sí mismo (con `destino` si incluye un Paso o una Zancada).
+func lanzar_conjuro(conjuro: DefinicionConjuro, id_objetivo: StringName = &"", destino: Vector2i = AccionesConjuro.SIN_CELDA,
+		recorrido: Array[Vector2i] = [], es_paso: bool = false) -> Array[EventoCombate]:
+	return conjuros.lanzar(conjuro, id_objetivo, destino, recorrido, es_paso)
+
+
+func sostener() -> Array[EventoCombate]:
+	return conjuros.sostener()
 
 
 func golpe(id_objetivo: StringName, arma: DefinicionArma = null) -> Array[EventoCombate]:
@@ -181,14 +197,16 @@ func arcadas() -> Array[EventoCombate]:
 	if not actor.condiciones.tiene(Condiciones.Tipo.INDISPUESTO):
 		return [invalida(actor, ACCION_ARCADAS, "no está indispuesto")]
 	actor.gastar_acciones(COSTO_ARCADAS)
-	return ReglasCondiciones.arcadas(self, actor, _dados)
+	var eventos: Array[EventoCombate] = conjuros.actualizar_pisos()
+	eventos.append_array(ReglasCondiciones.arcadas(self, actor, _dados))
+	return eventos
 
 
 func terminar_turno() -> Array[EventoCombate]:
 	var actor: Combatiente = turno_actual()
 	if actor == null or hay_reaccion_pendiente() or hay_continuacion():
 		return []
-	var eventos: Array[EventoCombate] = ReglasCondiciones.fin_de_turno(self, actor)
+	var eventos: Array[EventoCombate] = _fin_de_turno(actor)
 	eventos.append(_emitir(EventoCombate.new(EventoCombate.Tipo.FIN_TURNO, actor.id)))
 	eventos.append_array(_avanzar_turno())
 	return eventos
@@ -211,8 +229,16 @@ func _empezar_turno() -> Array[EventoCombate]:
 			eventos.append_array(_verificar_fin())
 	if estado == Estado.EN_CURSO and (not actor.condiciones.puede_actuar() or actor.acciones_restantes == 0):
 		eventos.append(_emitir(EventoCombate.new(EventoCombate.Tipo.TURNO_PERDIDO, actor.id)))
-		eventos.append_array(ReglasCondiciones.fin_de_turno(self, actor))
+		eventos.append_array(_fin_de_turno(actor))
 		eventos.append_array(_avanzar_turno())
+	return eventos
+
+
+## Lo que pasa al final del turno de `actor`: condiciones y conjuros sostenidos.
+func _fin_de_turno(actor: Combatiente) -> Array[EventoCombate]:
+	var eventos: Array[EventoCombate] = ReglasCondiciones.fin_de_turno(self, actor)
+	eventos.append_array(conjuros.fin_de_turno(actor))
+	eventos.append_array(conjuros.actualizar_pisos())
 	return eventos
 
 

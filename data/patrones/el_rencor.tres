@@ -1,9 +1,14 @@
 [gd_resource type="Resource" script_class="DefinicionPatron" format=3]
 
 [ext_resource type="Script" path="res://rules/datos/definicion_patron.gd" id="1_0y5di"]
+[ext_resource type="Script" path="res://rules/capacidades/capacidad.gd" id="1_hy5xj"]
+[ext_resource type="Resource" path="res://data/conjuros/debilitar.tres" id="2_ge7u0"]
+[ext_resource type="Resource" path="res://data/conjuros/mal_de_ojo.tres" id="4_ome8p"]
 
 [resource]
 script = ExtResource("1_0y5di")
+truco_maleficio = ExtResource("4_ome8p")
+conjuro_otorgado = ExtResource("2_ge7u0")
 mecanica_base = "The Resentment (Player Core)"
 id = &"el_rencor"
 nombre = "El Rencor"

@@ -92,3 +92,7 @@ Términos de reglas en castellano, según la edición oficial en castellano de l
 | Focus Point / focus pool / focus spell | punto de foco / reserva de foco / conjuro de foco | — | Provisorio |
 | basic saving throw | salvación básica | — | Provisorio |
 | hex | maleficio | — | Provisorio |
+| Cast a Spell | Lanzar un conjuro | `lanzar_conjuro()` | Provisorio |
+| Evil Eye / Enfeeble / Agile Feet | Mal de ojo / Debilitar / Pies ágiles | `mal_de_ojo`, `debilitar`, `pies_agiles` | Provisorio |
+| tradition (arcane / divine / occult / primal) | tradición (arcana / divina / ocultista / primigenia) | `Tradicion` | Provisorio |
+| disrupt (an action) | interrumpir | `interrumpida` | Provisorio |

@@ -49,6 +49,18 @@ func prueba_conjuro() -> Prueba:
 	return Estadisticas.prueba_conjuro(_personaje)
 
 
+func trucos() -> Array[DefinicionConjuro]:
+	return _personaje.trucos
+
+
+func conjuros_preparados() -> Array[DefinicionConjuro]:
+	return _personaje.conjuros_preparados
+
+
+func conjuros_foco() -> Array[DefinicionConjuro]:
+	return _personaje.conjuros_foco
+
+
 func defensa() -> Prueba:
 	return Estadisticas.defensa(_personaje)
 

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="DefinicionConjuro" format=3]
+
+[ext_resource type="Script" path="res://rules/datos/efecto_por_grado.gd" id="1_kidyp"]
+[ext_resource type="Script" path="res://rules/datos/definicion_conjuro.gd" id="2_ltwjb"]
+
+[resource]
+script = ExtResource("2_ltwjb")
+id = &"pies_agiles"
+nombre = "Pies ágiles"
+tipo = 2
+dominio = &"viaje"
+acciones = 1
+rasgos = Array[int]([0])
+objetivo = 1
+alcance_pies = 0
+bonificador_velocidad = 5
+permite_moverse = true

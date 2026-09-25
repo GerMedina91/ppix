@@ -12,6 +12,16 @@ enum Tipo {
 	ACCIONES_PERDIDAS,
 	## Arcadas contra indispuesto: {"resultado": ResultadoPrueba, "anterior", "valor"}.
 	ARCADAS,
+	## Empieza a lanzar un conjuro (ya pagado): {"conjuro": DefinicionConjuro, "objetivo"}.
+	LANZAMIENTO,
+	## Efecto del conjuro: {"conjuro", "objetivo", "resultado": ResultadoPrueba de la salvación o null}.
+	EFECTO_CONJURO,
+	## El conjuro no tuvo efecto: {"conjuro", "motivo"} (interrumpido, segundo maleficio del turno).
+	CONJURO_FALLIDO,
+	## Sostuvo un conjuro: {"conjuro", "objetivo"}.
+	SOSTENER,
+	## Terminó un conjuro sostenido: {"conjuro", "objetivo"}.
+	FIN_CONJURO,
 }
 
 var tipo: Tipo

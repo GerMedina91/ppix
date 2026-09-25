@@ -24,7 +24,7 @@ func _combate() -> Combate:
 # --- Consultas ---
 
 func casillas_de_zancada(c: Combatiente) -> Dictionary[Vector2i, int]:
-	return _movimiento.alcanzables(c.celda, c.fuente.velocidad_pies(), bloqueadas_para(c), de_aliados_de(c))
+	return _movimiento.alcanzables(c.celda, c.velocidad_pies(), bloqueadas_para(c), de_aliados_de(c))
 
 
 func camino_de_zancada(c: Combatiente, destino: Vector2i) -> Array[Vector2i]:
@@ -32,7 +32,7 @@ func camino_de_zancada(c: Combatiente, destino: Vector2i) -> Array[Vector2i]:
 
 
 func alcance_de_zancadas(c: Combatiente, zancadas_max: int) -> AlcanceZancadas:
-	return _movimiento.alcance_de_zancadas(c.celda, c.fuente.velocidad_pies(), zancadas_max, bloqueadas_para(c), de_aliados_de(c))
+	return _movimiento.alcance_de_zancadas(c.celda, c.velocidad_pies(), zancadas_max, bloqueadas_para(c), de_aliados_de(c))
 
 
 ## Casillas de oponentes que no murieron: no se pueden atravesar.
@@ -74,7 +74,7 @@ func zancada(destino: Vector2i, recorrido: Array[Vector2i]) -> Array[EventoComba
 func motivo_zancada_imposible(actor: Combatiente, destino: Vector2i, recorrido: Array[Vector2i]) -> String:
 	var camino: Array[Vector2i] = _camino_para(actor, destino, recorrido)
 	var valido: bool = _movimiento.es_camino_valido(actor.celda, camino, bloqueadas_para(actor), de_aliados_de(actor)) \
-		and camino.back() == destino and MovimientoCombate.costo_de(actor.celda, camino) <= actor.fuente.velocidad_pies()
+		and camino.back() == destino and MovimientoCombate.costo_de(actor.celda, camino) <= actor.velocidad_pies()
 	if not valido:
 		return "fuera del alcance de la Zancada"
 	if not ReglasCondiciones.movimiento_permitido(_combate(), actor, actor.celda, destino):

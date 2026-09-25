@@ -50,7 +50,19 @@ static func armar(build: DefinicionBuild) -> DefinicionPersonaje:
 	if build.subclase != null:
 		p.capacidades.append_array(build.subclase.capacidades)
 	p.capacidades.append_array(build.dotes)
+	p.trucos = build.trucos.duplicate()
+	if build.subclase is DefinicionPatron and (build.subclase as DefinicionPatron).truco_maleficio != null:
+		p.trucos.append((build.subclase as DefinicionPatron).truco_maleficio)
+	p.conjuros_preparados = build.conjuros_preparados.duplicate()
+	p.conjuros_foco = build.conjuros_foco.duplicate()
 	return p
+
+
+## Tradición con la que lanza: la del patrón (bruja) o la de la clase.
+static func tradicion_de(build: DefinicionBuild) -> Tradicion.Tipo:
+	if build.subclase is DefinicionPatron:
+		return (build.subclase as DefinicionPatron).tradicion
+	return build.clase.tradicion
 
 
 ## Modificadores de atributo finales (+0 base, +1 por mejora).
@@ -110,6 +122,30 @@ static func validar(build: DefinicionBuild) -> PackedStringArray:
 		errores.append("Build %s: la habilidad elegida no está entre las opciones de %s" % [build.nombre, clase.nombre])
 	if build.armadura != null and not clase.defensas.has(build.armadura.categoria):
 		errores.append("Build %s: %s no tiene competencia en esa armadura" % [build.nombre, clase.nombre])
+	errores.append_array(_errores_de_conjuros(build))
+	return errores
+
+
+## Trucos y preparados de la tradición del lanzador y dentro de lo que da la clase; los de foco, del
+## tipo correcto y (si son de dominio) de un dominio de su entidad.
+static func _errores_de_conjuros(build: DefinicionBuild) -> PackedStringArray:
+	var errores: PackedStringArray = PackedStringArray()
+	if build.trucos.size() > build.clase.trucos_maximos:
+		errores.append("Build %s: %s prepara hasta %d trucos" % [build.nombre, build.clase.nombre, build.clase.trucos_maximos])
+	if build.conjuros_preparados.size() > build.clase.espacios_rango_1:
+		errores.append("Build %s: %s tiene %d espacios de rango 1" % [build.nombre, build.clase.nombre, build.clase.espacios_rango_1])
+	var tipos: Dictionary = {DefinicionConjuro.Tipo.TRUCO: build.trucos, DefinicionConjuro.Tipo.ESPACIO: build.conjuros_preparados}
+	for tipo: DefinicionConjuro.Tipo in tipos:
+		for conjuro: DefinicionConjuro in tipos[tipo]:
+			if conjuro.tipo != tipo:
+				errores.append("Build %s: %s no va en esa lista" % [build.nombre, conjuro.nombre])
+			elif not conjuro.tradiciones.has(tradicion_de(build)):
+				errores.append("Build %s: %s no es de su tradición" % [build.nombre, conjuro.nombre])
+	for conjuro: DefinicionConjuro in build.conjuros_foco:
+		if conjuro.tipo != DefinicionConjuro.Tipo.FOCO:
+			errores.append("Build %s: %s no es un conjuro de foco" % [build.nombre, conjuro.nombre])
+		elif conjuro.dominio != &"" and (build.entidad == null or not build.entidad.dominios.has(conjuro.dominio)):
+			errores.append("Build %s: %s es de un dominio que su entidad no tiene" % [build.nombre, conjuro.nombre])
 	return errores
 
 

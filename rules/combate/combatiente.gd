@@ -32,6 +32,11 @@ var politica_reacciones: PoliticaReaccion = PoliticaReaccion.PREGUNTAR
 
 var fuente: FuenteEstadisticas
 var condiciones: Condiciones = Condiciones.new()
+var conjuros: ReservaConjuros
+## Ya lanzó un conjuro con el rasgo maleficio en este turno (solo uno por turno).
+var maleficio_en_turno: bool = false
+## Bonificador de estatus a la Velocidad hasta el final del turno (Pies ágiles).
+var bonificador_velocidad: int = 0
 
 
 func _init(id_combatiente: StringName, fuente_estadisticas: FuenteEstadisticas, bando_combatiente: Bando, celda_inicial: Vector2i) -> void:
@@ -40,6 +45,7 @@ func _init(id_combatiente: StringName, fuente_estadisticas: FuenteEstadisticas, 
 	bando = bando_combatiente
 	celda = celda_inicial
 	pg = fuente.pg_maximos()
+	conjuros = ReservaConjuros.new(fuente)
 	politica_reacciones = PoliticaReaccion.PREGUNTAR if bando == Bando.PARTY else PoliticaReaccion.SIEMPRE
 
 
@@ -59,6 +65,10 @@ func pg_maximos() -> int:
 	return fuente.pg_maximos()
 
 
+func velocidad_pies() -> int:
+	return fuente.velocidad_pies() + bonificador_velocidad
+
+
 func es_aliado_de(otro: Combatiente) -> bool:
 	return bando == otro.bando
 
@@ -74,6 +84,12 @@ func empezar_turno() -> void:
 	acciones_restantes = ACCIONES_POR_TURNO
 	reaccion_disponible = true
 	ataques_en_turno = 0
+	maleficio_en_turno = false
+
+
+## Lo que termina con el turno propio (bonificadores "hasta el final del turno").
+func terminar_turno() -> void:
+	bonificador_velocidad = 0
 
 
 ## Percepción con las condiciones aplicadas (inconsciente: -4 de estatus).
@@ -216,6 +232,7 @@ func _revisar_muerte() -> void:
 func restaurar_por_completo() -> void:
 	condiciones = Condiciones.new()
 	pg = pg_maximos()
+	conjuros.restaurar()
 
 
 ## Al terminar un combate ganado, quien sigue moribundo se estabiliza: pierde moribundo

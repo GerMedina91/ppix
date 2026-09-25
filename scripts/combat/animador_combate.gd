@@ -8,6 +8,7 @@ const COLOR_DANIO: Color = Color(1.0, 0.4, 0.3)
 const COLOR_FALLO: Color = Color(0.8, 0.8, 0.8)
 const COLOR_INFO: Color = Color(0.7, 0.85, 1.0)
 const COLOR_INVALIDA: Color = Color(1.0, 0.8, 0.4)
+const COLOR_CONJURO: Color = Color(0.85, 0.6, 1.0)
 ## Fracción del camino hacia el objetivo que recorre la embestida de un Golpe.
 const FRACCION_EMBESTIDA: float = 0.3
 
@@ -56,6 +57,16 @@ func animar(evento: EventoCombate, actores: Dictionary[StringName, ActorMapa]) -
 			await _texto(actor, texto, COLOR_INFO)
 		EventoCombate.Tipo.ACCIONES_PERDIDAS:
 			await _texto(actor, "%s: -%d ◆" % [Condiciones.nombre(evento.datos.condicion), evento.datos.cantidad], COLOR_INFO)
+		EventoCombate.Tipo.LANZAMIENTO:
+			await _texto(actor, (evento.datos.conjuro as DefinicionConjuro).nombre, COLOR_CONJURO)
+		EventoCombate.Tipo.EFECTO_CONJURO:
+			var r: ResultadoPrueba = evento.datos.resultado
+			if r != null:
+				await _texto(actores[evento.datos.objetivo], GradoExito.nombre(r.grado), COLOR_CONJURO)
+		EventoCombate.Tipo.CONJURO_FALLIDO:
+			await _texto(actor, "sin efecto: %s" % evento.datos.motivo, COLOR_INVALIDA)
+		EventoCombate.Tipo.FIN_CONJURO:
+			await _texto(actor, "termina %s" % (evento.datos.conjuro as DefinicionConjuro).nombre, COLOR_INFO)
 		EventoCombate.Tipo.ARCADAS:
 			await _texto(actor, "Arcadas: indispuesto %d" % evento.datos.valor, COLOR_INFO)
 		_:

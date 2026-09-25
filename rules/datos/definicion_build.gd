@@ -32,6 +32,13 @@ extends Resource
 ## Dotes fijas del build (sin elección para el slice), como capacidades.
 @export var dotes: Array[Capacidad] = []
 
+@export_group("Conjuros")
+## Trucos preparados (el truco de maleficio del patrón se suma aparte y no cuenta).
+@export var trucos: Array[DefinicionConjuro] = []
+## Uno por espacio de rango 1.
+@export var conjuros_preparados: Array[DefinicionConjuro] = []
+## Conjuros de foco (clérigo: el de su dominio, por Iniciado de dominio).
+@export var conjuros_foco: Array[DefinicionConjuro] = []
 @export_group("Equipo")
 @export var armas: Array[DefinicionArma] = []
 @export var armadura: DefinicionArmadura

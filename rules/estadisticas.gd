@@ -17,6 +17,10 @@ const _NOMBRE_SALVACION: Dictionary[Salvacion, String] = {
 }
 
 
+static func nombre_salvacion(salvacion: Salvacion) -> String:
+	return _NOMBRE_SALVACION[salvacion]
+
+
 static func prueba_percepcion(personaje: DefinicionPersonaje) -> Prueba:
 	return _prueba("Percepción", personaje, Atributo.Tipo.SABIDURIA, personaje.percepcion)
 

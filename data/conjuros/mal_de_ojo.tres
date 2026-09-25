@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="DefinicionConjuro" format=3]
+
+[ext_resource type="Script" path="res://rules/datos/efecto_por_grado.gd" id="1_wwsep"]
+[ext_resource type="Script" path="res://rules/datos/definicion_conjuro.gd" id="2_c55k6"]
+
+[sub_resource type="Resource" id="Resource_rk1dv"]
+script = ExtResource("1_wwsep")
+condicion = 1
+
+[sub_resource type="Resource" id="Resource_lmack"]
+script = ExtResource("1_wwsep")
+grado = 0
+condicion = 1
+valor = 2
+
+[resource]
+script = ExtResource("2_c55k6")
+id = &"mal_de_ojo"
+nombre = "Mal de ojo"
+tipo = 0
+acciones = 1
+rasgos = Array[int]([3, 2, 0])
+defensa = 4
+efectos = Array[ExtResource("1_wwsep")]([SubResource("Resource_rk1dv"), SubResource("Resource_lmack")])
+sostenido_rondas_max = 10
+piso_mientras_dura = 1

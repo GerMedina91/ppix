@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="DefinicionConjuro" format=3]
+
+[ext_resource type="Script" path="res://rules/datos/efecto_por_grado.gd" id="1_ncls6"]
+[ext_resource type="Script" path="res://rules/datos/definicion_conjuro.gd" id="2_lrbg4"]
+
+[sub_resource type="Resource" id="Resource_msfdw"]
+script = ExtResource("1_ncls6")
+grado = 2
+condicion = 2
+rondas = 1
+
+[sub_resource type="Resource" id="Resource_ulrx7"]
+script = ExtResource("1_ncls6")
+condicion = 2
+valor = 2
+rondas = 10
+
+[sub_resource type="Resource" id="Resource_xfvs6"]
+script = ExtResource("1_ncls6")
+grado = 0
+condicion = 2
+valor = 3
+rondas = 10
+
+[resource]
+script = ExtResource("2_lrbg4")
+id = &"debilitar"
+nombre = "Debilitar"
+tradiciones = Array[int]([0, 1, 2])
+rasgos = Array[int]([1, 0])
+defensa = 2
+efectos = Array[ExtResource("1_ncls6")]([SubResource("Resource_msfdw"), SubResource("Resource_ulrx7"), SubResource("Resource_xfvs6")])

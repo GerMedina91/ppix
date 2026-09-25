@@ -108,3 +108,32 @@ func test_ningun_miembro_saltea_celdas_ni_corta_esquinas() -> void:
 	await _runner.await_func_on(_party, "celda_lider").wait_until(ESPERA_MS).is_equal(Vector2i(16, 7))
 	await _esperar_toda_la_party_quieta()
 	assert_array(pasos_invalidos).is_empty()
+
+
+func test_en_modo_combate_no_hay_seguimiento_ni_aviso_de_pasos() -> void:
+	var miembros: Array[MiembroParty] = _party.miembros()
+	await _esperar_toda_la_party_quieta()
+	_party.entrar_en_combate()
+	monitor_signals(_party)
+	var antes: Array[Vector2i] = []
+	for m in miembros:
+		antes.append(m.celda)
+	# Mover a mano al líder y al segundo, como lo haría el ControladorCombate.
+	var mapa: Mapa = _runner.find_child("MapaActual").get_child(0)
+	miembros[0].dar_paso(antes[0] + Vector2i(1, 0), mapa.celda_a_posicion(antes[0] + Vector2i(1, 0)), 0.05)
+	miembros[1].dar_paso(antes[1] + Vector2i(0, 1), mapa.celda_a_posicion(antes[1] + Vector2i(0, 1)), 0.05)
+	await _runner.simulate_frames(30)
+	assert_that(miembros[2].celda).is_equal(antes[2])
+	assert_that(miembros[3].celda).is_equal(antes[3])
+	await assert_signal(_party).wait_until(200).is_not_emitted("lider_llego_a")
+
+
+func test_al_salir_de_combate_vuelve_la_fila() -> void:
+	await _esperar_toda_la_party_quieta()
+	_party.entrar_en_combate()
+	_party.salir_de_combate()
+	assert_int(_party.modo()).is_equal(ControlParty.Modo.EXPLORACION)
+	_party.ir_a_celda(Vector2i(7, 5))
+	await _runner.await_func_on(_party, "celda_lider").wait_until(ESPERA_MS).is_equal(Vector2i(7, 5))
+	await _esperar_toda_la_party_quieta()
+	assert_that(_party.miembros()[1].celda).is_equal(Vector2i(6, 5))

@@ -15,13 +15,17 @@ func before_test() -> void:
 	GameState.estado_party.clear()
 	_runner = scene_runner(ESCENA)
 	_control = _runner.find_child("ControladorCombate")
+	_control.config = _config_rapida()
+	_party = _runner.find_child("Party")
+
+
+func _config_rapida() -> ConfigCombate:
 	var rapida: ConfigCombate = ConfigCombate.new()
 	rapida.segundos_por_celda = 0.001
 	rapida.pausa_entre_eventos = 0.001
 	rapida.segundos_golpe = 0.001
 	rapida.segundos_texto_flotante = 0.01
-	_control.config = rapida
-	_party = _runner.find_child("Party")
+	return rapida
 
 
 func _entrar_a_la_zona() -> void:
@@ -58,6 +62,40 @@ func test_en_su_turno_el_jugador_mueve_con_click() -> void:
 	assert_int(actor.acciones_restantes).is_equal(2)
 	assert_bool(await _esperar(func() -> bool: return not _control.animando())).is_true()
 	assert_that(_control.actor_de(actor.id).celda).is_equal(destino)
+
+
+## Invariante: después de animar cada evento, cada ActorMapa está en la casilla de su Combatiente
+## y en el centro visual de esa casilla. Devuelve las violaciones encontradas.
+func _vigilar_sincronia() -> Array[String]:
+	var violaciones: Array[String] = []
+	_control.evento_mostrado.connect(func(evento: EventoCombate) -> void:
+		var combate: Combate = _control.combate()
+		if combate == null:
+			return
+		var mapa: Mapa = _runner.find_child("MapaActual").get_child(0)
+		for c: Combatiente in combate.participantes:
+			var actor: ActorMapa = _control.actor_de(c.id)
+			if actor.celda != c.celda:
+				violaciones.append("%s tras %s: actor en %s, combatiente en %s" % [c.id, evento, actor.celda, c.celda])
+			elif actor.global_position.distance_to(mapa.celda_a_posicion(c.celda)) > 0.5:
+				violaciones.append("%s tras %s: posición %s fuera del centro de %s" % [c.id, evento, actor.global_position, c.celda]))
+	return violaciones
+
+
+func test_actores_y_combatientes_sincronizados_en_combate_ia_contra_ia() -> void:
+	for semilla: int in [11, 12, 13]:
+		GameState.reiniciar_dados(semilla)
+		GameState.estado_party.clear()
+		_runner = scene_runner(ESCENA)
+		_control = _runner.find_child("ControladorCombate")
+		_control.config = _config_rapida()
+		_party = _runner.find_child("Party")
+		_control.auto_jugar_party = true
+		var violaciones: Array[String] = _vigilar_sincronia()
+		await _entrar_a_la_zona()
+		assert_bool(await _esperar(func() -> bool: return not _control.en_curso())).override_failure_message("semilla %d: no terminó" % semilla).is_true()
+		assert_array(violaciones).override_failure_message("semilla %d: %s" % [semilla, "
+".join(violaciones.slice(0, 5))]).is_empty()
 
 
 func test_combate_completo_vuelve_a_exploracion() -> void:

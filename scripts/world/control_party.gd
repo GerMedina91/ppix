@@ -6,8 +6,12 @@ extends Node2D
 ## dejando el de adelante (SeguimientoFila). Cada miembro se mueve por su cuenta,
 ## así que separar la party a futuro es dejar de aplicar el seguimiento y dar órdenes por miembro.
 
-## Se emite cada vez que el líder termina un paso.
+## Se emite cada vez que el líder termina un paso (solo en exploración).
 signal lider_llego_a(celda: Vector2i)
+
+## EXPLORACION: fila india y aviso de pasos del líder conectados. COMBATE: todo eso desconectado;
+## cada miembro se mueve solo por orden del ControladorCombate.
+enum Modo { EXPLORACION, COMBATE }
 
 @export var config: ConfigExploracion
 
@@ -24,17 +28,60 @@ var _camino: Array[Vector2i] = []
 var _miembros: Array[MiembroParty] = []
 ## Un seguimiento por seguidor: _seguimientos[i] es el del miembro i + 1.
 var _seguimientos: Array[SeguimientoFila] = []
+var _modo: Modo = Modo.EXPLORACION
+## Conexiones del modo exploración: [señal, callable]. Se conectan y desconectan juntas.
+var _conexiones: Array[Array] = []
 
 
 func _ready() -> void:
 	for hijo: Node in get_children():
 		if hijo is MiembroParty:
 			_miembros.append(hijo)
-	lider().paso_terminado.connect(_al_terminar_paso_lider)
+	_conexiones.append([lider().paso_terminado, _al_terminar_paso_lider])
 	for i in range(1, _miembros.size()):
 		_seguimientos.append(SeguimientoFila.new())
-		_miembros[i - 1].paso_iniciado.connect(_al_moverse_el_de_adelante.bind(i))
-		_miembros[i].paso_terminado.connect(_al_terminar_paso_seguidor.bind(i))
+		_conexiones.append([_miembros[i - 1].paso_iniciado, _al_moverse_el_de_adelante.bind(i)])
+		_conexiones.append([_miembros[i].paso_terminado, _al_terminar_paso_seguidor.bind(i)])
+	_conectar_exploracion()
+
+
+func modo() -> Modo:
+	return _modo
+
+
+## Pasa a combate: desconecta la fila india y el aviso de pasos del líder, vacía las colas, frena la
+## entrada del jugador y asienta a cada miembro en el centro de su casilla (por si venía caminando).
+func entrar_en_combate() -> void:
+	if _modo == Modo.COMBATE:
+		return
+	_modo = Modo.COMBATE
+	bloqueado = true
+	_desconectar_exploracion()
+	for seguimiento: SeguimientoFila in _seguimientos:
+		seguimiento.limpiar()
+	for miembro: MiembroParty in _miembros:
+		miembro.colocar(miembro.celda, _mapa.celda_a_posicion(miembro.celda))
+
+
+## Vuelve a exploración: reconecta la fila india. Quien llama reagrupa la formación antes (o
+## entra a otro mapa), porque tras un combate las posiciones no forman una cadena.
+func salir_de_combate() -> void:
+	if _modo == Modo.EXPLORACION:
+		return
+	_modo = Modo.EXPLORACION
+	_conectar_exploracion()
+	bloqueado = false
+
+
+func _conectar_exploracion() -> void:
+	for par: Array in _conexiones:
+		(par[0] as Signal).connect(par[1])
+
+
+func _desconectar_exploracion() -> void:
+	for par: Array in _conexiones:
+		if (par[0] as Signal).is_connected(par[1]):
+			(par[0] as Signal).disconnect(par[1])
 
 
 func lider() -> MiembroParty:
@@ -97,7 +144,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _process(_delta: float) -> void:
-	if not bloqueado and _grilla != null and not lider().esta_moviendose():
+	if _modo == Modo.EXPLORACION and not bloqueado and _grilla != null and not lider().esta_moviendose():
 		_avanzar()
 
 

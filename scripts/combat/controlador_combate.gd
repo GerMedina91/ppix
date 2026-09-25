@@ -96,7 +96,7 @@ func iniciar(encuentro: Encuentro, mapa: Mapa, party: ControlParty, camara: Cama
 	_mapa = mapa
 	_party = party
 	_camara = camara
-	_party.bloqueado = true
+	_party.entrar_en_combate()
 	_actores.clear()
 	var participantes: Array[Combatiente] = []
 	for miembro: MiembroParty in party.miembros():
@@ -170,7 +170,7 @@ func _procesar_cola() -> void:
 	var actor: Combatiente = _combate.turno_actual()
 	_camara.objetivo = _actores[actor.id]
 	if actor.bando == Combatiente.Bando.ENEMIGOS or auto_jugar_party:
-		_encolar(IASimple.jugar_turno(_combate))
+		_encolar(IASimple.jugar_accion(_combate))
 		return
 	_zancada = _combate.casillas_de_zancada(actor)
 	queue_redraw()

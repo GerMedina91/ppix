@@ -12,31 +12,40 @@ extends RefCounted
 const _DECISIONES_MAXIMAS: int = 6
 
 
+## Juega el turno entero del combatiente actual (varias acciones y terminar turno).
 static func jugar_turno(combate: Combate) -> Array[EventoCombate]:
 	var eventos: Array[EventoCombate] = []
 	var actor: Combatiente = combate.turno_actual()
-	if actor == null:
-		return eventos
-	var arma: DefinicionArma = actor.arma_principal()
-	if arma != null and arma.a_distancia and actor.condiciones.puede_actuar():
-		eventos.append_array(_alejarse_si_esta_pegado(combate, actor))
-	for i in _DECISIONES_MAXIMAS:
-		if combate.turno_actual() != actor or actor.acciones_restantes <= 0 or arma == null:
+	for i in _DECISIONES_MAXIMAS + 1:
+		if actor == null or combate.turno_actual() != actor:
 			break
-		var objetivo: Combatiente = _objetivo_golpeable(combate, actor, arma)
-		if objetivo != null:
-			eventos.append_array(combate.golpe(objetivo.id, arma))
-			continue
-		var destino: Variant = _mejor_destino(combate, actor, arma)
-		if destino == null:
-			break
-		var movimiento: Array[EventoCombate] = combate.zancada(destino)
-		eventos.append_array(movimiento)
-		if movimiento.back().tipo == EventoCombate.Tipo.ACCION_INVALIDA:
-			break
-	if combate.turno_actual() == actor:
-		eventos.append_array(combate.terminar_turno())
+		eventos.append_array(jugar_accion(combate))
 	return eventos
+
+
+## Resuelve UNA decisión del combatiente actual: un Paso, un Golpe o una Zancada; si no le queda
+## nada útil que hacer, termina el turno. La presentación anima cada decisión antes de pedir la
+## siguiente, así el estado del Combate y lo que se ve en el mapa avanzan juntos.
+static func jugar_accion(combate: Combate) -> Array[EventoCombate]:
+	var actor: Combatiente = combate.turno_actual()
+	if actor == null:
+		return []
+	var arma: DefinicionArma = actor.arma_principal()
+	if arma == null or actor.acciones_restantes <= 0:
+		return combate.terminar_turno()
+	if arma.a_distancia and actor.acciones_restantes == Combatiente.ACCIONES_POR_TURNO:
+		var alejarse: Array[EventoCombate] = _alejarse_si_esta_pegado(combate, actor)
+		if not alejarse.is_empty():
+			return alejarse
+	var objetivo: Combatiente = _objetivo_golpeable(combate, actor, arma)
+	if objetivo != null:
+		return combate.golpe(objetivo.id, arma)
+	var destino: Variant = _mejor_destino(combate, actor, arma)
+	if destino != null:
+		var movimiento: Array[EventoCombate] = combate.zancada(destino)
+		if movimiento.back().tipo != EventoCombate.Tipo.ACCION_INVALIDA:
+			return movimiento
+	return combate.terminar_turno()
 
 
 ## Oponentes vivos que la IA considera: en pie, o también caídos si su perfil remata caídos.

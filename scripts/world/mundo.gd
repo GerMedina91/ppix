@@ -53,13 +53,14 @@ func _al_terminar_combate(victoria: bool) -> void:
 		for miembro: MiembroParty in _party.miembros():
 			miembro.mostrar_estado(ActorMapa.EstadoVisual.NORMAL)
 		EventBus.encuentro_terminado.emit(id_encuentro, false)
+		_party.salir_de_combate()
 		_transicionar(GameState.id_mapa_actual, _ultima_entrada)
 		return
 	var grilla: GrillaMapa = _grilla_exploracion()
 	_party.set_grilla(grilla)
 	_party.reagrupar(Formacion.cadena(grilla, _party.celda_lider(), _party.miembros().size(), []) + _relleno())
 	_camara.objetivo = _party.lider()
-	_party.bloqueado = false
+	_party.salir_de_combate()
 	EventBus.encuentro_terminado.emit(id_encuentro, true)
 
 

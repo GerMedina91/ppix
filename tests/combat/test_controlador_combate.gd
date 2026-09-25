@@ -144,8 +144,8 @@ func test_f4_restaura_a_la_party_fuera_y_dentro_del_combate() -> void:
 	for c: Combatiente in _control.combate().participantes:
 		if c.bando == Combatiente.Bando.PARTY:
 			c.recibir_danio(c.pg, false)
-	_runner.simulate_action_pressed(AtajosDepuracion.ACCION_CURAR)
-	await _runner.simulate_frames(2)
+	# En combate se comprueba en el acto: si se dejan pasar frames, los enemigos ya actúan.
+	(_runner.find_child("AtajosDepuracion") as AtajosDepuracion).curar_party()
 	for c: Combatiente in _control.combate().participantes:
 		if c.bando == Combatiente.Bando.PARTY:
 			assert_int(c.pg).is_equal(c.pg_maximos())
@@ -235,13 +235,20 @@ func test_click_lejano_hace_dos_zancadas_seguidas_como_acciones_separadas() -> v
 func test_costo_previsto_de_un_golpe_es_una_accion() -> void:
 	await _entrar_a_la_zona()
 	assert_bool(await _esperar_turno_de_la_party()).is_true()
+	assert_bool(_control.en_curso()).is_true()
 	var actor: Combatiente = _control.combate().turno_actual()
-	var golpeable: Combatiente = null
+	# Se fuerza la situación: un enemigo pegado al actor activo (combatiente y actor del mapa juntos).
+	var enemigo: Combatiente = null
 	for c: Combatiente in _control.combate().participantes:
-		if not c.es_aliado_de(actor) and Golpe.validar(actor, c, actor.arma_principal(), _control.combate().vision()) == Golpe.Motivo.VALIDO:
-			golpeable = c
-	assert_object(golpeable).override_failure_message("con la semilla 11 el primer actor (a distancia) tiene a quién golpear").is_not_null()
-	assert_int(_control.costo_previsto(golpeable.celda)).is_equal(Combate.COSTO_GOLPE)
+		if not c.es_aliado_de(actor) and not c.condiciones.muerto:
+			enemigo = c
+	var mapa: Mapa = _runner.find_child("MapaActual").get_child(0)
+	var junto: Vector2i = _casilla_vecina_libre(actor.celda)
+	enemigo.celda = junto
+	_control.actor_de(enemigo.id).colocar(junto, mapa.celda_a_posicion(junto))
+	var arma: DefinicionArma = actor.arma_principal()
+	assert_int(Golpe.validar(actor, enemigo, arma, _control.combate().vision())).is_equal(Golpe.Motivo.VALIDO)
+	assert_int(_control.costo_previsto(junto)).is_equal(Combate.COSTO_GOLPE)
 
 
 func test_el_alcance_distingue_una_dos_y_tres_acciones() -> void:
@@ -250,3 +257,61 @@ func test_el_alcance_distingue_una_dos_y_tres_acciones() -> void:
 	var valores: Array = _control.alcance_actual().values()
 	for n: int in [1, 2, 3]:
 		assert_bool(valores.has(n)).override_failure_message("sin casillas a %d Zancadas" % n).is_true()
+
+
+## Casilla vecina transitable y sin ningún combatiente.
+func _casilla_vecina_libre(celda: Vector2i) -> Vector2i:
+	var grilla: GrillaMapa = _control.combate().grilla()
+	for d: Vector2i in [Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 0), Vector2i(0, -1), Vector2i(1, 1), Vector2i(-1, -1), Vector2i(1, -1), Vector2i(-1, 1)]:
+		var c: Vector2i = celda + d
+		if grilla.puede_dar_paso(celda, c) and not _control.combate().participantes.any(func(x: Combatiente) -> bool: return x.celda == c):
+			return c
+	fail("sin casilla vecina libre")
+	return celda
+
+
+## IA de enemigos para el test: el enemigo cuerpo a cuerpo se aleja con una Zancada al empezar su turno.
+func _ia_que_se_aleja(combate: Combate) -> Array[EventoCombate]:
+	var actor: Combatiente = combate.turno_actual()
+	if actor.id == &"EnemigoCuerpoACuerpo" and actor.acciones_restantes == Combatiente.ACCIONES_POR_TURNO:
+		var guerrero: Combatiente = combate.combatiente(&"Miembro1")
+		var casillas: Dictionary = combate.casillas_de_zancada(actor)
+		var lejos: Vector2i = actor.celda
+		for c: Vector2i in casillas:
+			if Medicion.pies_entre(c, guerrero.celda) > Medicion.pies_entre(lejos, guerrero.celda):
+				lejos = c
+		return combate.zancada(lejos)
+	return combate.terminar_turno()
+
+
+func test_aviso_de_golpe_reactivo_pausa_el_combate_y_siempre_dura_la_sesion() -> void:
+	var hud: HudCombate = _runner.find_child("HudCombate")
+	var violaciones: Array[String] = _vigilar_sincronia()
+	_control.ia_enemigos = _ia_que_se_aleja
+	await _entrar_a_la_zona()
+	# Se fuerza la situación: el enemigo cuerpo a cuerpo, pegado al guerrero (Miembro1).
+	var guerrero: Combatiente = _control.combate().combatiente(&"Miembro1")
+	var enemigo: Combatiente = _control.combate().combatiente(&"EnemigoCuerpoACuerpo")
+	var mapa: Mapa = _runner.find_child("MapaActual").get_child(0)
+	assert_bool(await _esperar(func() -> bool: return not _control.animando())).is_true()
+	var junto: Vector2i = _casilla_vecina_libre(guerrero.celda)
+	enemigo.celda = junto
+	_control.actor_de(enemigo.id).colocar(junto, mapa.celda_a_posicion(junto))
+	# La party pasa sus turnos hasta que el enemigo se aleja y aparece el aviso.
+	var aparecio: bool = await _esperar(func() -> bool:
+		if _control.esperando_decision():
+			_control.terminar_turno_jugador()
+		return _control.esperando_reaccion() or not _control.en_curso())
+	assert_bool(aparecio and _control.esperando_reaccion()).override_failure_message("no apareció el aviso").is_true()
+	assert_bool(hud.aviso_visible()).is_true()
+	assert_bool(_control.esperando_decision()).is_false()
+	var celda_en_pausa: Vector2i = enemigo.celda
+	await _runner.simulate_frames(10)
+	assert_that(enemigo.celda).override_failure_message("el combate siguió durante la pausa").is_equal(celda_en_pausa)
+	_control.responder_reaccion(ControladorCombate.Respuesta.SIEMPRE)
+	assert_bool(await _esperar(func() -> bool: return not _control.animando())).is_true()
+	assert_bool(hud.aviso_visible()).is_false()
+	assert_int(guerrero.politica_reacciones).is_equal(Combatiente.PoliticaReaccion.SIEMPRE)
+	assert_bool(Array(hud.lineas_registro()).any(func(l: String) -> bool: return l.begins_with("Miembro1 usa Golpe reactivo")) \
+		or _control.combate() == null or not guerrero.reaccion_disponible).is_true()
+	assert_array(violaciones).is_empty()

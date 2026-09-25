@@ -183,3 +183,28 @@ func test_nunca_no_pregunta_ni_reacciona() -> void:
 	var enemigo: Combatiente = _enemigo(Vector2i(6, 5))
 	var combate: Combate = _combate([guerrero, enemigo], [])
 	assert_array(_tipos(combate.zancada(Vector2i(10, 5)))).is_equal([T.MOV])
+
+
+func test_con_pausa_tras_reacciones_la_zancada_espera_a_continuar() -> void:
+	var guerrero: Combatiente = _guerrero(Vector2i(5, 5))
+	var enemigo: Combatiente = _enemigo(Vector2i(6, 5))
+	var combate: Combate = _combate([guerrero, enemigo], [2])
+	combate.pausar_tras_reacciones = true
+	var eventos: Array[EventoCombate] = combate.zancada(Vector2i(10, 5))
+	assert_array(_tipos(eventos)).is_equal([T.REACCION, T.GOLPE])
+	assert_bool(combate.hay_continuacion()).is_true()
+	assert_that(enemigo.celda).is_equal(Vector2i(6, 5))
+	assert_array(_tipos(combate.golpe(&"guerrero"))).is_equal([T.INVALIDA])
+	assert_array(_tipos(combate.continuar())).is_equal([T.MOV])
+	assert_bool(combate.hay_continuacion()).is_false()
+	assert_that(enemigo.celda).is_equal(Vector2i(10, 5))
+
+
+func test_con_pausa_si_nadie_reacciona_no_hay_nada_que_continuar() -> void:
+	var guerrero: Combatiente = _guerrero(Vector2i(5, 5))
+	guerrero.politica_reacciones = Combatiente.PoliticaReaccion.NUNCA
+	var enemigo: Combatiente = _enemigo(Vector2i(6, 5))
+	var combate: Combate = _combate([guerrero, enemigo], [])
+	combate.pausar_tras_reacciones = true
+	assert_array(_tipos(combate.zancada(Vector2i(10, 5)))).is_equal([T.MOV])
+	assert_bool(combate.hay_continuacion()).is_false()

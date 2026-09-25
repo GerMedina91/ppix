@@ -57,4 +57,4 @@ func test_la_party_entra_al_mapa_a_en_formacion() -> void:
 func test_los_miembros_tienen_definicion_de_reglas() -> void:
 	var runner: GdUnitSceneRunner = scene_runner("res://scenes/world/mundo.tscn")
 	for m: MiembroParty in (runner.find_child("Party") as ControlParty).miembros():
-		assert_object(m.definicion).is_not_null()
+		assert_object(m.definicion_de_reglas()).is_not_null()

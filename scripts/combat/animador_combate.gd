@@ -42,6 +42,8 @@ func animar(evento: EventoCombate, actores: Dictionary[StringName, ActorMapa]) -
 			await _texto(actor, "muerto", COLOR_DANIO)
 		EventoCombate.Tipo.RECUPERACION:
 			await _texto(actor, "recuperación: moribundo %d" % evento.datos.moribundo, COLOR_INFO)
+		EventoCombate.Tipo.REACCION:
+			await _texto(actor, "%s!" % evento.datos.reaccion, COLOR_INFO)
 		EventoCombate.Tipo.TURNO_PERDIDO:
 			await _texto(actor, "pierde el turno", COLOR_INFO)
 		EventoCombate.Tipo.ACCION_INVALIDA:

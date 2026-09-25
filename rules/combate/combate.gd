@@ -27,6 +27,9 @@ var estado: Estado = Estado.SIN_INICIAR
 var ronda: int = 0
 var registro: Array[EventoCombate] = []
 var reacciones: GestorReacciones = GestorReacciones.new(self)
+## La presentación lo activa: después de usar una reacción, la acción interrumpida no sigue sola; espera
+## continuar(), así se puede animar la reacción con el estado del combate en ese punto.
+var pausar_tras_reacciones: bool = false
 
 var _indice_turno: int = 0
 var _dados: Dados
@@ -86,6 +89,15 @@ func pregunta_de_reaccion() -> Dictionary:
 
 func responder_reaccion(usar: bool) -> Array[EventoCombate]:
 	return reacciones.responder(usar)
+
+
+## true si una acción quedó a mitad de camino tras una reacción (con pausar_tras_reacciones).
+func hay_continuacion() -> bool:
+	return reacciones.hay_continuacion()
+
+
+func continuar() -> Array[EventoCombate]:
+	return reacciones.continuar()
 
 
 func grilla() -> GrillaMapa:
@@ -185,7 +197,7 @@ func golpe_de_reaccion(reactor: Combatiente, objetivo: Combatiente, arma: Defini
 
 func terminar_turno() -> Array[EventoCombate]:
 	var actor: Combatiente = turno_actual()
-	if actor == null or hay_reaccion_pendiente():
+	if actor == null or hay_reaccion_pendiente() or hay_continuacion():
 		return []
 	var eventos: Array[EventoCombate] = [_emitir(EventoCombate.new(EventoCombate.Tipo.FIN_TURNO, actor.id))]
 	eventos.append_array(_avanzar_turno())
@@ -312,7 +324,7 @@ func _verificar_fin() -> Array[EventoCombate]:
 func _validar_accion(actor: Combatiente, costo: int, accion: String) -> EventoCombate:
 	if estado != Estado.EN_CURSO or actor == null:
 		return EventoCombate.new(EventoCombate.Tipo.ACCION_INVALIDA, &"", {"accion": accion, "motivo": "el combate no está en curso"})
-	if hay_reaccion_pendiente():
+	if hay_reaccion_pendiente() or hay_continuacion():
 		return _invalida(actor, accion, "esperando una reacción")
 	if not actor.condiciones.puede_actuar():
 		return _invalida(actor, accion, "no puede actuar")

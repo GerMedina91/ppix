@@ -3,12 +3,16 @@ extends RefCounted
 ## Reacciones del combate. Ante un DisparoReaccion busca quién puede reaccionar (en orden de iniciativa)
 ## y resuelve según la política de cada uno: SIEMPRE la usa, NUNCA la ignora, PREGUNTAR detiene el
 ## combate con una pregunta pendiente (evento REACCION_PENDIENTE) hasta que llegue responder().
-## Después sigue con la continuación de la acción que se había interrumpido.
+## Después sigue con la continuación de la acción que se había interrumpido. Si el Combate pide
+## `pausar_tras_reacciones` y se usó alguna reacción, la continuación queda diferida hasta continuar():
+## así la presentación anima la reacción con el estado del combate todavía en ese punto.
 
 ## Referencia débil: el Combate es dueño del gestor (una referencia fuerte formaría un ciclo que no se libera).
 var _combate_ref: WeakRef
 ## {"reactor", "capacidad", "disparo", "restantes", "continuacion"} o vacío.
 var _pendiente: Dictionary = {}
+## Continuación diferida tras usar una reacción (vacía si no hay).
+var _diferida: Callable = Callable()
 
 
 func _init(combate: Combate) -> void:
@@ -28,13 +32,26 @@ func pregunta() -> Dictionary:
 	return _pendiente
 
 
+func hay_continuacion() -> bool:
+	return _diferida.is_valid()
+
+
+## Ejecuta la continuación diferida (la acción interrumpida sigue desde donde quedó).
+func continuar() -> Array[EventoCombate]:
+	if not _diferida.is_valid():
+		return []
+	var continuacion: Callable = _diferida
+	_diferida = Callable()
+	return continuacion.call()
+
+
 func hay_candidatos(disparo: DisparoReaccion) -> bool:
 	return not _candidatos(disparo).is_empty()
 
 
 ## Resuelve las reacciones ante `disparo` y después ejecuta `continuacion` (salvo que quede una pregunta).
 func procesar(disparo: DisparoReaccion, continuacion: Callable) -> Array[EventoCombate]:
-	return _resolver(_candidatos(disparo), disparo, continuacion)
+	return _resolver(_candidatos(disparo), disparo, continuacion, false)
 
 
 func responder(usar: bool) -> Array[EventoCombate]:
@@ -45,12 +62,13 @@ func responder(usar: bool) -> Array[EventoCombate]:
 	var eventos: Array[EventoCombate] = []
 	if usar:
 		eventos.append_array(_usar(p.reactor, p.capacidad, p.disparo))
-	eventos.append_array(_resolver(p.restantes, p.disparo, p.continuacion))
+	eventos.append_array(_resolver(p.restantes, p.disparo, p.continuacion, usar))
 	return eventos
 
 
-func _resolver(candidatos: Array, disparo: DisparoReaccion, continuacion: Callable) -> Array[EventoCombate]:
+func _resolver(candidatos: Array, disparo: DisparoReaccion, continuacion: Callable, ya_se_uso: bool) -> Array[EventoCombate]:
 	var eventos: Array[EventoCombate] = []
+	var se_uso: bool = ya_se_uso
 	while not candidatos.is_empty():
 		var candidato: Array = candidatos.pop_front()
 		var reactor: Combatiente = candidato[0]
@@ -60,14 +78,21 @@ func _resolver(candidatos: Array, disparo: DisparoReaccion, continuacion: Callab
 		match reactor.politica_reacciones:
 			Combatiente.PoliticaReaccion.SIEMPRE:
 				eventos.append_array(_usar(reactor, capacidad, disparo))
+				se_uso = true
 			Combatiente.PoliticaReaccion.PREGUNTAR:
 				_pendiente = {"reactor": reactor, "capacidad": capacidad, "disparo": disparo,
 					"restantes": candidatos, "continuacion": continuacion}
+				if se_uso and _combate().pausar_tras_reacciones:
+					# Hubo reacciones antes de esta pregunta: se animan primero; la pregunta sigue en pie.
+					pass
 				eventos.append(_combate().emitir(EventoCombate.new(EventoCombate.Tipo.REACCION_PENDIENTE, reactor.id,
 					{"reaccion": capacidad.nombre, "disparador": disparo.actor.id})))
 				return eventos
 			_:
 				pass
+	if se_uso and _combate().pausar_tras_reacciones:
+		_diferida = continuacion
+		return eventos
 	eventos.append_array(continuacion.call())
 	return eventos
 

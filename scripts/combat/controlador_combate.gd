@@ -14,6 +14,11 @@ signal combate_terminado(victoria: bool)
 signal evento_mostrado(evento: EventoCombate)
 ## Se emite cuando no queda nada por animar y le toca decidir al jugador.
 signal esperando_jugador
+## Se emite cuando una reacción de la party espera respuesta (el combate queda en pausa).
+signal pregunta_reaccion(texto: String)
+
+## Respuestas al aviso de reacción. SIEMPRE: la usa ahora y en adelante, por el resto de la sesión.
+enum Respuesta { SI, NO, SIEMPRE }
 
 const ACCION_TERMINAR_TURNO: StringName = &"terminar_turno"
 ## Grupo para que herramientas (overlay de depuración) encuentren al controlador.
@@ -21,8 +26,12 @@ const GRUPO: StringName = &"controlador_combate"
 const _SIN_CURSOR: Vector2i = Vector2i(-9999, -9999)
 
 @export var config: ConfigCombate
-## Solo para pruebas y depuración: la IA juega también los turnos de la party.
+## Solo para pruebas y depuración: la IA juega también los turnos de la party (y sus reacciones).
 var auto_jugar_party: bool = false
+## Decide una acción del enemigo en turno: Callable(Combate) -> Array[EventoCombate]. Inyectable en tests.
+var ia_enemigos: Callable = IASimple.jugar_accion
+## Miembros con "Siempre" elegido en el aviso de reacción (dura toda la sesión, no se guarda).
+var _reacciones_siempre: Dictionary[StringName, bool] = {}
 
 var _combate: Combate
 var _encuentro: Encuentro
@@ -109,7 +118,24 @@ func camino_previsto(celda: Vector2i) -> Array[Vector2i]:
 
 ## true si le toca decidir al jugador (turno de un miembro de la party y nada animándose).
 func esperando_decision() -> bool:
-	return en_curso() and not _animando and _cola.is_empty() and _combate.turno_actual().bando == Combatiente.Bando.PARTY
+	return en_curso() and not _animando and _cola.is_empty() and not _combate.hay_reaccion_pendiente() \
+		and _combate.turno_actual().bando == Combatiente.Bando.PARTY
+
+
+## true si el combate está en pausa esperando la respuesta a un aviso de reacción.
+func esperando_reaccion() -> bool:
+	return en_curso() and not _animando and _cola.is_empty() and _combate.hay_reaccion_pendiente()
+
+
+## Respuesta del jugador al aviso de reacción.
+func responder_reaccion(respuesta: Respuesta) -> void:
+	if not esperando_reaccion():
+		return
+	var reactor: Combatiente = _combate.pregunta_de_reaccion().reactor
+	if respuesta == Respuesta.SIEMPRE:
+		_reacciones_siempre[reactor.id] = true
+		reactor.politica_reacciones = Combatiente.PoliticaReaccion.SIEMPRE
+	_encolar(_combate.responder_reaccion(respuesta != Respuesta.NO))
 
 
 func centro_global(celda: Vector2i) -> Vector2:
@@ -137,8 +163,10 @@ func iniciar(encuentro: Encuentro, mapa: Mapa, party: ControlParty, camara: Cama
 	_actores.clear()
 	var participantes: Array[Combatiente] = []
 	for miembro: MiembroParty in party.miembros():
-		var c: Combatiente = Combatiente.desde_personaje(StringName(miembro.name), miembro.definicion, miembro.celda)
-		_aplicar_estado_guardado(c)
+		var c: Combatiente = Combatiente.desde_personaje(StringName(miembro.name), miembro.definicion_de_reglas(), miembro.celda)
+		EstadoPartyCombate.aplicar(c)
+		if auto_jugar_party or _reacciones_siempre.has(c.id):
+			c.politica_reacciones = Combatiente.PoliticaReaccion.SIEMPRE
 		participantes.append(c)
 		_actores[c.id] = miembro
 	for enemigo: EnemigoEnMapa in encuentro.enemigos():
@@ -146,6 +174,7 @@ func iniciar(encuentro: Encuentro, mapa: Mapa, party: ControlParty, camara: Cama
 		participantes.append(c)
 		_actores[c.id] = enemigo
 	_combate = Combate.new(participantes, mapa.construir_grilla(), GameState.dados)
+	_combate.pausar_tras_reacciones = true
 	combate_iniciado.emit()
 	_encolar(_combate.iniciar())
 
@@ -219,6 +248,14 @@ func _procesar_cola() -> void:
 	if _combate.estado != Combate.Estado.EN_CURSO:
 		_terminar()
 		return
+	if _combate.hay_reaccion_pendiente():
+		_resaltados.queue_redraw()
+		pregunta_reaccion.emit(_texto_pregunta())
+		return
+	if _combate.hay_continuacion():
+		# La acción interrumpida por una reacción sigue, ya animada la reacción.
+		_encolar(_combate.continuar())
+		return
 	var actor: Combatiente = _combate.turno_actual()
 	_camara.objetivo = _actores[actor.id]
 	if not _plan.is_empty():
@@ -226,11 +263,16 @@ func _procesar_cola() -> void:
 		_encolar(_combate.zancada(_plan.pop_front()))
 		return
 	if actor.bando == Combatiente.Bando.ENEMIGOS or auto_jugar_party:
-		_encolar(IASimple.jugar_accion(_combate))
+		_encolar(IASimple.jugar_accion(_combate) if actor.bando == Combatiente.Bando.PARTY else ia_enemigos.call(_combate))
 		return
 	_alcance = _combate.alcance_de_zancadas(actor)
 	_resaltados.queue_redraw()
 	esperando_jugador.emit()
+
+
+func _texto_pregunta() -> String:
+	var pregunta: Dictionary = _combate.pregunta_de_reaccion()
+	return "%s: ¿usar %s contra %s?" % [pregunta.reactor.id, (pregunta.capacidad as Capacidad).nombre, pregunta.disparo.actor.id]
 
 
 # --- Fin del combate ---
@@ -238,7 +280,7 @@ func _procesar_cola() -> void:
 func _terminar() -> void:
 	var victoria: bool = _combate.estado == Combate.Estado.VICTORIA
 	if victoria:
-		_guardar_estado_party()
+		EstadoPartyCombate.guardar(_party, _combate)
 		for enemigo: EnemigoEnMapa in _encuentro.enemigos():
 			if _combate.combatiente(StringName(enemigo.name)).condiciones.muerto:
 				enemigo.queue_free()
@@ -247,24 +289,6 @@ func _terminar() -> void:
 	_plan.clear()
 	_resaltados.queue_redraw()
 	combate_terminado.emit(victoria)
-
-
-## PG y herido de la party persisten entre combates (GameState). Moribundos al ganar: se estabilizan.
-func _guardar_estado_party() -> void:
-	for miembro: MiembroParty in _party.miembros():
-		var c: Combatiente = _combate.combatiente(StringName(miembro.name))
-		c.estabilizar()
-		GameState.estado_party[c.id] = {"pg": c.pg, "herido": c.condiciones.herido, "muerto": c.condiciones.muerto}
-
-
-func _aplicar_estado_guardado(c: Combatiente) -> void:
-	var guardado: Dictionary = GameState.estado_party.get(c.id, {})
-	if guardado.is_empty():
-		return
-	c.pg = guardado.pg
-	c.condiciones.herido = guardado.herido
-	c.condiciones.muerto = guardado.get("muerto", false)
-	c.condiciones.inconsciente = c.pg == 0 and not c.condiciones.muerto
 
 
 func _combatiente_vivo_en(celda: Vector2i) -> Combatiente:

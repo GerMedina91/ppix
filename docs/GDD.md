@@ -203,3 +203,5 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
 | 2026-09-25 | Entidad del clérigo del slice: El Umbral (lore en `docs/lore/entidades.md`, datos en `data/entidades/el_umbral.tres`). |
 | 2026-09-25 | M3c: ascendencia humana para los 4 builds (placeholder). Recuperación: PG y espacios en puntos estables; 1 punto de foco por combate. Reacciones con aviso pausado [Sí] [No] [Siempre]. Glosario de clases provisorio. |
 | 2026-09-25 | Patrón de la bruja: El Rencor (`docs/lore/patrones.md`). Verificación de reglas contra Archives of Nethys antes de implementar cada clase. |
+| 2026-09-25 | La party del mundo usa los 4 builds reales (guerrero, pícaro, clérigo, bruja) desde C3 (adelantado de C6 para probar reacciones en el mapa). |
+| 2026-09-25 | Reacciones: el Combate pausa tras usar una reacción (`pausar_tras_reacciones`) y la presentación llama a `continuar()` después de animarla (invariante de sincronía). |

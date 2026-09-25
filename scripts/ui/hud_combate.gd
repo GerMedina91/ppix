@@ -25,6 +25,8 @@ var _activo: Label
 var _registro: Label
 var _ayuda: Label
 var _lineas: PackedStringArray = PackedStringArray()
+var _aviso: PanelContainer
+var _texto_aviso: Label
 
 
 func _ready() -> void:
@@ -34,6 +36,7 @@ func _ready() -> void:
 	controlador.esperando_jugador.connect(_actualizar)
 	controlador.combate_iniciado.connect(_al_iniciar)
 	controlador.combate_terminado.connect(func(_victoria: bool) -> void: visible = false)
+	controlador.pregunta_reaccion.connect(_mostrar_aviso)
 
 
 func lineas_registro() -> PackedStringArray:
@@ -50,6 +53,21 @@ func ayuda_visible() -> bool:
 
 func texto_ayuda() -> String:
 	return _ayuda.text
+
+
+func aviso_visible() -> bool:
+	return _aviso.visible
+
+
+## Aviso de reacción: el combate queda en pausa hasta que el jugador responda.
+func _mostrar_aviso(texto: String) -> void:
+	_texto_aviso.text = texto
+	_aviso.visible = true
+
+
+func _responder(respuesta: ControladorCombate.Respuesta) -> void:
+	controlador.responder_reaccion(respuesta)
+	_actualizar()
 
 
 func _al_iniciar() -> void:
@@ -91,6 +109,7 @@ func _actualizar() -> void:
 			PIP_LLENO.repeat(actual.acciones_restantes), PIP_VACIO.repeat(Combatiente.ACCIONES_POR_TURNO - actual.acciones_restantes),
 			_condiciones(actual)]
 	_ayuda.visible = controlador.esperando_decision()
+	_aviso.visible = controlador.esperando_reaccion()
 
 
 static func _condiciones(c: Combatiente) -> String:
@@ -127,6 +146,34 @@ func _construir() -> void:
 	abajo_der.add_child(_registro)
 	for panel: Control in [arriba, abajo_izq, abajo_der]:
 		add_child(panel)
+	_construir_aviso()
+
+
+func _construir_aviso() -> void:
+	_aviso = _panel()
+	_aviso.mouse_filter = Control.MOUSE_FILTER_STOP
+	_aviso.anchor_left = 0.5
+	_aviso.anchor_right = 0.5
+	_aviso.anchor_top = 0.35
+	_aviso.anchor_bottom = 0.35
+	_aviso.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	_aviso.grow_vertical = Control.GROW_DIRECTION_BOTH
+	var columna: VBoxContainer = VBoxContainer.new()
+	_texto_aviso = _etiqueta("")
+	_texto_aviso.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	columna.add_child(_texto_aviso)
+	var botones: HBoxContainer = HBoxContainer.new()
+	botones.alignment = BoxContainer.ALIGNMENT_CENTER
+	for par: Array in [["Sí", ControladorCombate.Respuesta.SI], ["No", ControladorCombate.Respuesta.NO], ["Siempre", ControladorCombate.Respuesta.SIEMPRE]]:
+		var boton: Button = Button.new()
+		boton.text = par[0]
+		boton.add_theme_font_size_override("font_size", TAMANO_FUENTE)
+		boton.pressed.connect(_responder.bind(par[1]))
+		botones.add_child(boton)
+	columna.add_child(botones)
+	_aviso.add_child(columna)
+	_aviso.visible = false
+	add_child(_aviso)
 
 
 ## Ancla el panel al borde inferior (a la izquierda con x = 0, a la derecha con x = 1): crece hacia arriba

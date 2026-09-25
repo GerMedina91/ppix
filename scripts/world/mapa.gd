@@ -1,11 +1,24 @@
 class_name Mapa
 extends Node2D
 ## Mapa de exploración (y, más adelante, de combate).
-## Traduce entre celdas de la grilla y posiciones globales, y ubica entradas y salidas.
+## Traduce entre celdas de la grilla y posiciones globales, ubica entradas y salidas,
+## y arma la GrillaMapa lógica a partir de los tiles.
+
+## Nombre de la capa de datos del TileSet que indica si un tile se puede pisar.
+const DATO_TRANSITABLE: String = "transitable"
 
 @onready var _suelo: TileMapLayer = $Suelo
 @onready var _entradas: Node = $Entradas
 @onready var _salidas: Node = $Salidas
+
+
+## Construye la grilla lógica: una celda es transitable si su tile tiene `transitable = true`.
+func construir_grilla() -> GrillaMapa:
+	var grilla: GrillaMapa = GrillaMapa.new(_suelo.get_used_rect())
+	for celda: Vector2i in _suelo.get_used_cells():
+		var datos: TileData = _suelo.get_cell_tile_data(celda)
+		grilla.set_transitable(celda, datos.get_custom_data(DATO_TRANSITABLE))
+	return grilla
 
 
 func celda_a_posicion(celda: Vector2i) -> Vector2:

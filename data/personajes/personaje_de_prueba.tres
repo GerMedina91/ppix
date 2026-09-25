@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="DefinicionPersonaje" format=3]
+
+[ext_resource type="Script" path="res://rules/datos/definicion_personaje.gd" id="1_678t6"]
+
+[resource]
+script = ExtResource("1_678t6")
+nombre = "TODO_LORE: personaje de prueba"
+fuerza = 4
+destreza = 2
+constitucion = 2
+sabiduria = 1
+percepcion = 1
+fortaleza = 2
+reflejos = 1
+voluntad = 1
+defensa = 1
+cd_clase = 1
+pg_ascendencia = 8
+pg_clase_por_nivel = 10

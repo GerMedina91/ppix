@@ -110,6 +110,8 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
 - **M0 — Setup:** proyecto Godot, config de render, estructura de carpetas, git, framework de tests.
 - **M1 — Mundo:** tilemap de prueba, movimiento en grilla, cámara, colisiones, transición entre mapas.
 - **M2 — Reglas:** motor de tiradas, grados de éxito, stats de personaje desde Resources.
+  - Hecho: `Dados` (con estado serializable), `Tirada` (NdX+M), `GradoExito`, `Modificador` + `SumaModificadores`, `Competencia`, `Prueba` (con fortuna/infortunio y desglose), `Estadisticas` sobre `DefinicionPersonaje`.
+  - Sin clases ni ascendencias: los números del personaje se cargan a mano hasta definir el contenido del slice.
 - **M3 — Combate:** iniciativa, turnos, tres acciones, ataque/movimiento/condiciones básicas, IA enemiga simple.
   - El costo de movimiento en combate usa la regla de diagonales de PF2e (5/10 pies alternado), calculado en `rules/`, no el costo de AStarGrid2D (que solo sirve para exploración).
   - En combate, las celdas ocupadas por actores bloquean el paso.
@@ -157,3 +159,8 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
 | 2026-09-25 | Paredes cortadas (zócalo de 16 px) en los bordes que dan a la cámara; fondo del proyecto #0a0a0c; F11 alterna pantalla completa. |
 | 2026-09-25 | Transparencia de paredes por tile (no shader), instantánea, sobre una lista genérica de actores visibles (grupo `mantener_visible`). |
 | 2026-09-25 | Duración del paso proporcional a la distancia en grilla (diagonal ×√2); seguidores con cola propia de celdas. |
+| 2026-09-25 | Glosario de reglas (`docs/GLOSARIO.md`) obligatorio en código, UI y textos. |
+| 2026-09-25 | Resources de reglas en `rules/datos/`; `.tres` en `data/`. |
+| 2026-09-25 | Bonificadores siempre con tipo; solo los penalizadores pueden ser sin tipo (se suman todos). |
+| 2026-09-25 | Las CD derivadas (CA, CD de clase, CD de Percepción) son 10 + el modificador total de su Prueba, con el mismo desglose. |
+| 2026-09-25 | Fortuna/infortunio: dos tiradas, mejor/peor; juntos se cancelan. El natural del dado elegido decide el ajuste por 20/1. |

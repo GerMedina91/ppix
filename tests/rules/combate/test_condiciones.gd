@@ -120,3 +120,18 @@ func test_inconsciente_queda_desprevenido_y_con_menos_4_de_estatus() -> void:
 	var ca_normal: int = c.defensa_contra(false).cd()
 	c.recibir_danio(c.pg, false)
 	assert_int(c.defensa_contra(false).cd()).is_equal(ca_normal - 2 - 4)
+
+
+func test_inconsciente_menos_4_a_percepcion_y_reflejos_pero_no_a_fortaleza_ni_voluntad() -> void:
+	var c: Combatiente = _personaje()
+	var antes: Dictionary = {
+		"percepcion": c.prueba_percepcion().modificador_total(),
+		"reflejos": c.prueba_salvacion(Estadisticas.Salvacion.REFLEJOS).modificador_total(),
+		"fortaleza": c.prueba_salvacion(Estadisticas.Salvacion.FORTALEZA).modificador_total(),
+		"voluntad": c.prueba_salvacion(Estadisticas.Salvacion.VOLUNTAD).modificador_total(),
+	}
+	c.recibir_danio(c.pg, false)
+	assert_int(c.prueba_percepcion().modificador_total()).is_equal(antes.percepcion - 4)
+	assert_int(c.prueba_salvacion(Estadisticas.Salvacion.REFLEJOS).modificador_total()).is_equal(antes.reflejos - 4)
+	assert_int(c.prueba_salvacion(Estadisticas.Salvacion.FORTALEZA).modificador_total()).is_equal(antes.fortaleza)
+	assert_int(c.prueba_salvacion(Estadisticas.Salvacion.VOLUNTAD).modificador_total()).is_equal(antes.voluntad)

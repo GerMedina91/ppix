@@ -138,3 +138,23 @@ class _DadosMixtos extends Dados:
 		if not _fijos.is_empty():
 			return _fijos.pop_front()
 		return super(caras)
+
+
+func test_con_remata_caidos_ataca_al_caido_mas_cercano() -> void:
+	var caido: Combatiente = Combatiente.desde_personaje(&"caido", load(CAC), Vector2i(6, 5))
+	var lejos: Combatiente = Combatiente.desde_personaje(&"lejos", load(CAC), Vector2i(12, 5))
+	var criatura: DefinicionCriatura = load(ENEMIGO_CAC).duplicate()
+	criatura.remata_caidos = true
+	var e: Combatiente = Combatiente.desde_criatura(&"e", criatura, Vector2i(5, 5))
+	var combate: Combate = _combate([caido, lejos, e])
+	caido.recibir_danio(caido.pg, false)
+	var eventos: Array[EventoCombate] = IASimple.jugar_turno(combate)
+	var objetivos: Array = eventos.filter(func(ev: EventoCombate) -> bool: return ev.tipo == EventoCombate.Tipo.GOLPE) \
+		.map(func(ev: EventoCombate) -> String: return ev.datos.objetivo)
+	assert_array(objetivos).is_not_empty()
+	assert_str(objetivos[0]).is_equal("caido")
+
+
+func test_los_enemigos_de_prueba_no_rematan_caidos() -> void:
+	assert_bool((load(ENEMIGO_CAC) as DefinicionCriatura).remata_caidos).is_false()
+	assert_bool((load(ENEMIGO_DIST) as DefinicionCriatura).remata_caidos).is_false()

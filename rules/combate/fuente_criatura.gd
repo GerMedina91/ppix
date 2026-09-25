@@ -43,6 +43,10 @@ func bonificador_danio(_arma: DefinicionArma) -> int:
 	return _criatura.bonificador_danio
 
 
+func remata_caidos() -> bool:
+	return _criatura.remata_caidos
+
+
 func defensa() -> Prueba:
 	return Prueba.fija("CA", "CA de la criatura", _criatura.ca - Prueba.BASE_CD)
 

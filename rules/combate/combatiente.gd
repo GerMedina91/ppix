@@ -69,15 +69,35 @@ func empezar_turno() -> void:
 	ataques_en_turno = 0
 
 
+## Percepción con las condiciones aplicadas (inconsciente: -4 de estatus).
+func prueba_percepcion() -> Prueba:
+	var prueba: Prueba = fuente.prueba_percepcion()
+	_aplicar_inconsciente(prueba)
+	return prueba
+
+
+## Tirada de salvación con las condiciones aplicadas (inconsciente: -4 de estatus a Reflejos).
+func prueba_salvacion(salvacion: Estadisticas.Salvacion) -> Prueba:
+	var prueba: Prueba = fuente.prueba_salvacion(salvacion)
+	if salvacion == Estadisticas.Salvacion.REFLEJOS:
+		_aplicar_inconsciente(prueba)
+	return prueba
+
+
 ## Defensa frente a un ataque, con las condiciones del defensor. `flanqueado_por_el_atacante` lo decide
 ## Flanqueo (solo frente a quien flanquea).
 func defensa_contra(flanqueado_por_el_atacante: bool) -> Prueba:
 	var prueba: Prueba = fuente.defensa()
 	if flanqueado_por_el_atacante or condiciones.desprevenido or condiciones.inconsciente:
 		prueba.modificadores.append(Modificador.new(PENALIZADOR_DESPREVENIDO, Modificador.Tipo.CIRCUNSTANCIA, "desprevenido"))
+	_aplicar_inconsciente(prueba)
+	return prueba
+
+
+## Inconsciente: -4 de estatus a CA, Percepción y Reflejos.
+func _aplicar_inconsciente(prueba: Prueba) -> void:
 	if condiciones.inconsciente:
 		prueba.modificadores.append(Modificador.new(PENALIZADOR_INCONSCIENTE, Modificador.Tipo.ESTATUS, "inconsciente"))
-	return prueba
 
 
 ## Aplica daño. Personajes: a 0 PG caen moribundos (reglas completas). Criaturas: mueren a 0 PG.

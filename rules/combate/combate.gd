@@ -40,7 +40,7 @@ func iniciar() -> Array[EventoCombate]:
 	var eventos: Array[EventoCombate] = []
 	var tiradas: Dictionary[Combatiente, int] = {}
 	for c: Combatiente in participantes:
-		var resultado: ResultadoPrueba = c.fuente.prueba_percepcion().resolver(_dados, 0)
+		var resultado: ResultadoPrueba = c.prueba_percepcion().resolver(_dados, 0)
 		tiradas[c] = resultado.total
 		eventos.append(_emitir(EventoCombate.new(EventoCombate.Tipo.INICIATIVA, c.id, {"total": resultado.total, "prueba": resultado})))
 	orden = participantes.duplicate()

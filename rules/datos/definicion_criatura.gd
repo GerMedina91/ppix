@@ -22,6 +22,11 @@ extends Resource
 @export var bonificador_danio: int = 0
 @export var armas: Array[DefinicionArma] = []
 
+@export_group("Perfil de IA")
+## Si es true, también ataca a personajes caídos (inconscientes). Decisión de diseño pendiente;
+## por defecto false (GDD, pilar 4: la muerte tiene que sentirse justa).
+@export var remata_caidos: bool = false
+
 
 func errores_de_datos() -> PackedStringArray:
 	var errores: PackedStringArray = PackedStringArray()

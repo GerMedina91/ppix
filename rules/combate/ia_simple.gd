@@ -6,7 +6,7 @@ extends RefCounted
 ## 2. Si no, Zancada: cuerpo a cuerpo, a una casilla desde la que llegue al objetivo más cercano;
 ##    a distancia, a una casilla desde la que pueda disparar. Si no llega, se acerca lo más posible.
 ## 3. A distancia: si empieza pegado a un oponente, primero se aleja con un Paso (si hay dónde).
-## No ataca a personajes caídos (inconscientes): la muerte tiene que sentirse justa (GDD, pilar 4).
+## Caídos (inconscientes): solo los ataca si su perfil de IA tiene `remata_caidos` (por defecto no).
 
 ## Tope de seguridad de decisiones por turno (cada una gasta al menos una acción o termina).
 const _DECISIONES_MAXIMAS: int = 6
@@ -39,11 +39,13 @@ static func jugar_turno(combate: Combate) -> Array[EventoCombate]:
 	return eventos
 
 
-## Oponentes en pie (no se ataca a caídos).
+## Oponentes vivos que la IA considera: en pie, o también caídos si su perfil remata caídos.
 static func _oponentes(combate: Combate, actor: Combatiente) -> Array[Combatiente]:
 	var lista: Array[Combatiente] = []
 	for c: Combatiente in combate.participantes:
-		if not c.es_aliado_de(actor) and c.condiciones.puede_actuar():
+		if c.es_aliado_de(actor) or c.condiciones.muerto:
+			continue
+		if c.condiciones.puede_actuar() or actor.fuente.remata_caidos():
 			lista.append(c)
 	return lista
 

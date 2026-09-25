@@ -46,6 +46,11 @@ func prueba_salvacion(_salvacion: Estadisticas.Salvacion) -> Prueba:
 	return Prueba.plana("Tirada de salvación")
 
 
+## Perfil de IA: si también ataca a personajes caídos.
+func remata_caidos() -> bool:
+	return false
+
+
 ## true si usa las reglas de moribundo, herido e inconsciente (personajes); false si muere a 0 PG.
 func usa_reglas_de_moribundo() -> bool:
 	return false

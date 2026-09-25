@@ -4,4 +4,5 @@
 
 [resource]
 script = ExtResource("1_but2e")
+alfa_pared_transparente = 0.35
 segundos_por_celda = 0.18

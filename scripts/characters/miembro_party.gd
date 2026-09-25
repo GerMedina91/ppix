@@ -18,6 +18,15 @@ var _moviendose: bool = false
 var _tween: Tween
 
 
+func _ready() -> void:
+	add_to_group(OclusionParedes.GRUPO_VISIBLES)
+
+
+## Rect del sprite en pantalla, para que las paredes que lo tapan se vuelvan transparentes.
+func rect_visible_global() -> Rect2:
+	return Rect2(global_position + _origen_placeholder(), TAMANO_PLACEHOLDER)
+
+
 func esta_moviendose() -> bool:
 	return _moviendose
 
@@ -51,5 +60,8 @@ func _al_terminar_paso() -> void:
 
 
 func _draw() -> void:
-	var origen: Vector2 = Vector2(-TAMANO_PLACEHOLDER.x / 2.0, -TAMANO_PLACEHOLDER.y)
-	draw_rect(Rect2(origen, TAMANO_PLACEHOLDER), color_placeholder)
+	draw_rect(Rect2(_origen_placeholder(), TAMANO_PLACEHOLDER), color_placeholder)
+
+
+func _origen_placeholder() -> Vector2:
+	return Vector2(-TAMANO_PLACEHOLDER.x / 2.0, -TAMANO_PLACEHOLDER.y)

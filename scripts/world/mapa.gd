@@ -17,7 +17,7 @@ const VECINAS: Array[Vector2i] = [
 ]
 
 @onready var _suelo: TileMapLayer = $Suelo
-@onready var _paredes: TileMapLayer = $Paredes
+@onready var _paredes: CapaParedes = $Paredes
 @onready var _entradas: Node = $Entradas
 @onready var _salidas: Node = $Salidas
 
@@ -75,6 +75,11 @@ func rect_global() -> Rect2:
 	rect.position.y -= _alto_maximo_sobre_el_suelo()
 	rect.size.y += _alto_maximo_sobre_el_suelo()
 	return rect
+
+
+## Opacidad que usan las paredes mientras tapan a un actor visible.
+func configurar_transparencia(alfa: float) -> void:
+	_paredes.alfa_transparente = alfa
 
 
 func celda_de_entrada(id_entrada: StringName) -> Vector2i:

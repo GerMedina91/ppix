@@ -50,6 +50,7 @@ func _cargar_mapa(id_mapa: StringName, id_entrada: StringName) -> void:
 		_mapa.queue_free()
 	_mapa = (load(definicion.ruta_escena) as PackedScene).instantiate()
 	_contenedor_mapa.add_child(_mapa)
+	_mapa.configurar_transparencia(config.alfa_pared_transparente)
 	_party.entrar_a_mapa(_mapa, _mapa.construir_grilla(), _mapa.celda_de_entrada(id_entrada))
 	_camara.objetivo = _party.lider()
 	_camara.ajustar_a_mapa(_mapa.rect_global())

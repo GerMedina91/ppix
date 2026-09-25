@@ -112,36 +112,28 @@ func casillas_de_zancada(c: Combatiente) -> Dictionary[Vector2i, int]:
 
 
 func camino_de_zancada(c: Combatiente, destino: Vector2i) -> Array[Vector2i]:
-	return camino_de_zancada_desde(c, c.celda, destino)
+	return _movimiento.camino(c.celda, destino, _bloqueadas_para(c), _de_aliados_de(c))
 
 
-## Camino de una Zancada de `c` que empieza en `desde` (para previsualizar planes de varias Zancadas).
-func camino_de_zancada_desde(c: Combatiente, desde: Vector2i, destino: Vector2i) -> Array[Vector2i]:
-	return _movimiento.camino(desde, destino, _bloqueadas_para(c), _de_aliados_de(c))
-
-
-## Cantidad mínima de Zancadas para cada casilla, con las acciones que le quedan a `c`.
-func alcance_de_zancadas(c: Combatiente) -> Dictionary[Vector2i, int]:
-	return _movimiento.alcance_por_zancadas(c.celda, c.fuente.velocidad_pies(), c.acciones_restantes / COSTO_ZANCADA,
-		_bloqueadas_para(c), _de_aliados_de(c))
-
-
-## Dónde termina cada Zancada para llegar a `destino` (vacío si no le alcanzan las acciones).
-## Cada Zancada se hace por separado con zancada(): son acciones distintas.
-func plan_de_zancadas(c: Combatiente, destino: Vector2i) -> Array[Vector2i]:
-	return _movimiento.plan_de_zancadas(c.celda, destino, c.fuente.velocidad_pies(), c.acciones_restantes / COSTO_ZANCADA,
+## Alcance de `c` con las Zancadas que le permiten sus acciones: casillas, plan y recorrido de cada una.
+func alcance_de_zancadas(c: Combatiente) -> AlcanceZancadas:
+	return _movimiento.alcance_de_zancadas(c.celda, c.fuente.velocidad_pies(), c.acciones_restantes / COSTO_ZANCADA,
 		_bloqueadas_para(c), _de_aliados_de(c))
 
 
 # --- Acciones (intenciones) ---
 
-func zancada(destino: Vector2i) -> Array[EventoCombate]:
+## `recorrido`: casillas por las que pasa (p. ej. el tramo previsto de un plan de varias Zancadas);
+## si falta, va por el camino más barato.
+func zancada(destino: Vector2i, recorrido: Array[Vector2i] = []) -> Array[EventoCombate]:
 	var actor: Combatiente = turno_actual()
 	var invalido: EventoCombate = _validar_accion(actor, COSTO_ZANCADA, ACCION_ZANCADA)
 	if invalido != null:
 		return [invalido]
-	var camino: Array[Vector2i] = camino_de_zancada(actor, destino)
-	if camino.is_empty() or MovimientoCombate.costo_de(actor.celda, camino) > actor.fuente.velocidad_pies():
+	var camino: Array[Vector2i] = recorrido if not recorrido.is_empty() else camino_de_zancada(actor, destino)
+	var valido: bool = _movimiento.es_camino_valido(actor.celda, camino, _bloqueadas_para(actor), _de_aliados_de(actor)) \
+		and camino.back() == destino and MovimientoCombate.costo_de(actor.celda, camino) <= actor.fuente.velocidad_pies()
+	if not valido:
 		return [_invalida(actor, ACCION_ZANCADA, "fuera del alcance de la Zancada")]
 	actor.gastar_acciones(COSTO_ZANCADA)
 	return _avanzar_zancada(actor, camino, 0, false)

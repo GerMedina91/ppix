@@ -44,10 +44,12 @@ var _actores: Dictionary[StringName, ActorMapa] = {}
 var _cola: Array[EventoCombate] = []
 var _animando: bool = false
 var _celda_cursor: Vector2i = _SIN_CURSOR
-## Casilla -> cantidad mínima de Zancadas (1 a 3) en el turno del jugador.
-var _alcance: Dictionary[Vector2i, int] = {}
-## Zancadas pendientes de un movimiento de varias acciones (se ejecutan de a una, animando cada una).
-var _plan: Array[Vector2i] = []
+## Alcance, caminos y objetivos de la decisión en curso del jugador (null si no hay decisión).
+var _prevision: PrevisionTurno
+## Tramos pendientes de un movimiento de varias Zancadas (se ejecutan de a una, animando cada una).
+var _plan: Array[Array] = []
+## Mitad del tamaño del rombo de una casilla (del TileSet del mapa del combate).
+var _medio_rombo: Vector2 = Vector2.ZERO
 
 
 func _ready() -> void:
@@ -86,34 +88,29 @@ func celda_cursor() -> Vector2i:
 
 ## Casilla -> cantidad mínima de Zancadas, durante la decisión del jugador.
 func alcance_actual() -> Dictionary[Vector2i, int]:
-	return _alcance
+	var prevision: PrevisionTurno = prevision_actual()
+	return prevision.alcance.por_casilla if prevision != null else {} as Dictionary[Vector2i, int]
 
 
 ## Costo en acciones de hacer click en `celda` ahora: Zancadas necesarias o el Golpe; 0 si no se puede.
 func costo_previsto(celda: Vector2i) -> int:
-	if not esperando_decision():
-		return 0
-	var actor: Combatiente = _combate.turno_actual()
-	var objetivo: Combatiente = _combatiente_vivo_en(celda)
-	if objetivo != null:
-		if objetivo.es_aliado_de(actor) or actor.arma_principal() == null:
-			return 0
-		var valido: bool = Golpe.validar(actor, objetivo, actor.arma_principal(), _combate.vision()) == Golpe.Motivo.VALIDO
-		return Combate.COSTO_GOLPE if valido and actor.acciones_restantes >= Combate.COSTO_GOLPE else 0
-	return _alcance.get(celda, 0) * Combate.COSTO_ZANCADA
+	var prevision: PrevisionTurno = prevision_actual()
+	return prevision.costo(celda) if prevision != null else 0
 
 
 ## Camino completo (todas las Zancadas) hasta `celda`, para la previsualización.
 func camino_previsto(celda: Vector2i) -> Array[Vector2i]:
-	var camino: Array[Vector2i] = []
-	if not esperando_decision() or not _alcance.has(celda):
-		return camino
-	var actor: Combatiente = _combate.turno_actual()
-	var desde: Vector2i = actor.celda
-	for fin: Vector2i in _combate.plan_de_zancadas(actor, celda):
-		camino.append_array(_combate.camino_de_zancada_desde(actor, desde, fin))
-		desde = fin
-	return camino
+	var prevision: PrevisionTurno = prevision_actual()
+	return prevision.camino(celda) if prevision != null else [] as Array[Vector2i]
+
+
+## Previsión de la decisión en curso: se calcula una vez y se rehace solo si cambió el estado del combate.
+func prevision_actual() -> PrevisionTurno:
+	if not esperando_decision():
+		return null
+	if _prevision == null or not _prevision.vigente(_combate):
+		_prevision = PrevisionTurno.new(_combate)
+	return _prevision
 
 
 ## true si le toca decidir al jugador (turno de un miembro de la party y nada animándose).
@@ -145,7 +142,7 @@ func centro_global(celda: Vector2i) -> Vector2:
 ## Rombo de la casilla en coordenadas globales.
 func rombo_global(celda: Vector2i) -> PackedVector2Array:
 	var centro: Vector2 = centro_global(celda)
-	var medio: Vector2 = Vector2((_mapa.get_node("Suelo") as TileMapLayer).tile_set.tile_size) / 2.0
+	var medio: Vector2 = _medio_rombo
 	return PackedVector2Array([
 		centro + Vector2(0, -medio.y), centro + Vector2(medio.x, 0),
 		centro + Vector2(0, medio.y), centro + Vector2(-medio.x, 0)])
@@ -158,6 +155,7 @@ func iniciar(encuentro: Encuentro, mapa: Mapa, party: ControlParty, camara: Cama
 	_mapa = mapa
 	_party = party
 	_camara = camara
+	_medio_rombo = Vector2((mapa.get_node("Suelo") as TileMapLayer).tile_set.tile_size) / 2.0
 	_party.entrar_en_combate()
 	_animador = AnimadorCombate.new(config, mapa, get_parent(), camara)
 	_actores.clear()
@@ -189,11 +187,11 @@ func click_en_celda(celda: Vector2i, es_paso: bool = false) -> void:
 	elif es_paso:
 		_encolar(_combate.paso(celda))
 	else:
-		_plan = _combate.plan_de_zancadas(_combate.turno_actual(), celda)
+		_plan = prevision_actual().alcance.tramos(celda)
 		if _plan.is_empty():
 			_encolar(_combate.zancada(celda))  # imposible: el evento informa el motivo
 		else:
-			_encolar(_combate.zancada(_plan.pop_front()))
+			_zancada_del_plan()
 
 
 func terminar_turno_jugador() -> void:
@@ -236,7 +234,7 @@ func _encolar(eventos: Array[EventoCombate]) -> void:
 
 func _procesar_cola() -> void:
 	_animando = true
-	_alcance.clear()
+	_prevision = null
 	_resaltados.queue_redraw()
 	while not _cola.is_empty():
 		var evento: EventoCombate = _cola.pop_front()
@@ -260,14 +258,21 @@ func _procesar_cola() -> void:
 	_camara.objetivo = _actores[actor.id]
 	if not _plan.is_empty():
 		# Siguiente Zancada de un movimiento de varias acciones (cada una es una acción aparte).
-		_encolar(_combate.zancada(_plan.pop_front()))
+		_zancada_del_plan()
 		return
 	if actor.bando == Combatiente.Bando.ENEMIGOS or auto_jugar_party:
 		_encolar(IASimple.jugar_accion(_combate) if actor.bando == Combatiente.Bando.PARTY else ia_enemigos.call(_combate))
 		return
-	_alcance = _combate.alcance_de_zancadas(actor)
+	_prevision = PrevisionTurno.new(_combate)
 	_resaltados.queue_redraw()
 	esperando_jugador.emit()
+
+
+## Ejecuta la siguiente Zancada del plan por el mismo recorrido que se previsualizó.
+func _zancada_del_plan() -> void:
+	var tramo: Array[Vector2i] = []
+	tramo.assign(_plan.pop_front())
+	_encolar(_combate.zancada(tramo.back(), tramo))
 
 
 func _texto_pregunta() -> String:

@@ -34,22 +34,20 @@ func _ready() -> void:
 func _draw() -> void:
 	if controlador == null or not controlador.en_curso():
 		return
-	var combate: Combate = controlador.combate()
-	var actor: Combatiente = combate.turno_actual()
-	_rombo(actor.celda, COLOR_ACTIVO)
-	if not controlador.esperando_decision():
+	_rombo(controlador.combate().turno_actual().celda, COLOR_ACTIVO)
+	# Todo sale de la previsión de la decisión en curso: acá solo se consulta.
+	var prevision: PrevisionTurno = controlador.prevision_actual()
+	if prevision == null:
 		return
-	var alcance: Dictionary[Vector2i, int] = controlador.alcance_actual()
+	var alcance: Dictionary[Vector2i, int] = prevision.alcance.por_casilla
 	for casilla: Vector2i in alcance:
 		_rombo(casilla, COLOR_POR_ZANCADAS[alcance[casilla]])
 	var cursor: Vector2i = controlador.celda_cursor()
-	for casilla: Vector2i in controlador.camino_previsto(cursor):
+	for casilla: Vector2i in prevision.camino(cursor):
 		_rombo(casilla, COLOR_CAMINO)
-	var arma: DefinicionArma = actor.arma_principal()
-	for c: Combatiente in combate.participantes:
-		if arma != null and Golpe.validar(actor, c, arma, combate.vision()) == Golpe.Motivo.VALIDO:
-			_rombo(c.celda, COLOR_OBJETIVO)
-	var costo: int = controlador.costo_previsto(cursor)
+	for casilla: Vector2i in prevision.golpeables:
+		_rombo(casilla, COLOR_OBJETIVO)
+	var costo: int = prevision.costo(cursor)
 	if costo > 0:
 		_texto_costo(cursor, PIP_ACCION.repeat(costo))
 

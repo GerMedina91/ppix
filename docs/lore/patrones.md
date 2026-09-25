@@ -14,7 +14,8 @@ hambriento de que alguien lo siga sintiendo, y elige a sus brujas entre quienes 
 - **Truco de maleficio:** Mal de ojo (*Evil Eye*, Player Core p. 386): 1 acción, 30 pies, 1 criatura, salvación de
   Voluntad, sostenido hasta 1 minuto. Fallo: indispuesto 1; fallo crítico: indispuesto 2. Mientras el conjuro esté
   activo y la bruja vea al objetivo, el indispuesto no puede bajar de 1.
-- **Conjuro otorgado:** Debilitar (*Enfeeble*) — efectos a verificar en AoN antes de implementarlo (C4).
+- **Conjuro otorgado:** Debilitar (*Enfeeble*, Player Core p. 329): 2 acciones, 30 pies, Fortaleza. Aplica *enfeebled*
+  (debilitado, penalizador a lo basado en Fuerza), no indispuesto. Detalle en `docs/verificacion/c4_conjuros.md`.
 - **Familiar:** su rol mecánico se pospone.
 
 > **Nota de diseño (no implementar):** el pacto podría cobrarse en recuerdos de agravios; pendiente de definir con Germán.

@@ -80,10 +80,11 @@ Mundo no lineal, muchos mapas conectados, mínimos o nulos marcadores de misión
   - **[a evaluar]** Steam Deck (1280×800) queda a ×1; evaluar más adelante un zoom de cámara.
 - Personajes: placeholder 32×56; tamaño final a definir con el sprite canónico del Eco. Retratos de diálogo 96–128 px.
 - **Y-sort** desde el principio: todo lo que se para sobre el mapa (party, paredes, objetos) se ordena por la posición de su base.
-- **[planificado]** Transparencia de paredes cuando un miembro de la party queda detrás. Por eso las paredes van en una capa propia, separada del suelo.
+- **Transparencia de paredes** cuando tapan a un actor que hay que mantener visible (hoy la party; en M3 también enemigos y NPCs).
   - Hecho: capa `Paredes` separada del suelo, con y-sort junto con la party.
   - Criterio: una pared tapa a un miembro si su base está delante (y-sort mayor) y su rect en pantalla se superpone con el del sprite.
-  - Opciones de implementación (decidir al hacerlo): (a) por tile, con `_tile_data_runtime_update` de TileMapLayer para bajar el alfa de las celdas que tapan; (b) shader en la capa `Paredes` con las posiciones de los miembros como uniform, que recorta un área alrededor de cada uno.
+  - Implementado por tile (`_tile_data_runtime_update` de TileMapLayer), cambio instantáneo, opacidad en la config. Solo las paredes con el dato `se_transparenta`. Actores: grupo `mantener_visible`.
+  - **[a futuro]** Fundido suave de la opacidad.
   - Observación de las pruebas: con paredes de 64 px de cara, una pared tapa casi entero a un personaje hasta dos celdas detrás.
 - **Paredes cortadas:** las paredes de los bordes que dan a la cámara (bordes inferiores del rombo) son zócalos de ~16 px de cara; las del fondo y las interiores son altas. La transparencia aplica a las interiores.
 - Generación con PixelLab + retoque en Aseprite. Todo asset final se pasa a modo indexado con la paleta del proyecto.
@@ -154,3 +155,5 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
 | 2026-09-25 | Teclado en direcciones de pantalla, 8 direcciones combinando teclas (reemplaza "teclado 4 direcciones"). |
 | 2026-09-25 | Personaje placeholder 32×56; tamaño final con el sprite canónico del Eco. |
 | 2026-09-25 | Paredes cortadas (zócalo de 16 px) en los bordes que dan a la cámara; fondo del proyecto #0a0a0c; F11 alterna pantalla completa. |
+| 2026-09-25 | Transparencia de paredes por tile (no shader), instantánea, sobre una lista genérica de actores visibles (grupo `mantener_visible`). |
+| 2026-09-25 | Duración del paso proporcional a la distancia en grilla (diagonal ×√2); seguidores con cola propia de celdas. |

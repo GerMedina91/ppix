@@ -2,6 +2,9 @@ extends Node2D
 ## Raíz del mundo: carga el mapa actual como hijo y ubica a la party.
 ## La party y la cámara persisten entre mapas; solo se reemplaza el mapa.
 ## Al pisar una salida hace la transición con fundido y avisa por EventBus.mapa_cambiado.
+##
+## Y-sort: Mundo, MapaActual, cada Mapa, su capa Paredes y Party tienen y_sort_enabled,
+## así las paredes y los miembros de la party se ordenan juntos por la posición de su base.
 
 @export var catalogo: CatalogoMapas
 @export var config: ConfigExploracion

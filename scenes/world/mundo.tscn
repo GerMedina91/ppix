@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/fundido.tscn" id="7_t8boj"]
 
 [node name="Mundo" type="Node2D" unique_id=459014428]
+y_sort_enabled = true
 script = ExtResource("1_8cwwk")
 catalogo = ExtResource("2_kn5no")
 config = ExtResource("4_h2l7i")
@@ -16,6 +17,7 @@ id_mapa_inicial = &"mapa_prueba_a"
 id_entrada_inicial = &"inicio"
 
 [node name="MapaActual" type="Node2D" parent="." unique_id=1379759301]
+y_sort_enabled = true
 
 [node name="Party" type="Node2D" parent="." unique_id=1024725282]
 y_sort_enabled = true

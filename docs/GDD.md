@@ -119,6 +119,10 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
   - Las entradas de mapa necesitan posiciones de formación para la party (ver 4.1).
   - Dividido en M3a (reglas en `rules/`, sin escenas) y M3b (presentación en el mapa).
   - M3a hecho: `Medicion`, `MovimientoCombate`, `LineaVision`, `Combatiente` (+ `FuenteEstadisticas`), `Condiciones`, `Flanqueo`, `Golpe`, `Combate` (eventos, reproducible) e `IASimple`.
+  - M3b hecho: formación de entrada, encuentros (`Encuentro` + `DisparadorEncuentro`/`ZonaEncuentro`), `ControladorCombate` (turnos, animaciones, resaltados), `HudCombate` con registro y desglose, capas F3 de rangos y línea de visión, F4 de curación (debug).
+  - **[provisorio]** Victoria con miembros moribundos: se estabilizan (pierden moribundo, herido +1) y quedan inconscientes a 0 PG hasta curarlos.
+  - **[placeholder M4]** Derrota: la party se cura y vuelve a la última entrada del mapa.
+  - **[pendiente]** En exploración, los miembros caídos (0 PG) siguen caminando en la fila.
   - Flanqueo: el flanqueado queda desprevenido **solo frente a las criaturas que lo flanquean**.
   - Alcance de 10 pies: llega a dos casillas en diagonal aunque por la regla de diagonales contaría 15 pies.
   - Moribundo, herido e inconsciente con reglas completas para la party; los enemigos mueren a 0 PG.
@@ -178,3 +182,5 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
 | 2026-09-25 | M3 aprobado: flanqueo solo frente a quienes flanquean; excepción del alcance de 10 pies; moribundo/herido completos; sin reacciones; disparador de encuentro genérico. |
 | 2026-09-25 | IA enemiga: no ataca a personajes caídos (pilar 4: muerte justa). |
 | 2026-09-25 | En combate, los oponentes no muertos bloquean el paso; los aliados se atraviesan pero no se termina en su casilla. |
+| 2026-09-25 | Encuentro de prueba en el mapa B; el mapa A queda para pruebas de exploración. |
+| 2026-09-25 | Inconsciente: -4 de estatus a CA, Percepción y Reflejos. Perfil de IA `remata_caidos` por criatura (por defecto false; decisión pendiente). |

@@ -184,3 +184,5 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
 | 2026-09-25 | En combate, los oponentes no muertos bloquean el paso; los aliados se atraviesan pero no se termina en su casilla. |
 | 2026-09-25 | Encuentro de prueba en el mapa B; el mapa A queda para pruebas de exploración. |
 | 2026-09-25 | Inconsciente: -4 de estatus a CA, Percepción y Reflejos. Perfil de IA `remata_caidos` por criatura (por defecto false; decisión pendiente). |
+| 2026-09-25 | ControlParty con modos EXPLORACION/COMBATE: en combate se desconectan la fila india y el aviso de pasos del líder. |
+| 2026-09-25 | La IA decide de a una acción; cada acción se anima antes de la siguiente (estado del Combate y mapa siempre sincronizados). |

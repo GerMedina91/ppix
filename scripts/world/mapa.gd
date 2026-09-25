@@ -20,6 +20,25 @@ const VECINAS: Array[Vector2i] = [
 @onready var _paredes: CapaParedes = $Paredes
 @onready var _entradas: Node = $Entradas
 @onready var _salidas: Node = $Salidas
+## Opcional: nodo con los Encuentros del mapa.
+@onready var _encuentros: Node = get_node_or_null("Encuentros")
+
+
+func _ready() -> void:
+	# Los enemigos de los encuentros se ubican en la casilla de su posición.
+	for encuentro: Encuentro in encuentros():
+		for enemigo: EnemigoEnMapa in encuentro.enemigos():
+			var casilla: Vector2i = posicion_a_celda(enemigo.global_position)
+			enemigo.colocar(casilla, celda_a_posicion(casilla))
+
+
+func encuentros() -> Array[Encuentro]:
+	var lista: Array[Encuentro] = []
+	if _encuentros != null:
+		for hijo: Node in _encuentros.get_children():
+			if hijo is Encuentro:
+				lista.append(hijo)
+	return lista
 
 
 ## Construye la grilla lógica: una celda es transitable si su suelo tiene `transitable = true`

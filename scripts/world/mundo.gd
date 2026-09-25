@@ -11,6 +11,9 @@ extends Node2D
 @export var id_mapa_inicial: StringName = &""
 @export var id_entrada_inicial: StringName = &""
 
+## Se emite con el Encuentro que se disparó (lo toma el controlador de combate).
+signal encuentro_disparado(encuentro: Encuentro)
+
 var _mapa: Mapa
 
 @onready var _contenedor_mapa: Node2D = $MapaActual
@@ -28,6 +31,20 @@ func _al_llegar_lider(celda: Vector2i) -> void:
 	var salida: SalidaMapa = _mapa.salida_en(celda)
 	if salida != null:
 		_transicionar(salida.id_mapa_destino, salida.id_entrada_destino)
+		return
+	_revisar_encuentros()
+
+
+## Dispara el primer encuentro sin resolver cuyo disparador se active con las casillas de la party.
+func _revisar_encuentros() -> void:
+	var celdas: Array[Vector2i] = []
+	for miembro: MiembroParty in _party.miembros():
+		celdas.append(miembro.celda)
+	for encuentro: Encuentro in _mapa.encuentros():
+		if encuentro.evaluar(celdas):
+			encuentro_disparado.emit(encuentro)
+			EventBus.encuentro_iniciado.emit(encuentro.id)
+			return
 
 
 ## Bloquea a la party, funde a negro, cambia de mapa y vuelve a aclarar.
@@ -52,6 +69,10 @@ func _cargar_mapa(id_mapa: StringName, id_entrada: StringName) -> void:
 	_contenedor_mapa.add_child(_mapa)
 	_mapa.configurar_transparencia(config.alfa_pared_transparente)
 	var grilla: GrillaMapa = _mapa.construir_grilla()
+	# En exploración no se camina a través de los enemigos (en combate lo decide MovimientoCombate).
+	for encuentro: Encuentro in _mapa.encuentros():
+		for enemigo: EnemigoEnMapa in encuentro.enemigos():
+			grilla.set_transitable(enemigo.celda, false)
 	_party.entrar_a_mapa(_mapa, grilla, _mapa.celdas_de_formacion(id_entrada, _party.miembros().size(), grilla))
 	_camara.objetivo = _party.lider()
 	_camara.ajustar_a_mapa(_mapa.rect_global())

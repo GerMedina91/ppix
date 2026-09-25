@@ -38,3 +38,15 @@ func test_salida_se_encuentra_por_celda() -> void:
 func test_hay_camino_de_la_entrada_a_la_salida() -> void:
 	var camino: Array[Vector2i] = _grilla.camino(_mapa.celda_de_entrada(&"inicio"), Vector2i(19, 5))
 	assert_array(camino).is_not_empty()
+
+
+func test_celda_con_pared_no_es_transitable_aunque_tenga_suelo() -> void:
+	# (5,3) es parte del muro interior "####" de la fila 3.
+	assert_bool(_grilla.es_transitable(Vector2i(5, 3))).is_false()
+	assert_bool(_grilla.es_transitable(Vector2i(4, 3))).is_true()
+
+
+func test_rect_global_incluye_la_altura_de_las_paredes() -> void:
+	# 20x12 celdas en rombo de 64x32: ancho (20+12)*32, alto (20+12)*16 + 64 de pared.
+	var rect: Rect2 = _mapa.rect_global()
+	assert_that(rect.size).is_equal(Vector2(1024, 576))

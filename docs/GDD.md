@@ -49,6 +49,7 @@ Con la Convergencia, los recuerdos se volvieron extraíbles y tangibles.
 - El combate ocurre **en el mismo mapa de exploración**, sin pantalla aparte (estilo BG3). La grilla de exploración es la grilla de combate.
 - **[planificado]** Antes del combate, la party se puede separar para posicionar a cada miembro por separado.
 - Nota para M3: el pathfinding de exploración usa costo diagonal uniforme; en combate hay que aplicar la regla de PF2e de diagonales alternadas (5/10 pies).
+- Nota para M3: las entradas de mapa necesitan **posiciones de formación** para la party (una celda por miembro), no un punto único. Hoy los 4 aparecen apilados en la celda de entrada y se despliegan al caminar.
 
 ### 4.2 Recuerdos
 - **Comprar:** un recuerdo ajeno otorga competencias, dotes o conocimiento (se apoya en las reglas de reentrenamiento de PF2e).

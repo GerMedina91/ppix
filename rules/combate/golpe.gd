@@ -4,7 +4,8 @@ extends RefCounted
 ## - Penalizador por ataque múltiple (sin tipo): -5 / -10, o -4 / -8 con armas ágiles.
 ## - A distancia: -2 (sin tipo) por cada incremento de rango más allá del primero; hasta 6 incrementos.
 ## - Flanqueo: el objetivo queda desprevenido (-2 por circunstancia) solo frente a quien lo flanquea.
-## - Daño: dados + bonificador (mínimo 1 si impacta); éxito crítico, el doble. Letal: en un crítico,
+## - Daño: dados + bonificador + daño adicional de capacidades (p. ej. ataque furtivo), mínimo 1 si impacta;
+##   éxito crítico, el doble de todo. Letal: en un crítico,
 ##   un dado más del tamaño indicado, tirado después de duplicar.
 ## El costo en acciones lo maneja Combate.
 
@@ -71,14 +72,27 @@ static func resolver(atacante: Combatiente, objetivo: Combatiente, arma: Definic
 		return resultado
 	var prueba: Prueba = prueba_de_ataque(atacante, objetivo, arma)
 	resultado.flanqueando = Flanqueo.atacante_flanquea(atacante, objetivo, participantes)
-	var cd: int = objetivo.defensa_contra(resultado.flanqueando).cd()
+	var defensa: Prueba = objetivo.defensa_contra(resultado.flanqueando)
+	var cd: int = defensa.cd()
 	resultado.prueba = prueba.resolver(dados, cd)
 	atacante.ataques_en_turno += 1
 	var grado: GradoExito.Grado = resultado.prueba.grado
 	if grado == GradoExito.Grado.EXITO or grado == GradoExito.Grado.EXITO_CRITICO:
 		resultado.critico = grado == GradoExito.Grado.EXITO_CRITICO
 		resultado.tirada_danio = arma.tirada_danio(atacante.fuente.bonificador_danio(arma)).tirar(dados)
-		resultado.danio = maxi(DANIO_MINIMO, resultado.tirada_danio.total())
+		var total: int = resultado.tirada_danio.total()
+		var contexto: ContextoGolpe = ContextoGolpe.new()
+		contexto.atacante = atacante
+		contexto.objetivo = objetivo
+		contexto.arma = arma
+		contexto.objetivo_desprevenido = defensa.modificadores.any(func(m: Modificador) -> bool: return m.fuente == Combatiente.FUENTE_DESPREVENIDO)
+		contexto.critico = resultado.critico
+		for capacidad: Capacidad in atacante.fuente.capacidades():
+			for adicional: Dictionary in capacidad.danio_adicional(contexto):
+				var tirada: ResultadoTirada = (adicional.tirada as Tirada).tirar(dados)
+				resultado.danio_adicional.append({"fuente": adicional.fuente, "tirada": tirada})
+				total += tirada.total()
+		resultado.danio = maxi(DANIO_MINIMO, total)
 		if resultado.critico:
 			resultado.danio *= MULTIPLICADOR_CRITICO
 			if arma.letal_caras > 0:

@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="CapacidadAtaqueFurtivo" format=3]
+
+[ext_resource type="Script" path="res://rules/capacidades/capacidad_ataque_furtivo.gd" id="1_isp64"]
+
+[resource]
+script = ExtResource("1_isp64")
+id = &"ataque_furtivo"
+nombre = "ataque furtivo"

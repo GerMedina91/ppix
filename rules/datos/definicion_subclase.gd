@@ -7,3 +7,5 @@ extends Resource
 @export var nombre: String = ""
 ## Habilidades que entrena (p. ej. Latrocinio del Ladrón, Ocultismo del patrón).
 @export var habilidades: Array[Habilidad.Tipo] = []
+## Capacidades que da (p. ej. Destreza al daño del Ladrón).
+@export var capacidades: Array[Capacidad] = []

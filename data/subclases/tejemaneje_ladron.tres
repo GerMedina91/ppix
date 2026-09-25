@@ -1,9 +1,12 @@
 [gd_resource type="Resource" script_class="DefinicionTejemaneje" format=3]
 
 [ext_resource type="Script" path="res://rules/datos/definicion_tejemaneje.gd" id="1_4co72"]
+[ext_resource type="Script" path="res://rules/capacidades/capacidad.gd" id="1_c3k6r"]
+[ext_resource type="Resource" path="res://data/capacidades/destreza_al_danio_ladron.tres" id="2_wl4la"]
 
 [resource]
 script = ExtResource("1_4co72")
 id = &"ladron"
 nombre = "Ladrón"
 habilidades = Array[int]([15])
+capacidades = Array[ExtResource("1_c3k6r")]([ExtResource("2_wl4la")])

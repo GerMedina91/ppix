@@ -1,6 +1,8 @@
 [gd_resource type="Resource" script_class="DefinicionClase" format=3]
 
+[ext_resource type="Script" path="res://rules/capacidades/capacidad.gd" id="1_bniai"]
 [ext_resource type="Script" path="res://rules/datos/definicion_clase.gd" id="1_xak1q"]
+[ext_resource type="Resource" path="res://data/capacidades/ataque_furtivo.tres" id="2_r3cpc"]
 
 [resource]
 script = ExtResource("1_xak1q")
@@ -19,5 +21,6 @@ defensas = Dictionary[int, int]({
 0: 1,
 1: 1
 })
+capacidades_nivel_1 = Array[ExtResource("1_bniai")]([ExtResource("2_r3cpc")])
 habilidades_fijas = Array[int]([13])
 habilidades_libres_base = 7

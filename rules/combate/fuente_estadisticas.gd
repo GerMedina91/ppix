@@ -46,6 +46,11 @@ func prueba_salvacion(_salvacion: Estadisticas.Salvacion) -> Prueba:
 	return Prueba.plana("Tirada de salvación")
 
 
+## Capacidades que modifican Golpes y otras reglas (criaturas: ninguna por ahora).
+func capacidades() -> Array[Capacidad]:
+	return []
+
+
 func prueba_habilidad(habilidad: Habilidad.Tipo) -> Prueba:
 	return Prueba.plana(Habilidad.nombre(habilidad))
 

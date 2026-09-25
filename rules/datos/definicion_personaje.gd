@@ -46,6 +46,10 @@ extends Resource
 @export var armadura: DefinicionArmadura
 @export var armas: Array[DefinicionArma] = []
 
+@export_group("Capacidades")
+## Capacidades de clase y subclase (ataque furtivo, Destreza al daño...).
+@export var capacidades: Array[Capacidad] = []
+
 
 ## Nivel mínimo y máximo de personaje en PF2e.
 const NIVEL_MINIMO: int = 1

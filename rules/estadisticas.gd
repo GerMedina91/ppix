@@ -81,8 +81,13 @@ static func atributo_de_ataque(personaje: DefinicionPersonaje, arma: DefinicionA
 	return Atributo.Tipo.FUERZA
 
 
-## Bonificador fijo al daño: Fuerza en cuerpo a cuerpo; nada a distancia.
+## Bonificador fijo al daño: Fuerza en cuerpo a cuerpo; nada a distancia. Una capacidad puede cambiar
+## el atributo (p. ej. Destreza del Ladrón con armas sutiles).
 static func bonificador_danio(personaje: DefinicionPersonaje, arma: DefinicionArma) -> int:
+	for capacidad: Capacidad in personaje.capacidades:
+		var atributo: Variant = capacidad.atributo_de_danio(personaje, arma)
+		if atributo != null:
+			return personaje.modificador(atributo)
 	return 0 if arma.a_distancia else personaje.fuerza
 
 

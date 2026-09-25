@@ -20,6 +20,10 @@ extends Resource
 ## Ataque y CD de conjuros (no entrenado en clases que no lanzan conjuros).
 @export var conjuros: Competencia.Rango = Competencia.Rango.NO_ENTRENADO
 
+@export_group("Capacidades")
+## Capacidades de la clase a nivel 1 (p. ej. ataque furtivo del pícaro).
+@export var capacidades_nivel_1: Array[Capacidad] = []
+
 @export_group("Habilidades")
 ## Entrenadas siempre (p. ej. Religión del clérigo, Sigilo del pícaro).
 @export var habilidades_fijas: Array[Habilidad.Tipo] = []

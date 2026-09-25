@@ -45,6 +45,9 @@ static func armar(build: DefinicionBuild) -> DefinicionPersonaje:
 	p.velocidad_pies = build.ascendencia.velocidad_pies
 	p.armas = build.armas.duplicate()
 	p.armadura = build.armadura
+	p.capacidades.append_array(clase.capacidades_nivel_1)
+	if build.subclase != null:
+		p.capacidades.append_array(build.subclase.capacidades)
 	return p
 
 

@@ -49,6 +49,10 @@ func prueba_salvacion(salvacion: Estadisticas.Salvacion) -> Prueba:
 	return Estadisticas.prueba_salvacion(_personaje, salvacion)
 
 
+func capacidades() -> Array[Capacidad]:
+	return _personaje.capacidades
+
+
 func prueba_habilidad(habilidad: Habilidad.Tipo) -> Prueba:
 	return Estadisticas.prueba_habilidad(_personaje, habilidad)
 

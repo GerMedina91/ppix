@@ -49,4 +49,6 @@ static func _golpe(atacante: String, objetivo: String, resultado: ResultadoGolpe
 		texto += " [flanqueo]"
 	if resultado.impacto():
 		texto += ", %d de daño" % resultado.danio
+		for adicional: Dictionary in resultado.danio_adicional:
+			texto += " (+%d %s)" % [(adicional.tirada as ResultadoTirada).total(), adicional.fuente]
 	return texto

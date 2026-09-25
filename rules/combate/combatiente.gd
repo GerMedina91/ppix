@@ -7,6 +7,8 @@ enum Bando { PARTY, ENEMIGOS }
 
 const ACCIONES_POR_TURNO: int = 3
 const PENALIZADOR_DESPREVENIDO: int = -2
+## Fuente del modificador de desprevenido en la defensa (las capacidades lo usan para saber si aplica).
+const FUENTE_DESPREVENIDO: String = "desprevenido"
 const PENALIZADOR_INCONSCIENTE: int = -4
 const _CAMBIO_MORIBUNDO_POR_GRADO: Dictionary[GradoExito.Grado, int] = {
 	GradoExito.Grado.EXITO_CRITICO: -2,
@@ -89,7 +91,7 @@ func prueba_salvacion(salvacion: Estadisticas.Salvacion) -> Prueba:
 func defensa_contra(flanqueado_por_el_atacante: bool) -> Prueba:
 	var prueba: Prueba = fuente.defensa()
 	if flanqueado_por_el_atacante or condiciones.desprevenido or condiciones.inconsciente:
-		prueba.modificadores.append(Modificador.new(PENALIZADOR_DESPREVENIDO, Modificador.Tipo.CIRCUNSTANCIA, "desprevenido"))
+		prueba.modificadores.append(Modificador.new(PENALIZADOR_DESPREVENIDO, Modificador.Tipo.CIRCUNSTANCIA, FUENTE_DESPREVENIDO))
 	_aplicar_inconsciente(prueba)
 	return prueba
 

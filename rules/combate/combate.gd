@@ -68,6 +68,10 @@ func vision() -> LineaVision:
 	return _vision
 
 
+func grilla() -> GrillaMapa:
+	return _grilla
+
+
 # --- Consultas para la presentación ---
 
 ## Casillas donde puede terminar una Zancada del combatiente, con su costo en pies.

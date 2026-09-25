@@ -87,3 +87,12 @@ func test_el_hud_aparece_con_el_combate_y_registra_eventos() -> void:
 		var actor: Combatiente = _control.combate().turno_actual()
 		assert_str(hud.texto_activo()).starts_with("%s   PG %d/%d   Acciones " % [actor.id, actor.pg, actor.pg_maximos()])
 		assert_str(hud.texto_activo()).not_contains("%")
+
+
+func test_el_overlay_dibuja_rangos_y_vision_durante_el_combate_sin_errores() -> void:
+	await _entrar_a_la_zona()
+	var overlay: OverlayDepuracion = _runner.find_child("OverlayDepuracion")
+	overlay.visible = true
+	overlay.set_process(true)
+	await _runner.simulate_frames(30)
+	assert_object(ControladorCombate.activo(_control.get_tree())).is_same(_control)

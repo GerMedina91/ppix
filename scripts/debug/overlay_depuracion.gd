@@ -17,6 +17,8 @@ func _ready() -> void:
 	visible = false
 	set_process(false)
 	registrar(CapaDepuracionOclusion.new())
+	registrar(CapaDepuracionRangos.new())
+	registrar(CapaDepuracionVision.new())
 
 
 func registrar(capa: CapaDepuracion) -> void:
@@ -54,14 +56,19 @@ func poligono_global(puntos: PackedVector2Array, borde: Color, relleno: Color = 
 	if relleno.a > 0.0:
 		draw_colored_polygon(local, relleno)
 	local.append(local[0])
-	draw_polyline(local, borde, 1.0)
+	draw_polyline(local, borde, -1.0)
+
+
+func linea_global(desde: Vector2, hasta: Vector2, color: Color) -> void:
+	# Ancho -1: línea primitiva de 1 px. Con ancho positivo es un polígono que el snap a píxel puede anular.
+	draw_line(to_local(desde), to_local(hasta), color, -1.0)
 
 
 func rect_global(rect: Rect2, borde: Color) -> void:
-	draw_rect(Rect2(to_local(rect.position), rect.size), borde, false, 1.0)
+	draw_rect(Rect2(to_local(rect.position), rect.size), borde, false, -1.0)
 
 
 func cruz_global(centro: Vector2, tamano: float, color: Color) -> void:
 	var c: Vector2 = to_local(centro)
-	draw_line(c - Vector2(tamano, 0), c + Vector2(tamano, 0), color, 1.0)
-	draw_line(c - Vector2(0, tamano), c + Vector2(0, tamano), color, 1.0)
+	draw_line(c - Vector2(tamano, 0), c + Vector2(tamano, 0), color, -1.0)
+	draw_line(c - Vector2(0, tamano), c + Vector2(0, tamano), color, -1.0)

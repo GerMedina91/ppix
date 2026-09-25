@@ -23,5 +23,8 @@ func test_arranca_oculto_y_f3_lo_alterna() -> void:
 func test_trae_la_capa_de_oclusion_y_acepta_capas_nuevas() -> void:
 	var overlay: OverlayDepuracion = _runner.find_child("OverlayDepuracion")
 	assert_bool(overlay.capas().any(func(c: CapaDepuracion) -> bool: return c is CapaDepuracionOclusion)).is_true()
+	assert_bool(overlay.capas().any(func(c: CapaDepuracion) -> bool: return c is CapaDepuracionRangos)).is_true()
+	assert_bool(overlay.capas().any(func(c: CapaDepuracion) -> bool: return c is CapaDepuracionVision)).is_true()
+	var antes: int = overlay.capas().size()
 	overlay.registrar(CapaDepuracion.new())
-	assert_int(overlay.capas().size()).is_equal(2)
+	assert_int(overlay.capas().size()).is_equal(antes + 1)

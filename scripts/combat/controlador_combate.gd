@@ -15,6 +15,8 @@ signal evento_mostrado(evento: EventoCombate)
 signal esperando_jugador
 
 const ACCION_TERMINAR_TURNO: StringName = &"terminar_turno"
+## Grupo para que herramientas (overlay de depuración) encuentren al controlador.
+const GRUPO: StringName = &"controlador_combate"
 const COLOR_ACTIVO: Color = Color(1.0, 0.85, 0.3, 0.5)
 const COLOR_ZANCADA: Color = Color(0.3, 0.6, 1.0, 0.18)
 const COLOR_CAMINO: Color = Color(0.4, 0.75, 1.0, 0.5)
@@ -42,8 +44,30 @@ var _zancada: Dictionary[Vector2i, int] = {}
 
 
 func _ready() -> void:
+	add_to_group(GRUPO)
 	z_as_relative = false
 	z_index = -1
+
+
+static func activo(arbol: SceneTree) -> ControladorCombate:
+	return arbol.get_first_node_in_group(GRUPO) as ControladorCombate
+
+
+func celda_cursor() -> Vector2i:
+	return _celda_cursor
+
+
+func centro_global(celda: Vector2i) -> Vector2:
+	return _mapa.celda_a_posicion(celda)
+
+
+## Rombo de la casilla en coordenadas globales.
+func rombo_global(celda: Vector2i) -> PackedVector2Array:
+	var centro: Vector2 = centro_global(celda)
+	var medio: Vector2 = Vector2(_mapa_tamano_tile()) / 2.0
+	return PackedVector2Array([
+		centro + Vector2(0, -medio.y), centro + Vector2(medio.x, 0),
+		centro + Vector2(0, medio.y), centro + Vector2(-medio.x, 0)])
 
 
 func en_curso() -> bool:
@@ -267,11 +291,10 @@ func _draw() -> void:
 
 
 func _rombo(celda: Vector2i, color: Color) -> void:
-	var centro: Vector2 = to_local(_mapa.celda_a_posicion(celda))
-	var medio: Vector2 = Vector2(_mapa_tamano_tile()) / 2.0
-	draw_colored_polygon(PackedVector2Array([
-		centro + Vector2(0, -medio.y), centro + Vector2(medio.x, 0),
-		centro + Vector2(0, medio.y), centro + Vector2(-medio.x, 0)]), color)
+	var local: PackedVector2Array = PackedVector2Array()
+	for punto: Vector2 in rombo_global(celda):
+		local.append(to_local(punto))
+	draw_colored_polygon(local, color)
 
 
 func _mapa_tamano_tile() -> Vector2i:

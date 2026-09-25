@@ -5,6 +5,11 @@
 [ext_resource type="Script" path="res://scripts/world/capa_paredes.gd" id="3_3b5yn"]
 [ext_resource type="Script" path="res://scripts/world/entrada_mapa.gd" id="4_6xbxu"]
 [ext_resource type="Script" path="res://scripts/world/salida_mapa.gd" id="5_84khq"]
+[ext_resource type="Script" path="res://scripts/combat/encuentro.gd" id="6_uls8p"]
+[ext_resource type="Script" path="res://scripts/combat/zona_encuentro.gd" id="7_av2f3"]
+[ext_resource type="Script" path="res://scripts/characters/enemigo_en_mapa.gd" id="8_otgf5"]
+[ext_resource type="Resource" path="res://data/criaturas/enemigo_prueba_cuerpo_a_cuerpo.tres" id="9_0h363"]
+[ext_resource type="Resource" path="res://data/criaturas/enemigo_prueba_distancia.tres" id="10_tgohb"]
 
 [node name="MapaPruebaB" type="Node2D" unique_id=212694562]
 y_sort_enabled = true
@@ -35,3 +40,27 @@ position = Vector2(-288, 176)
 script = ExtResource("5_84khq")
 id_mapa_destino = &"mapa_prueba_a"
 id_entrada_destino = &"desde_b"
+
+[node name="Encuentros" type="Node2D" parent="." unique_id=1262510823]
+y_sort_enabled = true
+
+[node name="EncuentroPrueba" type="Node2D" parent="Encuentros" unique_id=1217238505]
+y_sort_enabled = true
+script = ExtResource("6_uls8p")
+id = &"encuentro_prueba"
+
+[node name="Zona" type="Node" parent="Encuentros/EncuentroPrueba" unique_id=718606447]
+script = ExtResource("7_av2f3")
+zona = Rect2i(12, 1, 3, 18)
+
+[node name="EnemigoCuerpoACuerpo" type="Node2D" parent="Encuentros/EncuentroPrueba" unique_id=1023307506]
+position = Vector2(384, 480)
+script = ExtResource("8_otgf5")
+definicion = ExtResource("9_0h363")
+color_placeholder = Color(0.55, 0.2, 0.25, 1)
+
+[node name="EnemigoDistancia" type="Node2D" parent="Encuentros/EncuentroPrueba" unique_id=1346548569]
+position = Vector2(448, 576)
+script = ExtResource("8_otgf5")
+definicion = ExtResource("10_tgohb")
+color_placeholder = Color(0.6, 0.3, 0.45, 1)

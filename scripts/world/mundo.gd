@@ -15,8 +15,11 @@ extends Node2D
 signal encuentro_disparado(encuentro: Encuentro)
 
 var _mapa: Mapa
+var _ultima_entrada: StringName = &""
+var _id_encuentro_actual: StringName = &""
 
 @onready var _contenedor_mapa: Node2D = $MapaActual
+@onready var _combate: ControladorCombate = $ControladorCombate
 @onready var _party: ControlParty = $Party
 @onready var _camara: CamaraMundo = $Camara
 @onready var _fundido: Fundido = $Fundido
@@ -24,6 +27,8 @@ var _mapa: Mapa
 
 func _ready() -> void:
 	_party.lider_llego_a.connect(_al_llegar_lider)
+	encuentro_disparado.connect(_iniciar_combate)
+	_combate.combate_terminado.connect(_al_terminar_combate)
 	_cargar_mapa(id_mapa_inicial, id_entrada_inicial)
 
 
@@ -35,11 +40,54 @@ func _al_llegar_lider(celda: Vector2i) -> void:
 	_revisar_encuentros()
 
 
+func _iniciar_combate(encuentro: Encuentro) -> void:
+	_id_encuentro_actual = encuentro.id
+	_combate.iniciar(encuentro, _mapa, _party, _camara)
+
+
+func _al_terminar_combate(victoria: bool) -> void:
+	var id_encuentro: StringName = _id_encuentro_actual
+	if not victoria:
+		# Placeholder hasta M4 (muerte del Eco): la party se cura y vuelve a la última entrada.
+		GameState.estado_party.clear()
+		for miembro: MiembroParty in _party.miembros():
+			miembro.mostrar_estado(ActorMapa.EstadoVisual.NORMAL)
+		EventBus.encuentro_terminado.emit(id_encuentro, false)
+		_transicionar(GameState.id_mapa_actual, _ultima_entrada)
+		return
+	var grilla: GrillaMapa = _grilla_exploracion()
+	_party.set_grilla(grilla)
+	_party.reagrupar(Formacion.cadena(grilla, _party.celda_lider(), _party.miembros().size(), []) + _relleno())
+	_camara.objetivo = _party.lider()
+	_party.bloqueado = false
+	EventBus.encuentro_terminado.emit(id_encuentro, true)
+
+
+## Si la formación no alcanza para todos, los que faltan van a la última casilla.
+func _relleno() -> Array[Vector2i]:
+	var relleno: Array[Vector2i] = []
+	for i in _party.miembros().size():
+		relleno.append(_party.celda_lider())
+	return relleno
+
+
+## Grilla de exploración: la del mapa, sin poder atravesar a los enemigos que siguen en pie.
+func _grilla_exploracion() -> GrillaMapa:
+	var grilla: GrillaMapa = _mapa.construir_grilla()
+	for encuentro: Encuentro in _mapa.encuentros():
+		for enemigo: EnemigoEnMapa in encuentro.enemigos():
+			if not enemigo.is_queued_for_deletion():
+				grilla.set_transitable(enemigo.celda, false)
+	return grilla
+
+
 ## Dispara el primer encuentro sin resolver cuyo disparador se active con las casillas de la party.
 func _revisar_encuentros() -> void:
 	var celdas: Array[Vector2i] = []
 	for miembro: MiembroParty in _party.miembros():
 		celdas.append(miembro.celda)
+	if _combate.en_curso():
+		return
 	for encuentro: Encuentro in _mapa.encuentros():
 		if encuentro.evaluar(celdas):
 			encuentro_disparado.emit(encuentro)
@@ -68,11 +116,9 @@ func _cargar_mapa(id_mapa: StringName, id_entrada: StringName) -> void:
 	_mapa = (load(definicion.ruta_escena) as PackedScene).instantiate()
 	_contenedor_mapa.add_child(_mapa)
 	_mapa.configurar_transparencia(config.alfa_pared_transparente)
-	var grilla: GrillaMapa = _mapa.construir_grilla()
+	_ultima_entrada = id_entrada
 	# En exploración no se camina a través de los enemigos (en combate lo decide MovimientoCombate).
-	for encuentro: Encuentro in _mapa.encuentros():
-		for enemigo: EnemigoEnMapa in encuentro.enemigos():
-			grilla.set_transitable(enemigo.celda, false)
+	var grilla: GrillaMapa = _grilla_exploracion()
 	_party.entrar_a_mapa(_mapa, grilla, _mapa.celdas_de_formacion(id_entrada, _party.miembros().size(), grilla))
 	_camara.objetivo = _party.lider()
 	_camara.ajustar_a_mapa(_mapa.rect_global())

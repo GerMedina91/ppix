@@ -161,6 +161,13 @@ func _revisar_muerte() -> void:
 		condiciones.muerto = true
 
 
+## Al terminar un combate ganado, quien sigue moribundo se estabiliza: pierde moribundo
+## (herido +1) y queda inconsciente con 0 PG hasta que lo curen.
+func estabilizar() -> void:
+	if condiciones.moribundo > 0 and not condiciones.muerto:
+		_perder_moribundo()
+
+
 func gastar_acciones(cantidad: int) -> bool:
 	if cantidad > acciones_restantes:
 		return false

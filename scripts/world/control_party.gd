@@ -60,6 +60,19 @@ func entrar_a_mapa(mapa: Mapa, grilla: GrillaMapa, celdas: Array[Vector2i]) -> v
 		_miembros[i].colocar(celdas[i], mapa.celda_a_posicion(celdas[i]))
 
 
+## Vuelve a armar la fila en `celdas` (formación en cadena) sin cambiar de mapa (p. ej. tras un combate).
+func reagrupar(celdas: Array[Vector2i]) -> void:
+	entrar_a_mapa(_mapa, _grilla, celdas)
+
+
+func grilla() -> GrillaMapa:
+	return _grilla
+
+
+func set_grilla(grilla_nueva: GrillaMapa) -> void:
+	_grilla = grilla_nueva
+
+
 ## Lleva al líder hasta `destino` por el camino más corto. Si no hay camino, no hace nada.
 func ir_a_celda(destino: Vector2i) -> void:
 	if bloqueado or _grilla == null:
@@ -76,6 +89,8 @@ func ir_a_celda(destino: Vector2i) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if bloqueado:
+		return
 	if _mapa != null and event.is_action_pressed("mover_a_click"):
 		ir_a_celda(_mapa.posicion_a_celda(get_global_mouse_position()))
 		get_viewport().set_input_as_handled()

@@ -11,6 +11,14 @@ signal paso_terminado(celda: Vector2i)
 ## El origen del nodo es el centro del rombo, que también es su punto de y-sort.
 const TAMANO_PLACEHOLDER: Vector2 = Vector2(32, 56)
 
+enum EstadoVisual { NORMAL, CAIDO, MUERTO }
+
+const MODULACION: Dictionary[EstadoVisual, Color] = {
+	EstadoVisual.NORMAL: Color.WHITE,
+	EstadoVisual.CAIDO: Color(0.45, 0.45, 0.5),
+	EstadoVisual.MUERTO: Color(0.25, 0.1, 0.1, 0.6),
+}
+
 @export var color_placeholder: Color = Color.WHITE
 
 ## Celda que ocupa, o hacia la que se está moviendo.
@@ -26,6 +34,11 @@ func _ready() -> void:
 ## Rect del sprite en pantalla, para que las paredes que lo tapan se vuelvan transparentes.
 func rect_visible_global() -> Rect2:
 	return Rect2(global_position + _origen_placeholder(), TAMANO_PLACEHOLDER)
+
+
+## Aspecto según su estado (placeholder: solo cambia el color).
+func mostrar_estado(estado: EstadoVisual) -> void:
+	modulate = MODULACION[estado]
 
 
 func esta_moviendose() -> bool:

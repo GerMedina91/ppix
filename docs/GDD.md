@@ -84,7 +84,8 @@ Mundo no lineal, muchos mapas conectados, mínimos o nulos marcadores de misión
   - Hecho: capa `Paredes` separada del suelo, con y-sort junto con la party.
   - Criterio: una pared tapa a un miembro si su base está delante (y-sort mayor) y su rect en pantalla se superpone con el del sprite.
   - Opciones de implementación (decidir al hacerlo): (a) por tile, con `_tile_data_runtime_update` de TileMapLayer para bajar el alfa de las celdas que tapan; (b) shader en la capa `Paredes` con las posiciones de los miembros como uniform, que recorta un área alrededor de cada uno.
-  - Observación de las pruebas: con paredes de 64 px de cara, una pared tapa casi entero a un personaje hasta dos celdas detrás. Evaluar también paredes "cortadas" (más bajas) en los bordes que dan a la cámara.
+  - Observación de las pruebas: con paredes de 64 px de cara, una pared tapa casi entero a un personaje hasta dos celdas detrás.
+- **Paredes cortadas:** las paredes de los bordes que dan a la cámara (bordes inferiores del rombo) son zócalos de ~16 px de cara; las del fondo y las interiores son altas. La transparencia aplica a las interiores.
 - Generación con PixelLab + retoque en Aseprite. Todo asset final se pasa a modo indexado con la paleta del proyecto.
 - **Paleta:** a definir (candidatas: Resurrect 64, Endesga 64, AAP-64). Rampas de 4–6 tonos con hue shifting.
 - Primer asset a producir: sprite canónico del Eco, que sirve de referencia de estilo para todo lo demás.
@@ -148,3 +149,4 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
 | 2026-09-25 | Resolución nativa 960×540 (×2 a 1080p), ventana de desarrollo 1920×1080. Contras: web necesita pantalla completa, 1440p con franjas, Steam Deck a evaluar con zoom. |
 | 2026-09-25 | Teclado en direcciones de pantalla, 8 direcciones combinando teclas (reemplaza "teclado 4 direcciones"). |
 | 2026-09-25 | Personaje placeholder 32×56; tamaño final con el sprite canónico del Eco. |
+| 2026-09-25 | Paredes cortadas (zócalo de 16 px) en los bordes que dan a la cámara; fondo del proyecto #0a0a0c; F11 alterna pantalla completa. |

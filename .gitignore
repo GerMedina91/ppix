@@ -1,0 +1,19 @@
+# Godot 4
+.godot/
+/android/
+*.translation
+export_credentials.cfg
+
+# Builds
+/build/
+
+# Mono/.NET (por si acaso)
+.mono/
+mono_crash.*.json
+
+# SO / editores
+.DS_Store
+Thumbs.db
+*.tmp
+.vscode/
+.idea/

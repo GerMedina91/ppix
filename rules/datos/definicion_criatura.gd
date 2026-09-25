@@ -23,7 +23,7 @@ extends Resource
 @export var armas: Array[DefinicionArma] = []
 
 @export_group("Perfil de IA")
-## Si es true, también ataca a personajes caídos (inconscientes). Decisión de diseño pendiente;
+## Si es true, también ataca a personajes caídos (inconscientes). Decidido: depende de cada criatura;
 ## por defecto false (GDD, pilar 4: la muerte tiene que sentirse justa).
 @export var remata_caidos: bool = false
 

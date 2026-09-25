@@ -100,7 +100,7 @@ Mundo no lineal, muchos mapas conectados, mínimos o nulos marcadores de misión
 ## 7. Alcance: vertical slice **[propuesta]**
 Objetivo: 10–15 minutos jugables que demuestren los pilares.
 - 1 asentamiento + 1 zona peligrosa (mazmorra o exterior).
-- 3–4 clases jugables, nivel bajo.
+- 4 clases jugables a nivel 1: guerrero, pícaro, clérigo y bruja (Player Core, Remaster).
 - Combate táctico completo con tres acciones.
 - 1 mercader de recuerdos, 5–6 recuerdos comprables.
 - Pérdida de recuerdos al morir.
@@ -112,7 +112,12 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
 - **M2 — Reglas:** motor de tiradas, grados de éxito, stats de personaje desde Resources.
   - Hecho: `Dados` (con estado serializable), `Tirada` (NdX+M), `GradoExito`, `Modificador` + `SumaModificadores`, `Competencia`, `Prueba` (con fortuna/infortunio y desglose), `Estadisticas` sobre `DefinicionPersonaje`.
   - Sin clases ni ascendencias: los números del personaje se cargan a mano hasta definir el contenido del slice.
-- **M3 — Combate:** iniciativa, turnos, tres acciones, ataque/movimiento/condiciones básicas, IA enemiga simple.
+- **M3 — Combate:** iniciativa, turnos, tres acciones, ataque/movimiento/condiciones básicas, IA enemiga simple. **Cerrado.**
+  - **Resumen de M3.** Combate de PF2e en el mismo mapa de exploración, con la party de 4 controlada por el jugador:
+    - Reglas (`rules/combate/`, lógica pura y reproducible con semilla): medición con diagonales 5/10 y alcance de 10 pies, Zancada (una o varias, cada una una acción), Paso, Golpe (penalizador por ataque múltiple, incrementos de rango, crítico, daño mínimo), línea de visión, flanqueo (desprevenido solo frente a quien flanquea), moribundo/herido/inconsciente completos, iniciativa, turnos de 3 acciones, IA de a una acción, punto de extensión para reacciones.
+    - Presentación (`scripts/combat/`): encuentros con disparador genérico, controlador + animador + resaltados, HUD con registro y desglose, feedback de acciones imposibles, previsualización de costo (◆), capas de depuración F3 y curación F4.
+    - Garantía: test de invariante sobre el mapa real (IA contra IA): tras cada evento, cada actor está en la casilla de su combatiente.
+    - Pendientes que pasan a M3c/M4: clases y ascendencias reales, conjuros, reacciones, cobertura, posicionamiento previo, muerte del Eco (derrota hoy es placeholder), caídos que siguen caminando en exploración.
   - El costo de movimiento en combate usa la regla de diagonales de PF2e (5/10 pies alternado), calculado en `rules/`, no el costo de AStarGrid2D (que solo sirve para exploración).
   - En combate, las celdas ocupadas por actores bloquean el paso.
   - `Dados` tiene que poder serializar y restaurar el estado del RNG, para el guardado.
@@ -140,7 +145,7 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
 - Quién fue el Eco original y por qué fue rearmado.
 - Qué provocó la Convergencia.
 - Facciones principales.
-- Qué ascendencias y clases de PF2e entran en el slice.
+- Qué ascendencias de PF2e entran en el slice (las clases ya están decididas, ver registro).
 - Justificación en el lore de la party de 4 (¿otros Ecos? ¿mercenarios?).
 - Muerte en party: qué pasa si cae el Eco pero sobreviven los demás, y qué pierden (si algo) los otros miembros al morir.
 - Paleta definitiva.
@@ -183,6 +188,10 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
 | 2026-09-25 | IA enemiga: no ataca a personajes caídos (pilar 4: muerte justa). |
 | 2026-09-25 | En combate, los oponentes no muertos bloquean el paso; los aliados se atraviesan pero no se termina en su casilla. |
 | 2026-09-25 | Encuentro de prueba en el mapa B; el mapa A queda para pruebas de exploración. |
-| 2026-09-25 | Inconsciente: -4 de estatus a CA, Percepción y Reflejos. Perfil de IA `remata_caidos` por criatura (por defecto false; decisión pendiente). |
+| 2026-09-25 | Inconsciente: -4 de estatus a CA, Percepción y Reflejos. Perfil de IA `remata_caidos` por criatura (por defecto false). |
 | 2026-09-25 | ControlParty con modos EXPLORACION/COMBATE: en combate se desconectan la fila india y el aviso de pasos del líder. |
 | 2026-09-25 | La IA decide de a una acción; cada acción se anima antes de la siguiente (estado del Combate y mapa siempre sincronizados). |
+| 2026-09-25 | Movimiento de varias acciones: un click puede encadenar hasta 3 Zancadas (cada una es una acción separada); previsualización de costo con ◆. |
+| 2026-09-25 | **M3 cerrado.** |
+| 2026-09-25 | Clases del slice: guerrero, pícaro, clérigo y bruja (Player Core, Remaster), nivel 1. |
+| 2026-09-25 | `remata_caidos`: **decidido**, depende de cada criatura (perfil de IA en `DefinicionCriatura`). |

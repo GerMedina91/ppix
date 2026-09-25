@@ -2,7 +2,8 @@ class_name ControlParty
 extends Node2D
 ## Controla a la party en exploración: interpreta la entrada del jugador (click y teclado)
 ## y mueve al líder por la grilla. Los miembros son hijos de este nodo; el primero es el líder.
-## Los demás lo siguen en fila india (SeguimientoFila). Cada miembro se mueve por su cuenta,
+## Los demás lo siguen en fila india: cada seguidor recorre, a su ritmo, las celdas que va
+## dejando el de adelante (SeguimientoFila). Cada miembro se mueve por su cuenta,
 ## así que separar la party a futuro es dejar de aplicar el seguimiento y dar órdenes por miembro.
 
 ## Se emite cada vez que el líder termina un paso.
@@ -21,6 +22,8 @@ var _mapa: Mapa
 var _grilla: GrillaMapa
 var _camino: Array[Vector2i] = []
 var _miembros: Array[MiembroParty] = []
+## Un seguimiento por seguidor: _seguimientos[i] es el del miembro i + 1.
+var _seguimientos: Array[SeguimientoFila] = []
 
 
 func _ready() -> void:
@@ -28,6 +31,10 @@ func _ready() -> void:
 		if hijo is MiembroParty:
 			_miembros.append(hijo)
 	lider().paso_terminado.connect(_al_terminar_paso_lider)
+	for i in range(1, _miembros.size()):
+		_seguimientos.append(SeguimientoFila.new())
+		_miembros[i - 1].paso_iniciado.connect(_al_moverse_el_de_adelante.bind(i))
+		_miembros[i].paso_terminado.connect(_al_terminar_paso_seguidor.bind(i))
 
 
 func lider() -> MiembroParty:
@@ -43,6 +50,8 @@ func entrar_a_mapa(mapa: Mapa, grilla: GrillaMapa, celda: Vector2i) -> void:
 	_mapa = mapa
 	_grilla = grilla
 	_camino.clear()
+	for seguimiento: SeguimientoFila in _seguimientos:
+		seguimiento.limpiar()
 	for miembro: MiembroParty in _miembros:
 		miembro.colocar(celda, mapa.celda_a_posicion(celda))
 
@@ -86,19 +95,34 @@ func _avanzar() -> void:
 
 
 func _dar_paso_lider(destino: Vector2i) -> void:
-	var celdas_antes: Array[Vector2i] = []
-	for miembro: MiembroParty in _miembros:
-		celdas_antes.append(miembro.celda)
 	_mover(lider(), destino)
-	var destinos: Array[Vector2i] = SeguimientoFila.destinos(celdas_antes)
-	for i in destinos.size():
-		var seguidor: MiembroParty = _miembros[i + 1]
-		if destinos[i] != seguidor.celda:
-			_mover(seguidor, destinos[i])
 
 
 func _mover(miembro: MiembroParty, destino: Vector2i) -> void:
-	miembro.dar_paso(destino, _mapa.celda_a_posicion(destino), config.segundos_por_paso)
+	var duracion: float = duracion_de_paso(miembro.celda, destino, config.segundos_por_celda)
+	miembro.dar_paso(destino, _mapa.celda_a_posicion(destino), duracion)
+
+
+## Duración proporcional a la distancia en la grilla: ortogonal = 1 celda, diagonal = √2.
+static func duracion_de_paso(desde: Vector2i, hasta: Vector2i, segundos_por_celda: float) -> float:
+	return Vector2(hasta - desde).length() * segundos_por_celda
+
+
+func _al_moverse_el_de_adelante(desde: Vector2i, _hasta: Vector2i, indice_seguidor: int) -> void:
+	var seguidor: MiembroParty = _miembros[indice_seguidor]
+	_seguimientos[indice_seguidor - 1].registrar_salida(desde, seguidor.celda)
+	if not seguidor.esta_moviendose():
+		_avanzar_seguidor(indice_seguidor)
+
+
+func _al_terminar_paso_seguidor(_celda: Vector2i, indice_seguidor: int) -> void:
+	_avanzar_seguidor(indice_seguidor)
+
+
+func _avanzar_seguidor(indice_seguidor: int) -> void:
+	var seguimiento: SeguimientoFila = _seguimientos[indice_seguidor - 1]
+	if seguimiento.tiene_pendientes():
+		_mover(_miembros[indice_seguidor], seguimiento.proxima())
 
 
 func _al_terminar_paso_lider(celda: Vector2i) -> void:

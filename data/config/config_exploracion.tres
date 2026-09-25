@@ -4,4 +4,4 @@
 
 [resource]
 script = ExtResource("1_but2e")
-segundos_por_paso = 0.18
+segundos_por_celda = 0.18

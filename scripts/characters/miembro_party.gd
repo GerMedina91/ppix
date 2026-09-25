@@ -3,6 +3,7 @@ extends Node2D
 ## Miembro de la party en el mapa. Solo presentación: se desplaza de celda en celda
 ## cuando se lo ordenan; no decide adónde ir (eso es de ControlParty).
 
+signal paso_iniciado(desde: Vector2i, hasta: Vector2i)
 signal paso_terminado(celda: Vector2i)
 
 ## Rectángulo placeholder de 32×56 (ver CLAUDE.md), con los pies en el centro del rombo.
@@ -35,11 +36,13 @@ func dar_paso(celda_nueva: Vector2i, posicion_global: Vector2, duracion: float) 
 	# Si todavía no terminó el paso anterior, se corta y el nuevo arranca desde donde está.
 	if _tween:
 		_tween.kill()
+	var celda_anterior: Vector2i = celda
 	celda = celda_nueva
 	_moviendose = true
 	_tween = create_tween()
 	_tween.tween_property(self, "global_position", posicion_global, duracion)
 	_tween.finished.connect(_al_terminar_paso)
+	paso_iniciado.emit(celda_anterior, celda_nueva)
 
 
 func _al_terminar_paso() -> void:

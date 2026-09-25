@@ -14,6 +14,11 @@ func before_test() -> void:
 	_party = _runner.find_child("Party")
 
 
+func _esperar_toda_la_party_quieta() -> void:
+	for miembro: Node in _party.get_children():
+		await _runner.await_func_on(miembro, "esta_moviendose").wait_until(ESPERA_MS).is_false()
+
+
 func _esperar_quieto() -> void:
 	await _runner.await_func_on(_party.lider(), "esta_moviendose").wait_until(ESPERA_MS).is_false()
 
@@ -82,9 +87,24 @@ func test_la_party_sigue_en_fila_india() -> void:
 	# Desde (3,5) hasta (7,5) en línea recta: 4 pasos, alcanza para desplegar a los 4 miembros.
 	_party.ir_a_celda(Vector2i(7, 5))
 	await _runner.await_func_on(_party, "celda_lider").wait_until(ESPERA_MS).is_equal(Vector2i(7, 5))
-	await _esperar_quieto()
-	await _runner.simulate_frames(5)
+	await _esperar_toda_la_party_quieta()
 	var celdas: Array[Vector2i] = []
 	for miembro: Node in _party.get_children():
 		celdas.append((miembro as MiembroParty).celda)
 	assert_array(celdas).is_equal([Vector2i(7, 5), Vector2i(6, 5), Vector2i(5, 5), Vector2i(4, 5)])
+
+
+func test_ningun_miembro_saltea_celdas_ni_corta_esquinas() -> void:
+	# Recorrido con diagonales y rodeos: cada paso de cada miembro tiene que ser un paso válido.
+	var grilla: GrillaMapa = (_runner.find_child("MapaActual").get_child(0) as Mapa).construir_grilla()
+	var pasos_invalidos: Array[String] = []
+	for miembro: Node in _party.get_children():
+		(miembro as MiembroParty).paso_iniciado.connect(func(desde: Vector2i, hasta: Vector2i) -> void:
+			if not grilla.puede_dar_paso(desde, hasta):
+				pasos_invalidos.append("%s: %s -> %s" % [miembro.name, desde, hasta]))
+	_party.ir_a_celda(Vector2i(10, 2))
+	await _runner.await_func_on(_party, "celda_lider").wait_until(ESPERA_MS).is_equal(Vector2i(10, 2))
+	_party.ir_a_celda(Vector2i(16, 9))
+	await _runner.await_func_on(_party, "celda_lider").wait_until(ESPERA_MS).is_equal(Vector2i(16, 9))
+	await _esperar_toda_la_party_quieta()
+	assert_array(pasos_invalidos).is_empty()

@@ -1,15 +1,29 @@
 class_name SeguimientoFila
 extends RefCounted
-## Seguimiento en fila india: cuando el líder da un paso, cada seguidor avanza a la celda
-## que ocupaba el miembro de adelante antes de ese paso.
-## Es una estrategia separada de ControlParty para poder desactivarla a futuro
+## Recorrido pendiente de un seguidor en la fila india: las celdas que fue dejando el miembro
+## de adelante, en orden. El seguidor las recorre a su propio ritmo, así nunca corta camino
+## aunque sus pasos duren distinto que los del de adelante (diagonal vs. ortogonal).
+## Es una pieza separada de ControlParty para poder desactivar el seguimiento a futuro
 ## (party separada, cada miembro con órdenes propias) sin tocar el movimiento de los miembros.
 
+var _pendientes: Array[Vector2i] = []
 
-## Recibe las celdas de toda la party antes del paso del líder (índice 0 = líder)
-## y devuelve el destino de cada seguidor (índice 0 = primer seguidor).
-static func destinos(celdas_antes: Array[Vector2i]) -> Array[Vector2i]:
-	var resultado: Array[Vector2i] = []
-	for i in range(1, celdas_antes.size()):
-		resultado.append(celdas_antes[i - 1])
-	return resultado
+
+## El de adelante acaba de salir de `celda_dejada`. Se agrega al recorrido salvo que el seguidor
+## ya esté (o ya vaya a estar) en esa celda.
+func registrar_salida(celda_dejada: Vector2i, celda_propia: Vector2i) -> void:
+	var ultima: Vector2i = _pendientes.back() if not _pendientes.is_empty() else celda_propia
+	if celda_dejada != ultima:
+		_pendientes.append(celda_dejada)
+
+
+func tiene_pendientes() -> bool:
+	return not _pendientes.is_empty()
+
+
+func proxima() -> Vector2i:
+	return _pendientes.pop_front()
+
+
+func limpiar() -> void:
+	_pendientes.clear()

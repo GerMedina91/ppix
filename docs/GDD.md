@@ -80,6 +80,10 @@ Mundo no lineal, muchos mapas conectados, mínimos o nulos marcadores de misión
 - Personajes: placeholder 32×56; tamaño final a definir con el sprite canónico del Eco. Retratos de diálogo 96–128 px.
 - **Y-sort** desde el principio: todo lo que se para sobre el mapa (party, paredes, objetos) se ordena por la posición de su base.
 - **[planificado]** Transparencia de paredes cuando un miembro de la party queda detrás. Por eso las paredes van en una capa propia, separada del suelo.
+  - Hecho: capa `Paredes` separada del suelo, con y-sort junto con la party.
+  - Criterio: una pared tapa a un miembro si su base está delante (y-sort mayor) y su rect en pantalla se superpone con el del sprite.
+  - Opciones de implementación (decidir al hacerlo): (a) por tile, con `_tile_data_runtime_update` de TileMapLayer para bajar el alfa de las celdas que tapan; (b) shader en la capa `Paredes` con las posiciones de los miembros como uniform, que recorta un área alrededor de cada uno.
+  - Observación de las pruebas: con paredes de 64 px de cara, una pared tapa casi entero a un personaje hasta dos celdas detrás. Evaluar también paredes "cortadas" (más bajas) en los bordes que dan a la cámara.
 - Generación con PixelLab + retoque en Aseprite. Todo asset final se pasa a modo indexado con la paleta del proyecto.
 - **Paleta:** a definir (candidatas: Resurrect 64, Endesga 64, AAP-64). Rampas de 4–6 tonos con hue shifting.
 - Primer asset a producir: sprite canónico del Eco, que sirve de referencia de estilo para todo lo demás.

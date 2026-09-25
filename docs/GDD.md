@@ -72,9 +72,11 @@ Mundo no lineal, muchos mapas conectados, mínimos o nulos marcadores de misión
 - **Party:** los 4 miembros caminan en fila india detrás del líder. El seguimiento se diseña para poder desactivarlo y controlar a cada miembro por separado (ver 4.1).
 
 ## 5. Dirección de arte
-- Resolución nativa 640×360, escalado entero (×3 a 1080p, ×6 a 4K).
-- Tiles 32×32. Personajes ~32×48. Retratos de diálogo 96–128 px.
-- Vista top-down ¾.
+- **Vista isométrica.** Tiles en rombo de 64×32 (1 celda = 5 pies). La lógica sigue siendo una grilla cuadrada; isométrico es solo la proyección.
+- **Resolución nativa: en evaluación.** 640×360 (×3 a 1080p, ×4 a 1440p, ×6 a 4K) o 960×540 (×2 a 1080p, ×4 a 4K). Ver comparación en `docs/propuestas/`.
+- Personajes: tamaño a redefinir para la vista isométrica. Retratos de diálogo 96–128 px.
+- **Y-sort** desde el principio: todo lo que se para sobre el mapa (party, paredes, objetos) se ordena por la posición de su base.
+- **[planificado]** Transparencia de paredes cuando un miembro de la party queda detrás. Por eso las paredes van en una capa propia, separada del suelo.
 - Generación con PixelLab + retoque en Aseprite. Todo asset final se pasa a modo indexado con la paleta del proyecto.
 - **Paleta:** a definir (candidatas: Resurrect 64, Endesga 64, AAP-64). Rampas de 4–6 tonos con hue shifting.
 - Primer asset a producir: sprite canónico del Eco, que sirve de referencia de estilo para todo lo demás.
@@ -133,3 +135,5 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
 | 2026-09-25 | Control en exploración: click con pathfinding (AStarGrid2D, diagonales sin cortar esquinas) + teclado 4 direcciones. |
 | 2026-09-25 | Party en fila india en exploración; separable a futuro para posicionarse antes del combate. |
 | 2026-09-25 | Placeholders de colores planos permitidos en `assets/placeholder/` (a reemplazar por arte final). |
+| 2026-09-25 | Vista isométrica (reemplaza top-down ¾). Rombo 64×32. La grilla lógica sigue siendo cuadrada: isométrico es solo la proyección. |
+| 2026-09-25 | Y-sort desde el inicio; paredes en capa propia; transparencia de paredes prevista (sin implementar). |

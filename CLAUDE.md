@@ -9,11 +9,14 @@ El diseño completo está en `docs/GDD.md`. Consultalo antes de implementar cual
 - Control de versiones: git. Un commit por feature o cambio coherente, con mensaje descriptivo en español.
 
 ## Configuración de render (no modificar sin consultar)
-- Resolución nativa: 640×360. Stretch mode `viewport`, aspect `keep`, escalado entero.
+- Resolución nativa: 640×360 (**en evaluación: 960×540**, ver GDD 5). Stretch mode `viewport`, aspect `keep`, escalado entero.
 - Texture filter por defecto: `Nearest`. Sin mipmaps. Snap 2D de transforms y vértices a píxel activado.
-- Tiles: 32×32 px. 1 tile = 5 pies (casilla de PF2e).
-- Personajes: ~32×48 px. Retratos de diálogo: 96–128 px (capa de UI aparte).
-- Vista top-down ¾. No isométrica.
+- Tiles isométricos en rombo de 64×32 px (TileSet isométrico, layout Diamond Down). 1 celda = 5 pies (casilla de PF2e).
+- La lógica es una grilla cuadrada (`GrillaMapa`); isométrico es solo la proyección. Nada de reglas en coordenadas de pantalla.
+- Personajes: tamaño a redefinir para la vista isométrica. Retratos de diálogo: 96–128 px (capa de UI aparte).
+- Vista isométrica.
+- Y-sort activo desde el principio: party, paredes y objetos comparten una jerarquía con `y_sort_enabled`. El suelo se dibuja debajo, sin y-sort.
+- Paredes en su propia capa, separada del suelo, para poder hacerlas transparentes cuando la party pasa detrás (previsto, no implementado).
 
 ## Estructura de carpetas
 ```

@@ -68,3 +68,26 @@ func test_destino_inalcanzable_da_camino_vacio() -> void:
 func test_mismo_origen_y_destino_da_camino_vacio() -> void:
 	var grilla: GrillaMapa = _grilla(["..."])
 	assert_array(grilla.camino(Vector2i(1, 0), Vector2i(1, 0))).is_empty()
+
+
+func test_puede_dar_paso_ortogonal_y_diagonal() -> void:
+	var grilla: GrillaMapa = _grilla(["...", "...", "..."])
+	assert_bool(grilla.puede_dar_paso(Vector2i(1, 1), Vector2i(2, 1))).is_true()
+	assert_bool(grilla.puede_dar_paso(Vector2i(1, 1), Vector2i(2, 2))).is_true()
+
+
+func test_puede_dar_paso_rechaza_celdas_no_vecinas_y_quedarse_quieto() -> void:
+	var grilla: GrillaMapa = _grilla(["...", "...", "..."])
+	assert_bool(grilla.puede_dar_paso(Vector2i(0, 0), Vector2i(2, 0))).is_false()
+	assert_bool(grilla.puede_dar_paso(Vector2i(1, 1), Vector2i(1, 1))).is_false()
+
+
+func test_puede_dar_paso_no_corta_esquinas() -> void:
+	var grilla: GrillaMapa = _grilla([".#", ".."])
+	assert_bool(grilla.puede_dar_paso(Vector2i(0, 0), Vector2i(1, 1))).is_false()
+	assert_bool(grilla.puede_dar_paso(Vector2i(0, 0), Vector2i(0, 1))).is_true()
+
+
+func test_puede_dar_paso_a_pared() -> void:
+	var grilla: GrillaMapa = _grilla([".#"])
+	assert_bool(grilla.puede_dar_paso(Vector2i(0, 0), Vector2i(1, 0))).is_false()

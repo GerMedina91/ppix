@@ -11,6 +11,11 @@ extends Node2D
 ## Nombre de la capa de datos del TileSet que indica si un tile de suelo se puede pisar.
 const DATO_TRANSITABLE: String = "transitable"
 
+const VECINAS: Array[Vector2i] = [
+	Vector2i(1, 0), Vector2i(1, 1), Vector2i(0, 1), Vector2i(-1, 1),
+	Vector2i(-1, 0), Vector2i(-1, -1), Vector2i(0, -1), Vector2i(1, -1),
+]
+
 @onready var _suelo: TileMapLayer = $Suelo
 @onready var _paredes: TileMapLayer = $Paredes
 @onready var _entradas: Node = $Entradas
@@ -35,6 +40,23 @@ func celda_a_posicion(celda: Vector2i) -> Vector2:
 
 func posicion_a_celda(posicion_global: Vector2) -> Vector2i:
 	return _suelo.local_to_map(_suelo.to_local(posicion_global))
+
+
+## Traduce una dirección de pantalla (p. ej. (1, -1) = arriba a la derecha) al paso de grilla
+## cuya proyección apunta más cerca. Devuelve ZERO si la dirección es nula.
+func direccion_de_pantalla(pantalla: Vector2) -> Vector2i:
+	if pantalla.is_zero_approx():
+		return Vector2i.ZERO
+	var objetivo: Vector2 = pantalla.normalized()
+	var origen: Vector2 = _suelo.map_to_local(Vector2i.ZERO)
+	var mejor: Vector2i = Vector2i.ZERO
+	var mejor_parecido: float = -INF
+	for vecina: Vector2i in VECINAS:
+		var parecido: float = (_suelo.map_to_local(vecina) - origen).normalized().dot(objetivo)
+		if parecido > mejor_parecido:
+			mejor_parecido = parecido
+			mejor = vecina
+	return mejor
 
 
 ## Rectángulo de pantalla que envuelve el mapa proyectado, incluida la altura de las paredes

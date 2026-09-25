@@ -50,3 +50,17 @@ func test_rect_global_incluye_la_altura_de_las_paredes() -> void:
 	# 20x12 celdas en rombo de 64x32: ancho (20+12)*32, alto (20+12)*16 + 64 de pared.
 	var rect: Rect2 = _mapa.rect_global()
 	assert_that(rect.size).is_equal(Vector2(1024, 576))
+
+
+func test_direccion_de_pantalla_a_grilla(pantalla: Vector2, esperado: Vector2i, test_parameters := [
+		[Vector2(0, -1), Vector2i(-1, -1)],
+		[Vector2(0, 1), Vector2i(1, 1)],
+		[Vector2(1, 0), Vector2i(1, -1)],
+		[Vector2(-1, 0), Vector2i(-1, 1)],
+		[Vector2(1, -1), Vector2i(0, -1)],
+		[Vector2(-1, -1), Vector2i(-1, 0)],
+		[Vector2(1, 1), Vector2i(1, 0)],
+		[Vector2(-1, 1), Vector2i(0, 1)],
+		[Vector2(0, 0), Vector2i(0, 0)],
+	]) -> void:
+	assert_that(_mapa.direccion_de_pantalla(pantalla)).is_equal(esperado)

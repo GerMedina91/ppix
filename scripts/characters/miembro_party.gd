@@ -5,9 +5,9 @@ extends Node2D
 
 signal paso_terminado(celda: Vector2i)
 
-## Rectángulo placeholder (~32×48, ver CLAUDE.md). Los pies quedan cerca del borde inferior de la celda.
-const TAMANO_PLACEHOLDER: Vector2 = Vector2(24, 44)
-const PIES_BAJO_EL_CENTRO: float = 12.0
+## Rectángulo placeholder de 32×56 (ver CLAUDE.md), con los pies en el centro del rombo.
+## El origen del nodo es el centro del rombo, que también es su punto de y-sort.
+const TAMANO_PLACEHOLDER: Vector2 = Vector2(32, 56)
 
 @export var color_placeholder: Color = Color.WHITE
 
@@ -48,5 +48,5 @@ func _al_terminar_paso() -> void:
 
 
 func _draw() -> void:
-	var origen: Vector2 = Vector2(-TAMANO_PLACEHOLDER.x / 2.0, PIES_BAJO_EL_CENTRO - TAMANO_PLACEHOLDER.y)
+	var origen: Vector2 = Vector2(-TAMANO_PLACEHOLDER.x / 2.0, -TAMANO_PLACEHOLDER.y)
 	draw_rect(Rect2(origen, TAMANO_PLACEHOLDER), color_placeholder)

@@ -33,6 +33,20 @@ func es_transitable(celda: Vector2i) -> bool:
 	return _astar.is_in_boundsv(celda) and not _astar.is_point_solid(celda)
 
 
+## true si se puede dar un paso de `desde` a una celda vecina `hasta` (8 direcciones).
+## Un paso diagonal no puede cortar esquinas: las dos celdas ortogonales que lo flanquean
+## tienen que ser transitables.
+func puede_dar_paso(desde: Vector2i, hasta: Vector2i) -> bool:
+	var paso: Vector2i = hasta - desde
+	if paso == Vector2i.ZERO or absi(paso.x) > 1 or absi(paso.y) > 1:
+		return false
+	if not es_transitable(hasta):
+		return false
+	if paso.x != 0 and paso.y != 0:
+		return es_transitable(desde + Vector2i(paso.x, 0)) and es_transitable(desde + Vector2i(0, paso.y))
+	return true
+
+
 ## Camino de `desde` a `hasta`, sin incluir `desde`. Vacío si no hay camino
 ## o si alguno de los extremos no es transitable.
 func camino(desde: Vector2i, hasta: Vector2i) -> Array[Vector2i]:

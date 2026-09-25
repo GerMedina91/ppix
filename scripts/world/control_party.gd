@@ -79,7 +79,7 @@ func _avanzar() -> void:
 	if direccion != Vector2i.ZERO:
 		_camino.clear()
 		var destino: Vector2i = celda_lider() + direccion
-		if _grilla.es_transitable(destino):
+		if _grilla.puede_dar_paso(celda_lider(), destino):
 			_dar_paso_lider(destino)
 	elif not _camino.is_empty():
 		_dar_paso_lider(_camino.pop_front())
@@ -107,9 +107,10 @@ func _al_terminar_paso_lider(celda: Vector2i) -> void:
 		_avanzar()
 
 
-## Dirección del teclado en 4 direcciones; si se aprietan dos ejes, gana el horizontal.
-static func _direccion_teclado() -> Vector2i:
-	var horizontal: int = roundi(Input.get_axis("mover_izquierda", "mover_derecha"))
-	if horizontal != 0:
-		return Vector2i(horizontal, 0)
-	return Vector2i(0, roundi(Input.get_axis("mover_arriba", "mover_abajo")))
+## Dirección del teclado en direcciones de pantalla (W arriba, D derecha...), traducida a la grilla.
+## Cada tecla sola es un paso diagonal de la grilla; dos teclas juntas dan un paso ortogonal.
+func _direccion_teclado() -> Vector2i:
+	var pantalla: Vector2 = Vector2(
+		roundi(Input.get_axis("mover_izquierda", "mover_derecha")),
+		roundi(Input.get_axis("mover_arriba", "mover_abajo")))
+	return _mapa.direccion_de_pantalla(pantalla)

@@ -6,7 +6,7 @@ extends Node2D
 ## - Enemigos: IASimple, una decisión por vez (se anima cada una antes de pedir la siguiente, así el
 ##   estado del Combate y lo que se ve en el mapa avanzan juntos).
 ## - Party: click en enemigo = Golpe; click en el suelo = Zancada; Shift + click = Paso;
-##   acción `terminar_turno` (Espacio).
+##   acción `terminar_turno` (Espacio); teclas 1-9 = conjuros, Sostener y Arcadas (ModoAccion).
 
 signal combate_iniciado
 signal combate_terminado(victoria: bool)
@@ -16,6 +16,8 @@ signal evento_mostrado(evento: EventoCombate)
 signal esperando_jugador
 ## Se emite cuando una reacción de la party espera respuesta (el combate queda en pausa).
 signal pregunta_reaccion(texto: String)
+## Se emite al elegir o cancelar un conjuro (el HUD y los resaltados cambian).
+signal accion_elegida
 
 ## Respuestas al aviso de reacción. SIEMPRE: la usa ahora y en adelante, por el resto de la sesión.
 enum Respuesta { SI, NO, SIEMPRE }
@@ -48,6 +50,7 @@ var _celda_cursor: Vector2i = _SIN_CURSOR
 var _prevision: PrevisionTurno
 ## Tramos pendientes de un movimiento de varias Zancadas (se ejecutan de a una, animando cada una).
 var _plan: Array[Array] = []
+var _modo: ModoAccion = ModoAccion.new()
 ## Mitad del tamaño del rombo de una casilla (del TileSet del mapa del combate).
 var _medio_rombo: Vector2 = Vector2.ZERO
 
@@ -113,6 +116,32 @@ func prevision_actual() -> PrevisionTurno:
 	if _prevision == null or not _prevision.vigente(_combate):
 		_prevision = PrevisionTurno.new(_combate)
 	return _prevision
+
+
+## Conjuros, Sostener y Arcadas del actor (o la instrucción del conjuro elegido) para el HUD.
+func texto_acciones() -> String:
+	return _modo.texto(_combate, _combate.turno_actual()) if esperando_decision() else ""
+
+
+func modo_accion() -> ModoAccion:
+	return _modo
+
+
+## Elige la acción `indice` (desde 0) de la lista de texto_acciones(). Sostener y Arcadas se hacen ya.
+func elegir_accion(indice: int) -> void:
+	if not esperando_decision():
+		return
+	var inmediata: Callable = _modo.elegir(_combate, _combate.turno_actual(), indice)
+	if inmediata.is_valid():
+		_encolar(inmediata.call())
+	accion_elegida.emit()
+	_resaltados.queue_redraw()
+
+
+func cancelar_accion() -> void:
+	_modo.cancelar()
+	accion_elegida.emit()
+	_resaltados.queue_redraw()
 
 
 ## true si le toca decidir al jugador (turno de un miembro de la party y nada animándose).
@@ -183,6 +212,9 @@ func iniciar(encuentro: Encuentro, mapa: Mapa, party: ControlParty, camara: Cama
 func click_en_celda(celda: Vector2i, es_paso: bool = false) -> void:
 	if not esperando_decision():
 		return
+	if _modo.elegido != null:
+		_encolar(_modo.al_click(_combate, _combate.turno_actual(), celda, es_paso).call())
+		return
 	var objetivo: Combatiente = _combatiente_vivo_en(celda)
 	if objetivo != null and not objetivo.es_aliado_de(_combate.turno_actual()):
 		_encolar(_combate.golpe(objetivo.id))
@@ -224,9 +256,24 @@ func _unhandled_input(event: InputEvent) -> void:
 		var es_paso: bool = event is InputEventMouseButton and (event as InputEventMouseButton).shift_pressed
 		click_en_celda(_mapa.posicion_a_celda(get_global_mouse_position()), es_paso)
 		get_viewport().set_input_as_handled()
+	elif event is InputEventKey and event.pressed and not event.echo and _teclas_de_accion(event as InputEventKey):
+		get_viewport().set_input_as_handled()
+	elif event is InputEventMouseButton and event.pressed and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_RIGHT:
+		cancelar_accion()
 	elif event.is_action_pressed(ACCION_TERMINAR_TURNO):
 		terminar_turno_jugador()
 		get_viewport().set_input_as_handled()
+
+
+## 1-9: elegir acción; Esc: cancelar. Teclas fijas hasta la barra del HUD (C6).
+func _teclas_de_accion(tecla: InputEventKey) -> bool:
+	if tecla.keycode >= KEY_1 and tecla.keycode <= KEY_9:
+		elegir_accion(tecla.keycode - KEY_1)
+		return true
+	if tecla.keycode == KEY_ESCAPE and _modo.elegido != null:
+		cancelar_accion()
+		return true
+	return false
 
 
 # --- Cola de eventos ---
@@ -240,6 +287,7 @@ func _encolar(eventos: Array[EventoCombate]) -> void:
 func _procesar_cola() -> void:
 	_animando = true
 	_prevision = null
+	_modo.cancelar()
 	_resaltados.queue_redraw()
 	while not _cola.is_empty():
 		var evento: EventoCombate = _cola.pop_front()

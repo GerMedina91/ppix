@@ -315,3 +315,36 @@ func test_aviso_de_golpe_reactivo_pausa_el_combate_y_siempre_dura_la_sesion() ->
 	assert_bool(Array(hud.lineas_registro()).any(func(l: String) -> bool: return l.begins_with("Miembro1 usa Golpe reactivo")) \
 		or _control.combate() == null or not guerrero.reaccion_disponible).is_true()
 	assert_array(violaciones).is_empty()
+
+
+## Pasa los turnos de la party hasta que le toque decidir a `id` (false si el combate terminó antes).
+func _turno_de(id: StringName) -> bool:
+	return await _esperar(func() -> bool:
+		if not _control.en_curso():
+			return true
+		if _control.esperando_decision() and _control.combate().turno_actual().id != id:
+			_control.terminar_turno_jugador()
+		return _control.esperando_decision() and _control.combate().turno_actual().id == id) and _control.en_curso()
+
+
+func test_la_bruja_lanza_mal_de_ojo_desde_el_mapa() -> void:
+	var hud: HudCombate = _runner.find_child("HudCombate")
+	var violaciones: Array[String] = _vigilar_sincronia()
+	await _entrar_a_la_zona()
+	assert_bool(await _turno_de(&"Miembro4")).override_failure_message("no llegó el turno de la bruja").is_true()
+	var bruja: Combatiente = _control.combate().turno_actual()
+	# Se fuerza la situación: el enemigo cuerpo a cuerpo, pegado a la bruja (a alcance y con línea de visión).
+	var enemigo: Combatiente = _control.combate().combatiente(&"EnemigoCuerpoACuerpo")
+	var mapa: Mapa = _runner.find_child("MapaActual").get_child(0)
+	var junto: Vector2i = _casilla_vecina_libre(bruja.celda)
+	enemigo.celda = junto
+	_control.actor_de(enemigo.id).colocar(junto, mapa.celda_a_posicion(junto))
+	assert_str(hud.texto_acciones()).starts_with("1 Mal de ojo ◆")
+	_control.elegir_accion(0)
+	assert_str(hud.texto_acciones()).starts_with("Mal de ojo: click en el objetivo")
+	_control.click_en_celda(junto)
+	assert_bool(await _esperar(func() -> bool: return not _control.animando())).is_true()
+	assert_bool(Array(hud.lineas_registro()).any(func(l: String) -> bool:
+		return l == "Miembro4 lanza Mal de ojo sobre EnemigoCuerpoACuerpo")).is_true()
+	assert_int(bruja.acciones_restantes).is_equal(2)
+	assert_array(violaciones).is_empty()

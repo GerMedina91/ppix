@@ -13,10 +13,11 @@ const COLOR_ENEMIGO: Color = Color(1.0, 0.7, 0.7)
 const COLOR_ACTIVO: Color = Color(1.0, 0.85, 0.3)
 const COLOR_MUERTO: Color = Color(0.45, 0.45, 0.45)
 const COLOR_FONDO: Color = Color(0.0, 0.0, 0.0, 0.55)
+const COLOR_CONJURO: Color = Color(0.85, 0.7, 1.0)
 const PIP_LLENO: String = "◆"
 const PIP_VACIO: String = "◇"
 ## Ayuda de controles (placeholder), visible durante el turno de la party.
-const AYUDA: String = "Click en el suelo: Zancada (1 acción) · Click en un enemigo: Golpe\nShift+click: Paso · Espacio: terminar turno"
+const AYUDA: String = "Click en el suelo: Zancada (1 acción) · Click en un enemigo: Golpe\nShift+click: Paso · 1-9: conjuros y acciones · Esc: cancelar · Espacio: terminar turno"
 
 @export var controlador: ControladorCombate
 
@@ -24,6 +25,8 @@ var _orden: HBoxContainer
 var _activo: Label
 var _registro: Label
 var _ayuda: Label
+## Conjuros, Sostener y Arcadas con su tecla (o la instrucción del conjuro elegido).
+var _acciones: Label
 var _lineas: PackedStringArray = PackedStringArray()
 var _aviso: PanelContainer
 var _texto_aviso: Label
@@ -37,6 +40,7 @@ func _ready() -> void:
 	controlador.combate_iniciado.connect(_al_iniciar)
 	controlador.combate_terminado.connect(func(_victoria: bool) -> void: visible = false)
 	controlador.pregunta_reaccion.connect(_mostrar_aviso)
+	controlador.accion_elegida.connect(_actualizar)
 
 
 func lineas_registro() -> PackedStringArray:
@@ -53,6 +57,10 @@ func ayuda_visible() -> bool:
 
 func texto_ayuda() -> String:
 	return _ayuda.text
+
+
+func texto_acciones() -> String:
+	return _acciones.text if _acciones.visible else ""
 
 
 func aviso_visible() -> bool:
@@ -109,6 +117,8 @@ func _actualizar() -> void:
 			PIP_LLENO.repeat(actual.acciones_restantes), PIP_VACIO.repeat(Combatiente.ACCIONES_POR_TURNO - actual.acciones_restantes),
 			_condiciones(actual)]
 	_ayuda.visible = controlador.esperando_decision()
+	_acciones.text = controlador.texto_acciones()
+	_acciones.visible = not _acciones.text.is_empty()
 	_aviso.visible = controlador.esperando_reaccion()
 
 
@@ -139,7 +149,10 @@ func _construir() -> void:
 	_activo = _etiqueta("")
 	_ayuda = _etiqueta(AYUDA)
 	_ayuda.add_theme_color_override("font_color", COLOR_MUERTO.lightened(0.4))
+	_acciones = _etiqueta("")
+	_acciones.add_theme_color_override("font_color", COLOR_CONJURO)
 	columna.add_child(_activo)
+	columna.add_child(_acciones)
 	columna.add_child(_ayuda)
 	abajo_izq.add_child(columna)
 	var abajo_der: PanelContainer = _panel()

@@ -15,6 +15,8 @@ const COLOR_POR_ZANCADAS: Array[Color] = [
 ]
 const COLOR_CAMINO: Color = Color(0.4, 0.75, 1.0, 0.5)
 const COLOR_OBJETIVO: Color = Color(1.0, 0.25, 0.25, 0.45)
+## Objetivos (o casillas) posibles del conjuro elegido.
+const COLOR_CONJURO: Color = Color(0.75, 0.4, 1.0, 0.45)
 const COLOR_COSTO: Color = Color(1.0, 0.95, 0.6)
 const PIP_ACCION: String = "◆"
 const TAMANO_FUENTE_COSTO: int = 12
@@ -38,6 +40,11 @@ func _draw() -> void:
 	# Todo sale de la previsión de la decisión en curso: acá solo se consulta.
 	var prevision: PrevisionTurno = controlador.prevision_actual()
 	if prevision == null:
+		return
+	var modo: ModoAccion = controlador.modo_accion()
+	if modo.elegido != null:
+		for casilla: Vector2i in modo.objetivos(controlador.combate(), controlador.combate().turno_actual()):
+			_rombo(casilla, COLOR_CONJURO)
 		return
 	var alcance: Dictionary[Vector2i, int] = prevision.por_casilla
 	for casilla: Vector2i in alcance:

@@ -118,6 +118,7 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
   - `Dados` tiene que poder serializar y restaurar el estado del RNG, para el guardado.
   - Las entradas de mapa necesitan posiciones de formación para la party (ver 4.1).
   - Dividido en M3a (reglas en `rules/`, sin escenas) y M3b (presentación en el mapa).
+  - M3a hecho: `Medicion`, `MovimientoCombate`, `LineaVision`, `Combatiente` (+ `FuenteEstadisticas`), `Condiciones`, `Flanqueo`, `Golpe`, `Combate` (eventos, reproducible) e `IASimple`.
   - Flanqueo: el flanqueado queda desprevenido **solo frente a las criaturas que lo flanquean**.
   - Alcance de 10 pies: llega a dos casillas en diagonal aunque por la regla de diagonales contaría 15 pies.
   - Moribundo, herido e inconsciente con reglas completas para la party; los enemigos mueren a 0 PG.
@@ -175,3 +176,5 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
 | 2026-09-25 | Las CD derivadas (CA, CD de clase, CD de Percepción) son 10 + el modificador total de su Prueba, con el mismo desglose. |
 | 2026-09-25 | Fortuna/infortunio: dos tiradas, mejor/peor; juntos se cancelan. El natural del dado elegido decide el ajuste por 20/1. |
 | 2026-09-25 | M3 aprobado: flanqueo solo frente a quienes flanquean; excepción del alcance de 10 pies; moribundo/herido completos; sin reacciones; disparador de encuentro genérico. |
+| 2026-09-25 | IA enemiga: no ataca a personajes caídos (pilar 4: muerte justa). |
+| 2026-09-25 | En combate, los oponentes no muertos bloquean el paso; los aliados se atraviesan pero no se termina en su casilla. |

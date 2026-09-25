@@ -14,6 +14,12 @@ config/name="ppix"
 config/description="TODO_LORE: título definitivo del juego"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 
+[autoload]
+
+EventBus="*res://core/event_bus.gd"
+GameState="*res://core/game_state.gd"
+SaveSystem="*res://core/save_system.gd"
+
 [display]
 
 window/size/viewport_width=640

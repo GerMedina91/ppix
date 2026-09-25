@@ -4,7 +4,8 @@ extends RefCounted
 ## - Penalizador por ataque múltiple (sin tipo): -5 / -10, o -4 / -8 con armas ágiles.
 ## - A distancia: -2 (sin tipo) por cada incremento de rango más allá del primero; hasta 6 incrementos.
 ## - Flanqueo: el objetivo queda desprevenido (-2 por circunstancia) solo frente a quien lo flanquea.
-## - Daño: dados + bonificador (mínimo 1 si impacta); éxito crítico, el doble.
+## - Daño: dados + bonificador (mínimo 1 si impacta); éxito crítico, el doble. Letal: en un crítico,
+##   un dado más del tamaño indicado, tirado después de duplicar.
 ## El costo en acciones lo maneja Combate.
 
 enum Motivo { VALIDO, SIN_ARMA, OBJETIVO_ALIADO, OBJETIVO_MUERTO, FUERA_DE_ALCANCE, SIN_LINEA_DE_VISION, SIN_ACCIONES }
@@ -80,6 +81,9 @@ static func resolver(atacante: Combatiente, objetivo: Combatiente, arma: Definic
 		resultado.danio = maxi(DANIO_MINIMO, resultado.tirada_danio.total())
 		if resultado.critico:
 			resultado.danio *= MULTIPLICADOR_CRITICO
+			if arma.letal_caras > 0:
+				resultado.danio_letal = dados.tirar(arma.letal_caras)
+				resultado.danio += resultado.danio_letal
 		objetivo.recibir_danio(resultado.danio, resultado.critico)
 	return resultado
 

@@ -4,6 +4,7 @@
 
 [resource]
 script = ExtResource("1_a3khg")
+id = &"prueba_proyectil"
 nombre = "TODO_LORE: proyectil de prueba"
 caras_dado = 6
 tipo_danio = 1

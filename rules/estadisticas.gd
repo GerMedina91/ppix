@@ -32,7 +32,7 @@ static func defensa(personaje: DefinicionPersonaje) -> Prueba:
 	var armadura: DefinicionArmadura = personaje.armadura
 	if armadura != null and armadura.tiene_tope_destreza:
 		destreza = mini(destreza, armadura.tope_destreza)
-	var prueba: Prueba = Prueba.new("CA", Atributo.nombre(Atributo.Tipo.DESTREZA), destreza, personaje.defensa, personaje.nivel)
+	var prueba: Prueba = Prueba.new("CA", Atributo.nombre(Atributo.Tipo.DESTREZA), destreza, rango_de_defensa(personaje), personaje.nivel)
 	if armadura != null and armadura.bonificador_ca != 0:
 		prueba.modificadores.append(Modificador.new(armadura.bonificador_ca, Modificador.Tipo.OBJETO, armadura.nombre))
 	return prueba
@@ -44,7 +44,33 @@ static func prueba_clase(personaje: DefinicionPersonaje) -> Prueba:
 
 ## Prueba de ataque con un arma: Fuerza; Destreza si es a distancia; la mejor de las dos si es sutil.
 static func prueba_ataque(personaje: DefinicionPersonaje, arma: DefinicionArma) -> Prueba:
-	return _prueba("Golpe (%s)" % arma.nombre, personaje, atributo_de_ataque(personaje, arma), personaje.ataque)
+	return _prueba("Golpe (%s)" % arma.nombre, personaje, atributo_de_ataque(personaje, arma), rango_de_ataque(personaje, arma))
+
+
+## El mejor rango entre el de la categoría del arma y el del arma específica.
+static func rango_de_ataque(personaje: DefinicionPersonaje, arma: DefinicionArma) -> Competencia.Rango:
+	var por_categoria: Competencia.Rango = personaje.ataques.get(arma.categoria, Competencia.Rango.NO_ENTRENADO)
+	var especifico: Competencia.Rango = personaje.armas_con_competencia.get(arma.id, Competencia.Rango.NO_ENTRENADO)
+	return maxi(por_categoria, especifico) as Competencia.Rango
+
+
+static func categoria_de_defensa(personaje: DefinicionPersonaje) -> DefinicionArmadura.Categoria:
+	return DefinicionArmadura.Categoria.SIN_ARMADURA if personaje.armadura == null else personaje.armadura.categoria
+
+
+static func rango_de_defensa(personaje: DefinicionPersonaje) -> Competencia.Rango:
+	return personaje.defensas.get(categoria_de_defensa(personaje), Competencia.Rango.NO_ENTRENADO)
+
+
+## Velocidad con el penalizador de la armadura: si la Fuerza llega al requisito, baja 5 pies. Mínimo 5.
+static func velocidad(personaje: DefinicionPersonaje) -> int:
+	var armadura: DefinicionArmadura = personaje.armadura
+	if armadura == null:
+		return personaje.velocidad_pies
+	var penalizador: int = armadura.penalizador_velocidad_pies
+	if personaje.fuerza >= armadura.requisito_fuerza:
+		penalizador = maxi(0, penalizador - Medicion.PIES_POR_CASILLA)
+	return maxi(Medicion.PIES_POR_CASILLA, personaje.velocidad_pies - penalizador)
 
 
 static func atributo_de_ataque(personaje: DefinicionPersonaje, arma: DefinicionArma) -> Atributo.Tipo:

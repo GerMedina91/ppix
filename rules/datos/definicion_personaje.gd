@@ -20,12 +20,14 @@ extends Resource
 @export var fortaleza: Competencia.Rango = Competencia.Rango.NO_ENTRENADO
 @export var reflejos: Competencia.Rango = Competencia.Rango.NO_ENTRENADO
 @export var voluntad: Competencia.Rango = Competencia.Rango.NO_ENTRENADO
-## Competencia en la categoría de armadura que usa (o sin armadura).
-@export var defensa: Competencia.Rango = Competencia.Rango.NO_ENTRENADO
+## Competencia en defensa por categoría de armadura (incluye SIN_ARMADURA).
+@export var defensas: Dictionary[DefinicionArmadura.Categoria, Competencia.Rango] = {}
 @export var cd_clase: Competencia.Rango = Competencia.Rango.NO_ENTRENADO
 @export var atributo_clave: Atributo.Tipo = Atributo.Tipo.FUERZA
-## Competencia en los ataques con sus armas.
-@export var ataque: Competencia.Rango = Competencia.Rango.NO_ENTRENADO
+## Competencia en ataques por categoría de arma.
+@export var ataques: Dictionary[DefinicionArma.Categoria, Competencia.Rango] = {}
+## Competencia en armas específicas por id (p. ej. el arma predilecta de la entidad del clérigo).
+@export var armas_con_competencia: Dictionary[StringName, Competencia.Rango] = {}
 
 @export_group("Puntos de Golpe")
 ## PG que da la ascendencia (una sola vez).

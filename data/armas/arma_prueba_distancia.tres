@@ -4,7 +4,9 @@
 
 [resource]
 script = ExtResource("1_e24fw")
+id = &"prueba_distancia"
 nombre = "TODO_LORE: arma a distancia de prueba"
+categoria = 1
 tipo_danio = 1
 a_distancia = true
 incremento_rango_pies = 60

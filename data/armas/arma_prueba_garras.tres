@@ -4,6 +4,8 @@
 
 [resource]
 script = ExtResource("1_n11xu")
+id = &"prueba_garras"
 nombre = "TODO_LORE: garras de prueba"
+categoria = 3
 caras_dado = 6
 agil = true

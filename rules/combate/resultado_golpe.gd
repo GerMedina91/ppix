@@ -8,6 +8,8 @@ var prueba: ResultadoPrueba
 var flanqueando: bool = false
 var tirada_danio: ResultadoTirada
 var danio: int = 0
+## Dado letal tirado en el crítico (ya sumado en `danio`; 0 si no hubo).
+var danio_letal: int = 0
 var critico: bool = false
 
 

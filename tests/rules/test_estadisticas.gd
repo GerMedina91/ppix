@@ -18,7 +18,8 @@ func _personaje() -> DefinicionPersonaje:
 	p.fortaleza = R_EXPERTO
 	p.reflejos = R_ENTRENADO
 	p.voluntad = R_ENTRENADO
-	p.defensa = R_ENTRENADO
+	for categoria: DefinicionArmadura.Categoria in DefinicionArmadura.Categoria.values():
+		p.defensas[categoria] = R_ENTRENADO
 	p.cd_clase = R_ENTRENADO
 	p.atributo_clave = Atributo.Tipo.FUERZA
 	p.pg_ascendencia = 8

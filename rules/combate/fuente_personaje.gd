@@ -22,7 +22,7 @@ func pg_maximos() -> int:
 
 
 func velocidad_pies() -> int:
-	return _personaje.velocidad_pies
+	return Estadisticas.velocidad(_personaje)
 
 
 func armas() -> Array[DefinicionArma]:

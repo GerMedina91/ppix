@@ -8,6 +8,7 @@
 [sub_resource type="Resource" id="Resource_bcsfs"]
 script = ExtResource("1_a1asc")
 nombre = "TODO_LORE: armadura pesada de prueba"
+categoria = 3
 bonificador_ca = 4
 tope_destreza = 1
 
@@ -22,9 +23,19 @@ percepcion = 1
 fortaleza = 2
 reflejos = 1
 voluntad = 1
-defensa = 1
+defensas = Dictionary[int, int]({
+0: 1,
+1: 1,
+2: 1,
+3: 1
+})
 cd_clase = 1
-ataque = 1
+ataques = Dictionary[int, int]({
+0: 1,
+1: 1,
+2: 1,
+3: 1
+})
 pg_ascendencia = 8
 pg_clase_por_nivel = 10
 armadura = SubResource("Resource_bcsfs")

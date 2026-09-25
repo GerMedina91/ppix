@@ -136,6 +136,10 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
   - Party de prueba: 2 combatientes cuerpo a cuerpo y 2 a distancia, con números genéricos (`TODO_LORE`); la estructura queda lista para que clases y ascendencias armen el `DefinicionPersonaje`.
   - M3b: tecla de depuración (solo builds de debug) para curar a la party por completo, porque los PG persisten entre combates y todavía no hay descanso.
   - M3b: la fuente del HUD es la de Godot como placeholder.
+- **M3c — Clases:** guerrero, pícaro, clérigo y bruja a nivel 1, con builds fijos y ascendencia humana (placeholder). Cada clase se verifica en Archives of Nethys **antes** de implementarla (`docs/verificacion/`).
+  - Recuperación: PG y espacios de conjuro solo en puntos estables; 1 punto de foco al terminar cada combate.
+  - Reacciones del jugador: aviso [Sí] [No] [Siempre] con el combate pausado; "Siempre" dura la sesión (se podrá revertir desde un menú futuro).
+  - Bruja: patrón El Rencor (mecánica de *The Resentment*); familiar sin rol mecánico por ahora.
 - **Después de M3:** cobertura (menor / normal / mayor) calculada con la línea de visión; posicionamiento previo de la party antes del combate.
 - **M4 — Recuerdos:** inventario de recuerdos, compra/venta, diario, pérdida al morir.
 - **M5 — Contenido del slice:** mapas, NPCs, diálogos, arte final.
@@ -146,7 +150,7 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
 - Qué provocó la Convergencia.
 - Facciones principales.
 - Qué ascendencias de PF2e entran en el slice (las clases ya están decididas, ver registro).
-- Dominio **vigilia** de El Umbral: no está en el Player Core Remaster (posiblemente en *Divine Mysteries*, fuera de los libros permitidos). ¿Se reemplaza por otro dominio o se amplía la lista de libros?
+- Tercer dominio de El Umbral: **vigilia** y su reemplazo propuesto **reposo** no están en el Player Core (ambos están en *Divine Mysteries*, verificado en AoN). Dominios del Player Core disponibles: ver `docs/verificacion/c1_clases.md`. Pendiente de elegir.
 - Justificación en el lore de la party de 4 (¿otros Ecos? ¿mercenarios?).
 - Muerte en party: qué pasa si cae el Eco pero sobreviven los demás, y qué pierden (si algo) los otros miembros al morir.
 - Paleta definitiva.
@@ -197,3 +201,5 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
 | 2026-09-25 | Clases del slice: guerrero, pícaro, clérigo y bruja (Player Core, Remaster), nivel 1. |
 | 2026-09-25 | `remata_caidos`: **decidido**, depende de cada criatura (perfil de IA en `DefinicionCriatura`). |
 | 2026-09-25 | Entidad del clérigo del slice: El Umbral (lore en `docs/lore/entidades.md`, datos en `data/entidades/el_umbral.tres`). |
+| 2026-09-25 | M3c: ascendencia humana para los 4 builds (placeholder). Recuperación: PG y espacios en puntos estables; 1 punto de foco por combate. Reacciones con aviso pausado [Sí] [No] [Siempre]. Glosario de clases provisorio. |
+| 2026-09-25 | Patrón de la bruja: El Rencor (`docs/lore/patrones.md`). Verificación de reglas contra Archives of Nethys antes de implementar cada clase. |

@@ -52,8 +52,7 @@ func test_entrar_a_la_zona_inicia_el_combate_y_bloquea_la_exploracion() -> void:
 func test_en_su_turno_el_jugador_mueve_con_click() -> void:
 	await _entrar_a_la_zona()
 	assert_bool(await _esperar(func() -> bool: return _control.esperando_decision() or not _control.en_curso())).is_true()
-	if not _control.en_curso():
-		return
+	assert_bool(_control.en_curso()).override_failure_message("con la semilla 11 el combate sigue en el primer turno de la party").is_true()
 	var actor: Combatiente = _control.combate().turno_actual()
 	var destinos: Dictionary = _control.combate().casillas_de_zancada(actor)
 	var destino: Vector2i = destinos.keys()[0]
@@ -121,10 +120,10 @@ func test_el_hud_aparece_con_el_combate_y_registra_eventos() -> void:
 	assert_bool(hud.visible).is_true()
 	assert_bool(await _esperar(func() -> bool: return _control.esperando_decision() or not _control.en_curso())).is_true()
 	assert_array(Array(hud.lineas_registro())).is_not_empty()
-	if _control.en_curso():
-		var actor: Combatiente = _control.combate().turno_actual()
-		assert_str(hud.texto_activo()).starts_with("%s   PG %d/%d   Acciones " % [actor.id, actor.pg, actor.pg_maximos()])
-		assert_str(hud.texto_activo()).not_contains("%")
+	assert_bool(_control.en_curso()).is_true()
+	var actor: Combatiente = _control.combate().turno_actual()
+	assert_str(hud.texto_activo()).starts_with("%s   PG %d/%d   Acciones " % [actor.id, actor.pg, actor.pg_maximos()])
+	assert_str(hud.texto_activo()).not_contains("%")
 
 
 func test_el_overlay_dibuja_rangos_y_vision_durante_el_combate_sin_errores() -> void:

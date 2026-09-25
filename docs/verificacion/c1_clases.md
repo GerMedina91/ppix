@@ -48,8 +48,8 @@ Remaster del **Player Core**). Solo números y referencias; no se copia texto de
 | Cota de malla | +4 | +1 | media | +3 | -2 | -5 pies | PC p. 273 · `ID=46` |
 
 ## Dominios (para El Umbral)
-- En Player Core: Viaje (`/Domains.aspx?ID=93`) y Sueños (`ID=72`).
-- **Reposo** y **Vigilia**: la versión Remaster está en *Divine Mysteries* (`ID=116`, `ID=123`), **no en Player Core**.
+- En Player Core: Viaje (`/Domains.aspx?ID=93`), Sueños (`ID=72`) y Muerte (PC p. 39 · `ID=70`; conjuro de dominio *Death's Call*, avanzado *Eradicate Undeath*).
+- **Reposo** y **Vigilia**: la versión Remaster está en *Divine Mysteries* (`ID=116`, `ID=123`), **no en Player Core**. Descartados: el tercer dominio es Muerte.
 
 ## Builds fijos del slice (resultado de `ArmadorPersonaje`, testeado)
 Humano, nivel 1. Trasfondo: solo 2 mejoras + 1 habilidad (su dote de habilidad queda para más adelante).

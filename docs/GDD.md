@@ -150,7 +150,6 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
 - Qué provocó la Convergencia.
 - Facciones principales.
 - Qué ascendencias de PF2e entran en el slice (las clases ya están decididas, ver registro).
-- Tercer dominio de El Umbral: **vigilia** y su reemplazo propuesto **reposo** no están en el Player Core (ambos están en *Divine Mysteries*, verificado en AoN). Dominios del Player Core disponibles: ver `docs/verificacion/c1_clases.md`. Pendiente de elegir.
 - Justificación en el lore de la party de 4 (¿otros Ecos? ¿mercenarios?).
 - Muerte en party: qué pasa si cae el Eco pero sobreviven los demás, y qué pierden (si algo) los otros miembros al morir.
 - Paleta definitiva.
@@ -198,6 +197,7 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
 | 2026-09-25 | La IA decide de a una acción; cada acción se anima antes de la siguiente (estado del Combate y mapa siempre sincronizados). |
 | 2026-09-25 | Movimiento de varias acciones: un click puede encadenar hasta 3 Zancadas (cada una es una acción separada); previsualización de costo con ◆. |
 | 2026-09-25 | **M3 cerrado.** |
+| 2026-09-25 | Dominios de El Umbral: viaje, sueños y **muerte** (Player Core p. 39, verificado en AoN). Muerte reemplaza a vigilia; vigilia y reposo solo están en *Divine Mysteries*. |
 | 2026-09-25 | Clases del slice: guerrero, pícaro, clérigo y bruja (Player Core, Remaster), nivel 1. |
 | 2026-09-25 | `remata_caidos`: **decidido**, depende de cada criatura (perfil de IA en `DefinicionCriatura`). |
 | 2026-09-25 | Entidad del clérigo del slice: El Umbral (lore en `docs/lore/entidades.md`, datos en `data/entidades/el_umbral.tres`). |

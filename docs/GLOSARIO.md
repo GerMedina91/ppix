@@ -70,7 +70,7 @@ Términos de reglas en castellano, según la edición oficial en castellano de l
 | edicts / anathema | edictos / anatemas | `edictos`, `anatemas` | Provisorio |
 | divine skill | habilidad divina | `habilidad_divina` | Provisorio |
 | favored weapon | arma predilecta | `arma_predilecta` | Provisorio |
-| travel / dreams (dominios) | viaje / sueños | `viaje`, `suenos` | Provisorio |
+| travel / dreams / death (dominios) | viaje / sueños / muerte | `viaje`, `suenos`, `muerte` | Provisorio |
 | halberd | alabarda | `alabarda` | Provisorio |
 | Occultism | Ocultismo | `ocultismo` | Provisorio |
 | skill | habilidad | `Habilidad` | Provisorio |

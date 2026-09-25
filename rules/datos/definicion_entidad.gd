@@ -14,8 +14,6 @@ enum FuenteDivina { CURAR, DANAR }
 @export var arma_predilecta: StringName = &""
 ## Ids de dominios verificados en el Player Core Remaster (ver docs/GLOSARIO.md).
 @export var dominios: Array[StringName] = []
-## Dominios pedidos por diseño que todavía no se verificaron en los libros permitidos.
-@export var dominios_a_verificar: Array[StringName] = []
 @export var habilidad_divina: Habilidad.Tipo = Habilidad.Tipo.RELIGION
 @export var edictos: PackedStringArray = PackedStringArray()
 @export var anatemas: PackedStringArray = PackedStringArray()

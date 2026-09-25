@@ -42,6 +42,12 @@ static func prueba_clase(personaje: DefinicionPersonaje) -> Prueba:
 	return _prueba("CD de clase", personaje, personaje.atributo_clave, personaje.cd_clase)
 
 
+## Ataque de conjuro: atributo clave + competencia en conjuros (Player Core p. 403). La CD de conjuro es
+## su cd(): 10 + el mismo modificador.
+static func prueba_conjuro(personaje: DefinicionPersonaje) -> Prueba:
+	return _prueba("Ataque de conjuro", personaje, personaje.atributo_clave, personaje.conjuros)
+
+
 ## Prueba de ataque con un arma: Fuerza; Destreza si es a distancia; la mejor de las dos si es sutil.
 static func prueba_ataque(personaje: DefinicionPersonaje, arma: DefinicionArma) -> Prueba:
 	return _prueba("Golpe (%s)" % arma.nombre, personaje, atributo_de_ataque(personaje, arma), rango_de_ataque(personaje, arma))
@@ -79,6 +85,15 @@ static func atributo_de_ataque(personaje: DefinicionPersonaje, arma: DefinicionA
 	if arma.sutil and personaje.destreza > personaje.fuerza:
 		return Atributo.Tipo.DESTREZA
 	return Atributo.Tipo.FUERZA
+
+
+## true si el bonificador al daño de `arma` sale de la Fuerza (lo mira debilitado).
+static func danio_con_fuerza(personaje: DefinicionPersonaje, arma: DefinicionArma) -> bool:
+	for capacidad: Capacidad in personaje.capacidades:
+		var atributo: Variant = capacidad.atributo_de_danio(personaje, arma)
+		if atributo != null:
+			return atributo == Atributo.Tipo.FUERZA
+	return not arma.a_distancia
 
 
 ## Bonificador fijo al daño: Fuerza en cuerpo a cuerpo; nada a distancia. Una capacidad puede cambiar

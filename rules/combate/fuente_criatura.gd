@@ -43,6 +43,15 @@ func bonificador_danio(_arma: DefinicionArma) -> int:
 	return _criatura.bonificador_danio
 
 
+## Criaturas: el bloque no dice el atributo; cuerpo a cuerpo sin sutil se toma como de Fuerza.
+func ataque_con_fuerza(arma: DefinicionArma) -> bool:
+	return not arma.a_distancia and not arma.sutil
+
+
+func danio_con_fuerza(arma: DefinicionArma) -> bool:
+	return not arma.a_distancia
+
+
 func prueba_habilidad(habilidad: Habilidad.Tipo) -> Prueba:
 	return Prueba.fija(Habilidad.nombre(habilidad), Habilidad.nombre(habilidad), _criatura.habilidades.get(habilidad, 0))
 

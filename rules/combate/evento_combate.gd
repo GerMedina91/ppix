@@ -6,6 +6,12 @@ enum Tipo {
 	INICIATIVA, INICIO_RONDA, INICIO_TURNO, RECUPERACION, TURNO_PERDIDO,
 	MOVIMIENTO, GOLPE, CAIDO, MUERTE, FIN_TURNO, FIN_COMBATE, ACCION_INVALIDA,
 	REACCION_PENDIENTE, REACCION,
+	## Cambió el valor de una condición: {"condicion": Condiciones.Tipo, "valor", "anterior"}.
+	CONDICION,
+	## Perdió acciones al empezar el turno: {"cantidad", "condicion": Condiciones.Tipo}.
+	ACCIONES_PERDIDAS,
+	## Arcadas contra indispuesto: {"resultado": ResultadoPrueba, "anterior", "valor"}.
+	ARCADAS,
 }
 
 var tipo: Tipo

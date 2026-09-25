@@ -3,8 +3,9 @@ extends RefCounted
 ## Máquina de estados de un combate de PF2e. Lógica pura: las escenas envían intenciones
 ## (zancada, paso, golpe, terminar_turno) y reciben eventos para mostrar.
 ## - Iniciativa: prueba de Percepción. Empate: primero los enemigos; si no, el orden de entrada.
-## - Turno: 3 acciones. Zancada, Paso y Golpe cuestan 1. Moribundo: prueba de recuperación al empezar.
-##   Quien no puede actuar (inconsciente o muerto) pierde el turno.
+## - Turno: 3 acciones. Zancada, Paso, Golpe y Arcadas cuestan 1. Moribundo: prueba de recuperación al
+##   empezar. Quien no puede actuar (inconsciente, muerto o aturdido sin acciones) pierde el turno.
+## - Condiciones con valor (duraciones, asustado, aturdido, huyendo): ver ReglasCondiciones.
 ## - Fin: victoria si todos los enemigos murieron; derrota si toda la party está fuera de combate.
 ## - Reacciones (GestorReacciones): la Zancada se procesa casilla por casilla y el Golpe avisa antes de
 ##   tirar; si una reacción necesita la decisión del jugador, el combate queda en pausa con una pregunta
@@ -16,10 +17,13 @@ enum Estado { SIN_INICIAR, EN_CURSO, VICTORIA, DERROTA }
 const COSTO_ZANCADA: int = 1
 const COSTO_PASO: int = 1
 const COSTO_GOLPE: int = 1
+const COSTO_ARCADAS: int = 1
 ## Nombres de las acciones para los eventos de acción imposible (según docs/GLOSARIO.md).
 const ACCION_ZANCADA: String = "Zancada"
 const ACCION_PASO: String = "Paso"
 const ACCION_GOLPE: String = "Golpe"
+const ACCION_ARCADAS: String = "Arcadas"
+const MOTIVO_HUYENDO: String = "huyendo: solo puede alejarse"
 
 var participantes: Array[Combatiente] = []
 var orden: Array[Combatiente] = []
@@ -135,6 +139,8 @@ func zancada(destino: Vector2i, recorrido: Array[Vector2i] = []) -> Array[Evento
 		and camino.back() == destino and MovimientoCombate.costo_de(actor.celda, camino) <= actor.fuente.velocidad_pies()
 	if not valido:
 		return [_invalida(actor, ACCION_ZANCADA, "fuera del alcance de la Zancada")]
+	if not ReglasCondiciones.movimiento_permitido(self, actor, actor.celda, destino):
+		return [_invalida(actor, ACCION_ZANCADA, MOTIVO_HUYENDO)]
 	actor.gastar_acciones(COSTO_ZANCADA)
 	return _avanzar_zancada(actor, camino, 0, false)
 
@@ -147,6 +153,8 @@ func paso(destino: Vector2i) -> Array[EventoCombate]:
 	var d: Vector2i = destino - actor.celda
 	if absi(d.x) > 1 or absi(d.y) > 1 or d == Vector2i.ZERO or _ocupada(destino) or not _grilla.puede_dar_paso(actor.celda, destino):
 		return [_invalida(actor, ACCION_PASO, "solo a una casilla libre adyacente")]
+	if not ReglasCondiciones.movimiento_permitido(self, actor, actor.celda, destino):
+		return [_invalida(actor, ACCION_PASO, MOTIVO_HUYENDO)]
 	actor.gastar_acciones(COSTO_PASO)
 	var camino: Array[Vector2i] = [destino]
 	return _mover(actor, camino, "paso")
@@ -176,7 +184,7 @@ func golpe(id_objetivo: StringName, arma: DefinicionArma = null) -> Array[Evento
 
 ## Golpe de una reacción (Golpe reactivo): no gasta acciones ni cuenta para el penalizador por ataque múltiple.
 func golpe_de_reaccion(reactor: Combatiente, objetivo: Combatiente, arma: DefinicionArma) -> Array[EventoCombate]:
-	var estaba_en_pie: bool = objetivo.condiciones.puede_actuar()
+	var estaba_en_pie: bool = objetivo.condiciones.en_pie()
 	var resultado: ResultadoGolpe = Golpe.resolver(reactor, objetivo, arma, _dados, participantes, _vision, [], false)
 	if not resultado.es_valido():
 		return []
@@ -187,11 +195,24 @@ func golpe_de_reaccion(reactor: Combatiente, objetivo: Combatiente, arma: Defini
 	return eventos
 
 
+## Arcadas: 1 acción para intentar bajar indispuesto (salvación de Fortaleza contra la CD del efecto).
+func arcadas() -> Array[EventoCombate]:
+	var actor: Combatiente = turno_actual()
+	var invalido: EventoCombate = _validar_accion(actor, COSTO_ARCADAS, ACCION_ARCADAS)
+	if invalido != null:
+		return [invalido]
+	if not actor.condiciones.tiene(Condiciones.Tipo.INDISPUESTO):
+		return [_invalida(actor, ACCION_ARCADAS, "no está indispuesto")]
+	actor.gastar_acciones(COSTO_ARCADAS)
+	return ReglasCondiciones.arcadas(self, actor, _dados)
+
+
 func terminar_turno() -> Array[EventoCombate]:
 	var actor: Combatiente = turno_actual()
 	if actor == null or hay_reaccion_pendiente() or hay_continuacion():
 		return []
-	var eventos: Array[EventoCombate] = [_emitir(EventoCombate.new(EventoCombate.Tipo.FIN_TURNO, actor.id))]
+	var eventos: Array[EventoCombate] = ReglasCondiciones.fin_de_turno(self, actor)
+	eventos.append(_emitir(EventoCombate.new(EventoCombate.Tipo.FIN_TURNO, actor.id)))
 	eventos.append_array(_avanzar_turno())
 	return eventos
 
@@ -203,6 +224,7 @@ func _empezar_turno() -> Array[EventoCombate]:
 	var actor: Combatiente = turno_actual()
 	actor.empezar_turno()
 	eventos.append(_emitir(EventoCombate.new(EventoCombate.Tipo.INICIO_TURNO, actor.id, {"ronda": ronda})))
+	eventos.append_array(ReglasCondiciones.inicio_de_turno(self, actor))
 	if actor.condiciones.moribundo > 0:
 		var resultado: ResultadoPrueba = actor.prueba_de_recuperacion(_dados)
 		eventos.append(_emitir(EventoCombate.new(EventoCombate.Tipo.RECUPERACION, actor.id,
@@ -210,8 +232,9 @@ func _empezar_turno() -> Array[EventoCombate]:
 		if actor.condiciones.muerto:
 			eventos.append(_emitir(EventoCombate.new(EventoCombate.Tipo.MUERTE, actor.id)))
 			eventos.append_array(_verificar_fin())
-	if estado == Estado.EN_CURSO and not actor.condiciones.puede_actuar():
+	if estado == Estado.EN_CURSO and (not actor.condiciones.puede_actuar() or actor.acciones_restantes == 0):
 		eventos.append(_emitir(EventoCombate.new(EventoCombate.Tipo.TURNO_PERDIDO, actor.id)))
+		eventos.append_array(ReglasCondiciones.fin_de_turno(self, actor))
 		eventos.append_array(_avanzar_turno())
 	return eventos
 
@@ -242,7 +265,7 @@ func _avanzar_zancada(actor: Combatiente, camino: Array[Vector2i], indice: int, 
 	var recorrido: Array[Vector2i] = []
 	var i: int = indice
 	var resuelto: bool = disparo_resuelto
-	while i < camino.size() and actor.condiciones.puede_actuar() and estado == Estado.EN_CURSO:
+	while i < camino.size() and actor.condiciones.en_pie() and estado == Estado.EN_CURSO:
 		if not resuelto:
 			var disparo: DisparoReaccion = DisparoReaccion.sale_de_casilla(actor, actor.celda)
 			if reacciones.hay_candidatos(disparo):
@@ -270,7 +293,7 @@ func _evento_movimiento(actor: Combatiente, desde: Vector2i, recorrido: Array[Ve
 func _tirar_golpe(actor: Combatiente, objetivo: Combatiente, arma: DefinicionArma, disparo: DisparoReaccion) -> Array[EventoCombate]:
 	if estado != Estado.EN_CURSO or not actor.condiciones.puede_actuar() or objetivo.condiciones.muerto:
 		return []
-	var estaba_en_pie: bool = objetivo.condiciones.puede_actuar()
+	var estaba_en_pie: bool = objetivo.condiciones.en_pie()
 	var resultado: ResultadoGolpe = Golpe.resolver(actor, objetivo, arma, _dados, participantes, _vision, disparo.bonificadores_ca)
 	if not resultado.es_valido():
 		return [_golpe_invalido(actor, resultado.motivo)]
@@ -292,7 +315,7 @@ func _eventos_de_estado(objetivo: Combatiente, estaba_en_pie: bool) -> Array[Eve
 	var eventos: Array[EventoCombate] = []
 	if objetivo.condiciones.muerto:
 		eventos.append(_emitir(EventoCombate.new(EventoCombate.Tipo.MUERTE, objetivo.id)))
-	elif estaba_en_pie and not objetivo.condiciones.puede_actuar():
+	elif estaba_en_pie and not objetivo.condiciones.en_pie():
 		eventos.append(_emitir(EventoCombate.new(EventoCombate.Tipo.CAIDO, objetivo.id, {"moribundo": objetivo.condiciones.moribundo})))
 	return eventos
 
@@ -303,7 +326,7 @@ func _verificar_fin() -> Array[EventoCombate]:
 	var enemigos_vivos: bool = participantes.any(func(c: Combatiente) -> bool:
 		return c.bando == Combatiente.Bando.ENEMIGOS and not c.condiciones.muerto)
 	var party_en_pie: bool = participantes.any(func(c: Combatiente) -> bool:
-		return c.bando == Combatiente.Bando.PARTY and c.condiciones.puede_actuar())
+		return c.bando == Combatiente.Bando.PARTY and c.condiciones.en_pie())
 	if not enemigos_vivos:
 		estado = Estado.VICTORIA
 	elif not party_en_pie:
@@ -320,6 +343,8 @@ func _validar_accion(actor: Combatiente, costo: int, accion: String) -> EventoCo
 		return _invalida(actor, accion, "esperando una reacción")
 	if not actor.condiciones.puede_actuar():
 		return _invalida(actor, accion, "no puede actuar")
+	if actor.condiciones.tiene(Condiciones.Tipo.HUYENDO) and accion != ACCION_ZANCADA and accion != ACCION_PASO:
+		return _invalida(actor, accion, MOTIVO_HUYENDO)
 	if actor.acciones_restantes < costo:
 		if accion == ACCION_GOLPE:
 			return _golpe_invalido(actor, Golpe.Motivo.SIN_ACCIONES)

@@ -120,6 +120,10 @@ static func _condiciones(c: Combatiente) -> String:
 		partes.append("herido %d" % c.condiciones.herido)
 	if c.condiciones.inconsciente:
 		partes.append("inconsciente")
+	var valores: Dictionary[Condiciones.Tipo, int] = c.condiciones.valores()
+	for tipo: Condiciones.Tipo in valores:
+		if valores[tipo] > 0:
+			partes.append(FormatoRegistro.condicion(tipo, valores[tipo]))
 	return "" if partes.is_empty() else "   (%s)" % ", ".join(partes)
 
 

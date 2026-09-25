@@ -37,7 +37,25 @@ static func texto(evento: EventoCombate, combate: Combate) -> String:
 			return "Victoria" if evento.datos.estado == Combate.Estado.VICTORIA else "Derrota"
 		EventoCombate.Tipo.ACCION_INVALIDA:
 			return "%s: %s imposible (%s)" % [actor, evento.datos.get("accion", "acción"), evento.datos.motivo]
+		EventoCombate.Tipo.CONDICION:
+			if evento.datos.valor == 0:
+				return "%s ya no está %s" % [actor, Condiciones.nombre(evento.datos.condicion)]
+			return "%s: %s" % [actor, condicion(evento.datos.condicion, evento.datos.valor)]
+		EventoCombate.Tipo.ACCIONES_PERDIDAS:
+			return "%s pierde %d %s por %s" % [actor, evento.datos.cantidad,
+				"acción" if evento.datos.cantidad == 1 else "acciones", Condiciones.nombre(evento.datos.condicion)]
+		EventoCombate.Tipo.ARCADAS:
+			var a: ResultadoPrueba = evento.datos.resultado
+			return "%s: Arcadas, Fortaleza %d contra CD %d: %s (indispuesto %d)" % [
+				actor, a.total, a.cd, GradoExito.nombre(a.grado), evento.datos.valor]
 	return ""
+
+
+## "asustado 2"; las condiciones sin valor (huyendo), solo el nombre.
+static func condicion(tipo: Condiciones.Tipo, valor: int) -> String:
+	if tipo == Condiciones.Tipo.HUYENDO:
+		return Condiciones.nombre(tipo)
+	return "%s %d" % [Condiciones.nombre(tipo), valor]
 
 
 ## "A → B: 12 (+4 Destreza, +3 competencia (entrenado)) = 19 contra CA 16: éxito, 9 de daño"

@@ -9,7 +9,7 @@ extends CapacidadReaccion
 func aplica(reactor: Combatiente, disparo: DisparoReaccion, combate: Combate) -> bool:
 	if disparo.tipo != DisparoReaccion.Tipo.SALE_DE_CASILLA and disparo.tipo != DisparoReaccion.Tipo.ATAQUE_A_DISTANCIA:
 		return false
-	if disparo.actor.es_aliado_de(reactor) or not disparo.actor.condiciones.puede_actuar():
+	if disparo.actor.es_aliado_de(reactor) or not disparo.actor.condiciones.en_pie():
 		return false
 	return arma_para(reactor, disparo.celda) != null and combate.vision().hay_linea(reactor.celda, disparo.celda)
 

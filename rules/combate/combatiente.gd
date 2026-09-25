@@ -80,6 +80,7 @@ func empezar_turno() -> void:
 func prueba_percepcion() -> Prueba:
 	var prueba: Prueba = fuente.prueba_percepcion()
 	_aplicar_inconsciente(prueba)
+	_aplicar_condiciones(prueba, false)
 	return prueba
 
 
@@ -88,6 +89,36 @@ func prueba_salvacion(salvacion: Estadisticas.Salvacion) -> Prueba:
 	var prueba: Prueba = fuente.prueba_salvacion(salvacion)
 	if salvacion == Estadisticas.Salvacion.REFLEJOS:
 		_aplicar_inconsciente(prueba)
+	_aplicar_condiciones(prueba, false)
+	return prueba
+
+
+## Prueba de ataque con un arma, con las condiciones del atacante (sin penalizador por ataque múltiple).
+func prueba_ataque(arma: DefinicionArma) -> Prueba:
+	var prueba: Prueba = fuente.prueba_ataque(arma)
+	_aplicar_condiciones(prueba, fuente.ataque_con_fuerza(arma))
+	return prueba
+
+
+## Bonificador fijo al daño con `arma`, con debilitado si el daño es de Fuerza (penalizador de estatus).
+func bonificador_danio(arma: DefinicionArma) -> int:
+	var bonificador: int = fuente.bonificador_danio(arma)
+	if fuente.danio_con_fuerza(arma):
+		bonificador -= condiciones.valor(Condiciones.Tipo.DEBILITADO)
+	return bonificador
+
+
+## Ataque de conjuro con las condiciones aplicadas; su cd() es la CD de conjuro.
+func prueba_conjuro() -> Prueba:
+	var prueba: Prueba = fuente.prueba_conjuro()
+	_aplicar_condiciones(prueba, false)
+	return prueba
+
+
+## Prueba de habilidad con las condiciones aplicadas (debilitado: solo Atletismo, de Fuerza).
+func prueba_habilidad(habilidad: Habilidad.Tipo) -> Prueba:
+	var prueba: Prueba = fuente.prueba_habilidad(habilidad)
+	_aplicar_condiciones(prueba, habilidad == Habilidad.Tipo.ATLETISMO)
 	return prueba
 
 
@@ -98,7 +129,20 @@ func defensa_contra(flanqueado_por_el_atacante: bool) -> Prueba:
 	if flanqueado_por_el_atacante or condiciones.desprevenido or condiciones.inconsciente:
 		prueba.modificadores.append(Modificador.new(PENALIZADOR_DESPREVENIDO, Modificador.Tipo.CIRCUNSTANCIA, FUENTE_DESPREVENIDO))
 	_aplicar_inconsciente(prueba)
+	_aplicar_condiciones(prueba, false)
 	return prueba
+
+
+## Asustado e indispuesto: penalizador de estatus a todas las pruebas y CD (también la CA). Debilitado:
+## solo a lo basado en Fuerza. Entre penalizadores de estatus vale el peor (SumaModificadores).
+func _aplicar_condiciones(prueba: Prueba, basada_en_fuerza: bool) -> void:
+	var tipos: Array[Condiciones.Tipo] = [Condiciones.Tipo.ASUSTADO, Condiciones.Tipo.INDISPUESTO]
+	if basada_en_fuerza:
+		tipos.append(Condiciones.Tipo.DEBILITADO)
+	for tipo: Condiciones.Tipo in tipos:
+		var valor: int = condiciones.valor(tipo)
+		if valor > 0:
+			prueba.modificadores.append(Modificador.new(-valor, Modificador.Tipo.ESTATUS, Condiciones.nombre(tipo)))
 
 
 ## Inconsciente: -4 de estatus a CA, Percepción y Reflejos.

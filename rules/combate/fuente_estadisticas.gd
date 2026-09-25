@@ -33,6 +33,21 @@ func bonificador_danio(_arma: DefinicionArma) -> int:
 	return 0
 
 
+## true si el ataque con `arma` usa la Fuerza (lo mira debilitado).
+func ataque_con_fuerza(arma: DefinicionArma) -> bool:
+	return not arma.a_distancia
+
+
+## true si el bonificador al daño con `arma` sale de la Fuerza (lo mira debilitado).
+func danio_con_fuerza(arma: DefinicionArma) -> bool:
+	return not arma.a_distancia
+
+
+## Ataque de conjuro; su cd() es la CD de conjuro. Sin lanzamiento: sin competencia.
+func prueba_conjuro() -> Prueba:
+	return Prueba.plana("Ataque de conjuro")
+
+
 ## La CA es defensa().cd().
 func defensa() -> Prueba:
 	return Prueba.plana("CA")

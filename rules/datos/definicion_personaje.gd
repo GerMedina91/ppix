@@ -24,6 +24,8 @@ extends Resource
 @export var defensas: Dictionary[DefinicionArmadura.Categoria, Competencia.Rango] = {}
 @export var cd_clase: Competencia.Rango = Competencia.Rango.NO_ENTRENADO
 @export var atributo_clave: Atributo.Tipo = Atributo.Tipo.FUERZA
+## Ataque y CD de conjuros (con el atributo clave). No entrenado si la clase no lanza conjuros.
+@export var conjuros: Competencia.Rango = Competencia.Rango.NO_ENTRENADO
 ## Competencia en ataques por categoría de arma.
 @export var ataques: Dictionary[DefinicionArma.Categoria, Competencia.Rango] = {}
 ## Competencia en armas específicas por id (p. ej. el arma predilecta de la entidad del clérigo).

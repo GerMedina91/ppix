@@ -37,6 +37,18 @@ func bonificador_danio(arma: DefinicionArma) -> int:
 	return Estadisticas.bonificador_danio(_personaje, arma)
 
 
+func ataque_con_fuerza(arma: DefinicionArma) -> bool:
+	return Estadisticas.atributo_de_ataque(_personaje, arma) == Atributo.Tipo.FUERZA
+
+
+func danio_con_fuerza(arma: DefinicionArma) -> bool:
+	return Estadisticas.danio_con_fuerza(_personaje, arma)
+
+
+func prueba_conjuro() -> Prueba:
+	return Estadisticas.prueba_conjuro(_personaje)
+
+
 func defensa() -> Prueba:
 	return Estadisticas.defensa(_personaje)
 

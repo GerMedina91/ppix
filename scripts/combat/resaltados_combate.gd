@@ -39,7 +39,7 @@ func _draw() -> void:
 	var prevision: PrevisionTurno = controlador.prevision_actual()
 	if prevision == null:
 		return
-	var alcance: Dictionary[Vector2i, int] = prevision.alcance.por_casilla
+	var alcance: Dictionary[Vector2i, int] = prevision.por_casilla
 	for casilla: Vector2i in alcance:
 		_rombo(casilla, COLOR_POR_ZANCADAS[alcance[casilla]])
 	var cursor: Vector2i = controlador.celda_cursor()

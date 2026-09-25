@@ -89,7 +89,8 @@ func celda_cursor() -> Vector2i:
 ## Casilla -> cantidad mínima de Zancadas, durante la decisión del jugador.
 func alcance_actual() -> Dictionary[Vector2i, int]:
 	var prevision: PrevisionTurno = prevision_actual()
-	return prevision.alcance.por_casilla if prevision != null else {} as Dictionary[Vector2i, int]
+	var vacio: Dictionary[Vector2i, int] = {}
+	return prevision.por_casilla if prevision != null else vacio
 
 
 ## Costo en acciones de hacer click en `celda` ahora: Zancadas necesarias o el Golpe; 0 si no se puede.
@@ -101,7 +102,8 @@ func costo_previsto(celda: Vector2i) -> int:
 ## Camino completo (todas las Zancadas) hasta `celda`, para la previsualización.
 func camino_previsto(celda: Vector2i) -> Array[Vector2i]:
 	var prevision: PrevisionTurno = prevision_actual()
-	return prevision.camino(celda) if prevision != null else [] as Array[Vector2i]
+	var vacio: Array[Vector2i] = []
+	return prevision.camino(celda) if prevision != null else vacio
 
 
 ## Previsión de la decisión en curso: se calcula una vez y se rehace solo si cambió el estado del combate.
@@ -187,7 +189,10 @@ func click_en_celda(celda: Vector2i, es_paso: bool = false) -> void:
 	elif es_paso:
 		_encolar(_combate.paso(celda))
 	else:
-		_plan = prevision_actual().alcance.tramos(celda)
+		var prevision: PrevisionTurno = prevision_actual()
+		_plan.clear()
+		if prevision.por_casilla.has(celda):
+			_plan = prevision.alcance.tramos(celda)
 		if _plan.is_empty():
 			_encolar(_combate.zancada(celda))  # imposible: el evento informa el motivo
 		else:

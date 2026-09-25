@@ -49,6 +49,15 @@ func animar(evento: EventoCombate, actores: Dictionary[StringName, ActorMapa]) -
 		EventoCombate.Tipo.ACCION_INVALIDA:
 			if actor != null:
 				await _texto(actor, evento.datos.motivo, COLOR_INVALIDA)
+		EventoCombate.Tipo.CONDICION:
+			var texto: String = FormatoRegistro.condicion(evento.datos.condicion, evento.datos.valor)
+			if evento.datos.valor == 0:
+				texto = "sin %s" % Condiciones.nombre(evento.datos.condicion)
+			await _texto(actor, texto, COLOR_INFO)
+		EventoCombate.Tipo.ACCIONES_PERDIDAS:
+			await _texto(actor, "%s: -%d ◆" % [Condiciones.nombre(evento.datos.condicion), evento.datos.cantidad], COLOR_INFO)
+		EventoCombate.Tipo.ARCADAS:
+			await _texto(actor, "Arcadas: indispuesto %d" % evento.datos.valor, COLOR_INFO)
 		_:
 			pass
 

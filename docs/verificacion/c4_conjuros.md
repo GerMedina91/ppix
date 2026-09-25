@@ -67,7 +67,15 @@ resumidas y referencias; no se copia texto de reglas.
   en Fuerza (ataques cuerpo a cuerpo con Fuerza, daño con Fuerza, Atletismo).
 - **Aturdido** (*Stunned*, PC p. 446 · `ID=93`): no puede actuar; el valor es la cantidad total de acciones que pierde
   (se descuentan al recuperar acciones).
-- **Huyendo** (*Fleeing*, PC p. 444): la necesita el fallo crítico de Miedo.
+- **Huyendo** (*Fleeing*, PC p. 444 · `ID=74`): en su turno gasta todas las acciones en alejarse de la fuente lo
+  más rápido posible; no puede Demorar ni Preparar. Implementación simplificada (decisión de diseño): solo Zancadas
+  y Pasos que terminan más lejos de la fuente.
+- **Condiciones repetidas** (PC p. 442 · `/Rules.aspx?ID=2455`): una condición se tiene una sola vez; con valores
+  distintos vale el más alto y se siguen las dos duraciones; una reducción baja todas las de ese nombre; quitar la
+  condición la saca entera. **Valor de condición** (`ID=2456`): a 0, la condición termina.
+- **Duraciones** (PC p. 302 · `ID=2242` y p. 426 · `ID=2378`): en rondas, bajan 1 al inicio de cada turno de quien
+  creó el efecto; "hasta el final de su próximo turno" corre al final del turno del afectado. Si el lanzador muere,
+  la duración sigue con su orden de iniciativa (pendiente: hoy los muertos no tienen turno).
 
 ## Sostener
 - **Sostener** (*Sustain*, PC p. 419 · `/Actions.aspx?ID=2317`): 1 acción, **concentrar**. Extiende un efecto

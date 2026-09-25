@@ -84,7 +84,7 @@ static func resolver(atacante: Combatiente, objetivo: Combatiente, arma: Definic
 	var grado: GradoExito.Grado = resultado.prueba.grado
 	if grado == GradoExito.Grado.EXITO or grado == GradoExito.Grado.EXITO_CRITICO:
 		resultado.critico = grado == GradoExito.Grado.EXITO_CRITICO
-		resultado.tirada_danio = arma.tirada_danio(atacante.fuente.bonificador_danio(arma)).tirar(dados)
+		resultado.tirada_danio = arma.tirada_danio(atacante.bonificador_danio(arma)).tirar(dados)
 		var total: int = resultado.tirada_danio.total()
 		var contexto: ContextoGolpe = ContextoGolpe.new()
 		contexto.atacante = atacante
@@ -109,7 +109,7 @@ static func resolver(atacante: Combatiente, objetivo: Combatiente, arma: Definic
 
 ## Prueba de ataque con el penalizador por ataque múltiple y el de rango ya aplicados (para previsualizar).
 static func prueba_de_ataque(atacante: Combatiente, objetivo: Combatiente, arma: DefinicionArma, cuenta_para_pam: bool = true) -> Prueba:
-	var prueba: Prueba = atacante.fuente.prueba_ataque(arma)
+	var prueba: Prueba = atacante.prueba_ataque(arma)
 	var pam: int = penalizador_ataque_multiple(arma, atacante.ataques_en_turno if cuenta_para_pam else 0)
 	if pam != 0:
 		prueba.modificadores.append(Modificador.new(pam, Modificador.Tipo.SIN_TIPO, "ataque múltiple"))

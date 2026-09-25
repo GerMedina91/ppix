@@ -47,3 +47,24 @@ func test_eventos_sin_texto() -> void:
 	var combate: Combate = _duelo([15, 5])
 	var inicio: EventoCombate = EventoCombate.new(EventoCombate.Tipo.INICIO_TURNO, &"pj")
 	assert_str(FormatoRegistro.texto(inicio, combate)).is_empty()
+
+
+func test_condiciones_en_el_registro() -> void:
+	var combate: Combate = _duelo([15, 5])
+	var cambio: EventoCombate = EventoCombate.new(EventoCombate.Tipo.CONDICION, &"pj",
+		{"condicion": Condiciones.Tipo.ASUSTADO, "valor": 1, "anterior": 2})
+	var fin: EventoCombate = EventoCombate.new(EventoCombate.Tipo.CONDICION, &"pj",
+		{"condicion": Condiciones.Tipo.HUYENDO, "valor": 0, "anterior": 1})
+	var perdidas: EventoCombate = EventoCombate.new(EventoCombate.Tipo.ACCIONES_PERDIDAS, &"e",
+		{"cantidad": 2, "condicion": Condiciones.Tipo.ATURDIDO})
+	assert_str(FormatoRegistro.texto(cambio, combate)).is_equal("pj: asustado 1")
+	assert_str(FormatoRegistro.texto(fin, combate)).is_equal("pj ya no está huyendo")
+	assert_str(FormatoRegistro.texto(perdidas, combate)).is_equal("e pierde 2 acciones por aturdido")
+
+
+func test_arcadas_en_el_registro() -> void:
+	# Fortaleza +5: 12 + 5 = 17 contra CD 15, éxito.
+	var combate: Combate = _duelo([15, 5, 12])
+	combate.turno_actual().condiciones.aplicar(EfectoCondicion.new(Condiciones.Tipo.INDISPUESTO, 2, 15))
+	var evento: EventoCombate = combate.arcadas()[0]
+	assert_str(FormatoRegistro.texto(evento, combate)).is_equal("pj: Arcadas, Fortaleza 17 contra CD 15: éxito (indispuesto 1)")

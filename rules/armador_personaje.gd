@@ -31,6 +31,7 @@ static func armar(build: DefinicionBuild) -> DefinicionPersonaje:
 	p.reflejos = clase.reflejos
 	p.voluntad = clase.voluntad
 	p.cd_clase = clase.cd_clase
+	p.conjuros = clase.conjuros
 	p.ataques = clase.ataques.duplicate()
 	p.defensas = clase.defensas.duplicate()
 	if build.subclase is DefinicionDoctrina:

@@ -82,3 +82,13 @@ Términos de reglas en castellano, según la edición oficial en castellano de l
 | simple / martial / advanced weapons / unarmed | armas simples / marciales / avanzadas / sin armas | `SIMPLE`, `MARCIAL`, `AVANZADA`, `SIN_ARMAS` | Provisorio |
 | unarmored / light / medium / heavy armor | sin armadura / ligera / media / pesada | `SIN_ARMADURA`, `LIGERA`, `MEDIA`, `PESADA` | Provisorio |
 | deadly / versatile / thrown / reach | letal / versátil / arrojadiza / alcance | `letal_caras`, `versatil`, `arrojadiza_incremento_pies`, `alcance_pies` | Provisorio |
+| condition / condition value | condición / valor de condición | `Condiciones`, `EfectoCondicion`, `valor` | Provisorio |
+| frightened / sickened / enfeebled | asustado / indispuesto / debilitado | `ASUSTADO`, `INDISPUESTO`, `DEBILITADO` | Provisorio |
+| stunned / fleeing | aturdido / huyendo | `ATURDIDO`, `HUYENDO` | Provisorio |
+| retching (acción de indispuesto) | Arcadas | `arcadas()`, `ARCADAS` | Provisorio |
+| Sustain | Sostener | `sostener` | Provisorio |
+| spell attack / spell DC | ataque de conjuro / CD de conjuro | `prueba_conjuro()` | Provisorio |
+| spell / cantrip / spell slot / rank | conjuro / truco / espacio de conjuro / rango | `conjuros` | Provisorio |
+| Focus Point / focus pool / focus spell | punto de foco / reserva de foco / conjuro de foco | — | Provisorio |
+| basic saving throw | salvación básica | — | Provisorio |
+| hex | maleficio | — | Provisorio |

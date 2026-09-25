@@ -5,7 +5,7 @@ El diseño completo está en `docs/GDD.md`. Consultalo antes de implementar cual
 
 ## Stack
 - Motor: Godot 4.x (última estable). Lenguaje: GDScript con tipado estático siempre (`var hp: int`, `func f() -> void`).
-- Tests: gdUnit4. La lógica de reglas se testea sin escenas.
+- Tests: gdUnit4 (`addons/gdUnit4`). La lógica de reglas se testea sin escenas. Correr todos: `pwsh tests/run_tests.ps1` (usa `GODOT_BIN` o la instalación en `%LOCALAPPDATA%\Programs\Godot`).
 - Control de versiones: git. Un commit por feature o cambio coherente, con mensaje descriptivo en español.
 
 ## Configuración de render (no modificar sin consultar)

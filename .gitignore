@@ -17,3 +17,6 @@ Thumbs.db
 *.tmp
 .vscode/
 .idea/
+
+# Reportes de gdUnit4
+/reports/

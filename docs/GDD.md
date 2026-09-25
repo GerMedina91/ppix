@@ -46,6 +46,9 @@ Con la Convergencia, los recuerdos se volvieron extraíbles y tangibles.
 - Por turnos, en grilla de 5 pies, sistema de tres acciones de PF2e, grados de éxito, condiciones.
 - Contenido solo de libros Remaster.
 - Party de 4 personajes, todos controlados por el jugador: decide las tres acciones de cada miembro en su turno.
+- El combate ocurre **en el mismo mapa de exploración**, sin pantalla aparte (estilo BG3). La grilla de exploración es la grilla de combate.
+- **[planificado]** Antes del combate, la party se puede separar para posicionar a cada miembro por separado.
+- Nota para M3: el pathfinding de exploración usa costo diagonal uniforme; en combate hay que aplicar la regla de PF2e de diagonales alternadas (5/10 pies).
 
 ### 4.2 Recuerdos
 - **Comprar:** un recuerdo ajeno otorga competencias, dotes o conocimiento (se apoya en las reglas de reentrenamiento de PF2e).
@@ -65,6 +68,8 @@ Al morir, el Eco se rearma con menos recuerdos: pierde algo concreto (un fragmen
 
 ### 4.4 Exploración
 Mundo no lineal, muchos mapas conectados, mínimos o nulos marcadores de misión.
+- **Control:** click en una celda con pathfinding (8 direcciones, sin cortar esquinas) + teclado en 4 direcciones.
+- **Party:** los 4 miembros caminan en fila india detrás del líder. El seguimiento se diseña para poder desactivarlo y controlar a cada miembro por separado (ver 4.1).
 
 ## 5. Dirección de arte
 - Resolución nativa 640×360, escalado entero (×3 a 1080p, ×6 a 4K).
@@ -124,3 +129,7 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
 | 2026-09-25 | Diálogos: Dialogue Manager (Nathan Hoad). Archivos `.dialogue` en `dialogue/`, condiciones en GDScript sobre el estado del juego. |
 | 2026-09-25 | Party: 4 personajes controlados por el jugador. Justificación en el lore: pendiente. |
 | 2026-09-25 | Guardado: solo en puntos estables + autoguardado al cambiar de mapa. Sin guardado libre ni en combate. Al morir, el Eco vuelve al último punto estable con recuerdos perdidos. |
+| 2026-09-25 | Combate en el mismo mapa de exploración, sin pantalla aparte (estilo BG3). |
+| 2026-09-25 | Control en exploración: click con pathfinding (AStarGrid2D, diagonales sin cortar esquinas) + teclado 4 direcciones. |
+| 2026-09-25 | Party en fila india en exploración; separable a futuro para posicionarse antes del combate. |
+| 2026-09-25 | Placeholders de colores planos permitidos en `assets/placeholder/` (a reemplazar por arte final). |

@@ -110,6 +110,10 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
 - **M1 — Mundo:** tilemap de prueba, movimiento en grilla, cámara, colisiones, transición entre mapas.
 - **M2 — Reglas:** motor de tiradas, grados de éxito, stats de personaje desde Resources.
 - **M3 — Combate:** iniciativa, turnos, tres acciones, ataque/movimiento/condiciones básicas, IA enemiga simple.
+  - El costo de movimiento en combate usa la regla de diagonales de PF2e (5/10 pies alternado), calculado en `rules/`, no el costo de AStarGrid2D (que solo sirve para exploración).
+  - En combate, las celdas ocupadas por actores bloquean el paso.
+  - `Dados` tiene que poder serializar y restaurar el estado del RNG, para el guardado.
+  - Las entradas de mapa necesitan posiciones de formación para la party (ver 4.1).
 - **M4 — Recuerdos:** inventario de recuerdos, compra/venta, diario, pérdida al morir.
 - **M5 — Contenido del slice:** mapas, NPCs, diálogos, arte final.
 

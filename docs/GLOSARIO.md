@@ -43,3 +43,23 @@ Términos de reglas en castellano, según la edición oficial en castellano de l
 | key attribute | atributo clave | `atributo_clave` | A verificar |
 | Dexterity cap (armor) | tope de Destreza | `tope_destreza` | A verificar |
 | natural 20 / natural 1 | 20 natural / 1 natural | `natural` | A verificar |
+| Stride | Zancada | `zancada()` | Provisorio |
+| Step | Paso | `paso()` | Provisorio |
+| Speed | Velocidad | `velocidad_pies` | Provisorio |
+| range increment | incremento de rango | `incremento_rango_pies` | Provisorio |
+| reach | alcance | `alcance_pies` | Provisorio |
+| Strike | Golpe | `Golpe` | Provisorio |
+| multiple attack penalty | penalizador por ataque múltiple | `penalizador_ataque_multiple()` | Provisorio |
+| agile | ágil | `agil` | Provisorio |
+| finesse | sutil | `sutil` | Provisorio |
+| off-guard | desprevenido | `desprevenido` | Provisorio |
+| flanked / flanking | flanqueado / flanqueo | `Flanqueo` | Provisorio |
+| dying | moribundo | `moribundo` | Provisorio |
+| wounded | herido | `herido` | Provisorio |
+| unconscious | inconsciente | `inconsciente` | Provisorio |
+| recovery check | prueba de recuperación | `prueba_de_recuperacion()` | Provisorio |
+| flat check | prueba plana | `Prueba.plana()` | Provisorio |
+| slashing / piercing / bludgeoning | cortante / perforante / contundente | `CORTANTE`, `PERFORANTE`, `CONTUNDENTE` | Provisorio |
+| initiative | iniciativa | `iniciativa` | Provisorio |
+| reaction | reacción | `reaccion` | Provisorio |
+| line of sight | línea de visión | `LineaVision` | Provisorio |

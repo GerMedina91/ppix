@@ -117,6 +117,16 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
   - En combate, las celdas ocupadas por actores bloquean el paso.
   - `Dados` tiene que poder serializar y restaurar el estado del RNG, para el guardado.
   - Las entradas de mapa necesitan posiciones de formación para la party (ver 4.1).
+  - Dividido en M3a (reglas en `rules/`, sin escenas) y M3b (presentación en el mapa).
+  - Flanqueo: el flanqueado queda desprevenido **solo frente a las criaturas que lo flanquean**.
+  - Alcance de 10 pies: llega a dos casillas en diagonal aunque por la regla de diagonales contaría 15 pies.
+  - Moribundo, herido e inconsciente con reglas completas para la party; los enemigos mueren a 0 PG.
+  - Sin reacciones en M3; el sistema queda preparado para sumarlas.
+  - Inicio del combate: zona de encuentro detrás de una interfaz de disparador genérica (para sumar después detección por visión).
+  - Party de prueba: 2 combatientes cuerpo a cuerpo y 2 a distancia, con números genéricos (`TODO_LORE`); la estructura queda lista para que clases y ascendencias armen el `DefinicionPersonaje`.
+  - M3b: tecla de depuración (solo builds de debug) para curar a la party por completo, porque los PG persisten entre combates y todavía no hay descanso.
+  - M3b: la fuente del HUD es la de Godot como placeholder.
+- **Después de M3:** cobertura (menor / normal / mayor) calculada con la línea de visión; posicionamiento previo de la party antes del combate.
 - **M4 — Recuerdos:** inventario de recuerdos, compra/venta, diario, pérdida al morir.
 - **M5 — Contenido del slice:** mapas, NPCs, diálogos, arte final.
 
@@ -164,3 +174,4 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
 | 2026-09-25 | Bonificadores siempre con tipo; solo los penalizadores pueden ser sin tipo (se suman todos). |
 | 2026-09-25 | Las CD derivadas (CA, CD de clase, CD de Percepción) son 10 + el modificador total de su Prueba, con el mismo desglose. |
 | 2026-09-25 | Fortuna/infortunio: dos tiradas, mejor/peor; juntos se cancelan. El natural del dado elegido decide el ajuste por 20/1. |
+| 2026-09-25 | M3 aprobado: flanqueo solo frente a quienes flanquean; excepción del alcance de 10 pies; moribundo/herido completos; sin reacciones; disparador de encuentro genérico. |

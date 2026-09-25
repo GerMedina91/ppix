@@ -5,6 +5,7 @@
 [ext_resource type="Script" path="res://scripts/world/control_party.gd" id="3_t8boj"]
 [ext_resource type="Resource" path="res://data/config/config_exploracion.tres" id="4_h2l7i"]
 [ext_resource type="PackedScene" path="res://scenes/characters/miembro_party.tscn" id="5_dsmiq"]
+[ext_resource type="Script" path="res://scripts/world/camara_mundo.gd" id="6_kn5no"]
 
 [node name="Mundo" type="Node2D" unique_id=459014428]
 script = ExtResource("1_8cwwk")
@@ -21,3 +22,6 @@ config = ExtResource("4_h2l7i")
 
 [node name="Miembro1" parent="Party" unique_id=1005019094 instance=ExtResource("5_dsmiq")]
 color_placeholder = Color(0.85, 0.75, 0.35, 1)
+
+[node name="Camara" type="Camera2D" parent="." unique_id=970090675]
+script = ExtResource("6_kn5no")

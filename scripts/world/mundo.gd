@@ -10,6 +10,7 @@ var _mapa: Mapa
 
 @onready var _contenedor_mapa: Node2D = $MapaActual
 @onready var _party: ControlParty = $Party
+@onready var _camara: CamaraMundo = $Camara
 
 
 func _ready() -> void:
@@ -27,4 +28,6 @@ func _cargar_mapa(id_mapa: StringName, id_entrada: StringName) -> void:
 	_mapa = (load(definicion.ruta_escena) as PackedScene).instantiate()
 	_contenedor_mapa.add_child(_mapa)
 	_party.entrar_a_mapa(_mapa, _mapa.construir_grilla(), _mapa.celda_de_entrada(id_entrada))
+	_camara.objetivo = _party.lider()
+	_camara.ajustar_a_mapa(_mapa.rect_global())
 	GameState.id_mapa_actual = id_mapa

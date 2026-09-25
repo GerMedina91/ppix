@@ -74,3 +74,16 @@ func test_combate_completo_vuelve_a_exploracion() -> void:
 	else:
 		# Derrota (placeholder hasta M4): la party vuelve a la entrada con los PG completos.
 		assert_bool(GameState.estado_party.is_empty()).is_true()
+
+
+func test_el_hud_aparece_con_el_combate_y_registra_eventos() -> void:
+	var hud: HudCombate = _runner.find_child("HudCombate")
+	assert_bool(hud.visible).is_false()
+	await _entrar_a_la_zona()
+	assert_bool(hud.visible).is_true()
+	assert_bool(await _esperar(func() -> bool: return _control.esperando_decision() or not _control.en_curso())).is_true()
+	assert_array(Array(hud.lineas_registro())).is_not_empty()
+	if _control.en_curso():
+		var actor: Combatiente = _control.combate().turno_actual()
+		assert_str(hud.texto_activo()).starts_with("%s   PG %d/%d   Acciones " % [actor.id, actor.pg, actor.pg_maximos()])
+		assert_str(hud.texto_activo()).not_contains("%")

@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/fundido.tscn" id="7_t8boj"]
 [ext_resource type="Script" path="res://scripts/ui/control_ventana.gd" id="8_h2l7i"]
 [ext_resource type="Script" path="res://scripts/debug/overlay_depuracion.gd" id="9_dsmiq"]
+[ext_resource type="Script" path="res://scripts/ui/hud_combate.gd" id="14_y4gja"]
 
 [node name="Mundo" type="Node2D" unique_id=459014428]
 y_sort_enabled = true
@@ -60,3 +61,8 @@ script = ExtResource("8_h2l7i")
 
 [node name="OverlayDepuracion" type="Node2D" parent="." unique_id=351358532]
 script = ExtResource("9_dsmiq")
+
+[node name="HudCombate" type="CanvasLayer" parent="." unique_id=918846169 node_paths=PackedStringArray("controlador")]
+layer = 5
+script = ExtResource("14_y4gja")
+controlador = NodePath("../ControladorCombate")

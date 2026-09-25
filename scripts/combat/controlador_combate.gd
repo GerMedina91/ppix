@@ -7,7 +7,10 @@ extends Node2D
 ## - Dibuja (debajo de los actores): casilla del actor activo, alcance de la Zancada, camino al cursor
 ##   y enemigos golpeables.
 
+signal combate_iniciado
 signal combate_terminado(victoria: bool)
+## Se emite al animar cada evento (lo usa el HUD para el registro).
+signal evento_mostrado(evento: EventoCombate)
 ## Se emite cuando no queda nada por animar y le toca decidir al jugador.
 signal esperando_jugador
 
@@ -82,6 +85,7 @@ func iniciar(encuentro: Encuentro, mapa: Mapa, party: ControlParty, camara: Cama
 		participantes.append(c)
 		_actores[c.id] = enemigo
 	_combate = Combate.new(participantes, mapa.construir_grilla(), GameState.dados)
+	combate_iniciado.emit()
 	_encolar(_combate.iniciar())
 
 
@@ -132,7 +136,9 @@ func _procesar_cola() -> void:
 	_animando = true
 	queue_redraw()
 	while not _cola.is_empty():
-		await _animar(_cola.pop_front())
+		var evento: EventoCombate = _cola.pop_front()
+		await _animar(evento)
+		evento_mostrado.emit(evento)
 	_animando = false
 	if _combate.estado != Combate.Estado.EN_CURSO:
 		_terminar()

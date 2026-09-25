@@ -26,6 +26,7 @@ res://
   assets/      # sprites, tilesets, audio, fuentes (NO editar ni generar sin pedido explícito)
   dialogue/    # diálogos (formato a definir)
   tests/
+  addons/      # plugins de terceros (gdUnit4, Dialogue Manager). No editar a mano.
 docs/
   GDD.md
 ```

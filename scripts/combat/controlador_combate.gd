@@ -228,6 +228,14 @@ func _texto(actor: ActorMapa, texto: String, color: Color) -> void:
 	await get_tree().create_timer(config.pausa_entre_eventos).timeout
 
 
+## Depuración: restaura por completo a los miembros de la party en el combate en curso.
+func restaurar_party_depuracion() -> void:
+	for c: Combatiente in _combate.participantes:
+		if c.bando == Combatiente.Bando.PARTY:
+			c.restaurar_por_completo()
+	queue_redraw()
+
+
 # --- Fin del combate ---
 
 func _terminar() -> void:

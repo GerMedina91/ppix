@@ -14,6 +14,7 @@
 [ext_resource type="Script" path="res://scripts/ui/control_ventana.gd" id="8_h2l7i"]
 [ext_resource type="Script" path="res://scripts/debug/overlay_depuracion.gd" id="9_dsmiq"]
 [ext_resource type="Script" path="res://scripts/ui/hud_combate.gd" id="14_y4gja"]
+[ext_resource type="Script" path="res://scripts/debug/atajos_depuracion.gd" id="15_52jc1"]
 
 [node name="Mundo" type="Node2D" unique_id=459014428]
 y_sort_enabled = true
@@ -65,4 +66,9 @@ script = ExtResource("9_dsmiq")
 [node name="HudCombate" type="CanvasLayer" parent="." unique_id=918846169 node_paths=PackedStringArray("controlador")]
 layer = 5
 script = ExtResource("14_y4gja")
+controlador = NodePath("../ControladorCombate")
+
+[node name="AtajosDepuracion" type="Node" parent="." unique_id=426093434 node_paths=PackedStringArray("party", "controlador")]
+script = ExtResource("15_52jc1")
+party = NodePath("../Party")
 controlador = NodePath("../ControladorCombate")

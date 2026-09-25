@@ -161,6 +161,12 @@ func _revisar_muerte() -> void:
 		condiciones.muerto = true
 
 
+## Restauración completa (PG al máximo, sin condiciones). Hoy solo para depuración; a futuro, descanso.
+func restaurar_por_completo() -> void:
+	condiciones = Condiciones.new()
+	pg = pg_maximos()
+
+
 ## Al terminar un combate ganado, quien sigue moribundo se estabiliza: pierde moribundo
 ## (herido +1) y queda inconsciente con 0 PG hasta que lo curen.
 func estabilizar() -> void:

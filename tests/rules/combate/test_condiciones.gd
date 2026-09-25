@@ -135,3 +135,14 @@ func test_inconsciente_menos_4_a_percepcion_y_reflejos_pero_no_a_fortaleza_ni_vo
 	assert_int(c.prueba_salvacion(Estadisticas.Salvacion.REFLEJOS).modificador_total()).is_equal(antes.reflejos - 4)
 	assert_int(c.prueba_salvacion(Estadisticas.Salvacion.FORTALEZA).modificador_total()).is_equal(antes.fortaleza)
 	assert_int(c.prueba_salvacion(Estadisticas.Salvacion.VOLUNTAD).modificador_total()).is_equal(antes.voluntad)
+
+
+func test_restaurar_por_completo_limpia_todo() -> void:
+	var c: Combatiente = _personaje()
+	c.condiciones.herido = 1
+	c.recibir_danio(c.pg, false)
+	c.restaurar_por_completo()
+	assert_int(c.pg).is_equal(c.pg_maximos())
+	assert_int(c.condiciones.moribundo).is_equal(0)
+	assert_int(c.condiciones.herido).is_equal(0)
+	assert_bool(c.condiciones.inconsciente).is_false()

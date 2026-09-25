@@ -96,3 +96,21 @@ func test_el_overlay_dibuja_rangos_y_vision_durante_el_combate_sin_errores() -> 
 	overlay.set_process(true)
 	await _runner.simulate_frames(30)
 	assert_object(ControladorCombate.activo(_control.get_tree())).is_same(_control)
+
+
+func test_f4_restaura_a_la_party_fuera_y_dentro_del_combate() -> void:
+	GameState.estado_party[&"Miembro1"] = {"pg": 0, "herido": 2, "muerto": false}
+	_runner.simulate_action_pressed(AtajosDepuracion.ACCION_CURAR)
+	await _runner.simulate_frames(2)
+	assert_bool(GameState.estado_party.is_empty()).is_true()
+	await _entrar_a_la_zona()
+	for c: Combatiente in _control.combate().participantes:
+		if c.bando == Combatiente.Bando.PARTY:
+			c.recibir_danio(c.pg, false)
+	_runner.simulate_action_pressed(AtajosDepuracion.ACCION_CURAR)
+	await _runner.simulate_frames(2)
+	for c: Combatiente in _control.combate().participantes:
+		if c.bando == Combatiente.Bando.PARTY:
+			assert_int(c.pg).is_equal(c.pg_maximos())
+			assert_bool(c.condiciones.puede_actuar()).is_true()
+			assert_int(c.condiciones.herido).is_equal(0)

@@ -8,6 +8,7 @@
 [ext_resource type="Script" path="res://scripts/world/camara_mundo.gd" id="6_kn5no"]
 [ext_resource type="PackedScene" path="res://scenes/ui/fundido.tscn" id="7_t8boj"]
 [ext_resource type="Script" path="res://scripts/ui/control_ventana.gd" id="8_h2l7i"]
+[ext_resource type="Script" path="res://scripts/debug/overlay_depuracion.gd" id="9_dsmiq"]
 
 [node name="Mundo" type="Node2D" unique_id=459014428]
 y_sort_enabled = true
@@ -44,3 +45,6 @@ script = ExtResource("6_kn5no")
 
 [node name="ControlVentana" type="Node" parent="." unique_id=1222689335]
 script = ExtResource("8_h2l7i")
+
+[node name="OverlayDepuracion" type="Node2D" parent="." unique_id=351358532]
+script = ExtResource("9_dsmiq")

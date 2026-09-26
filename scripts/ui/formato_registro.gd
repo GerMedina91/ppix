@@ -76,6 +76,11 @@ static func _efecto_conjuro(evento: EventoCombate) -> String:
 	return ""
 
 
+## Texto del aviso de reacción: "Miembro1: ¿usar Golpe reactivo contra X?".
+static func pregunta_reaccion(pregunta: Dictionary) -> String:
+	return "%s: ¿usar %s contra %s?" % [pregunta.reactor.id, (pregunta.capacidad as Capacidad).nombre, pregunta.disparo.actor.id]
+
+
 ## "asustado 2"; las condiciones sin valor (huyendo), solo el nombre.
 static func condicion(tipo: Condiciones.Tipo, valor: int) -> String:
 	if tipo == Condiciones.Tipo.HUYENDO:

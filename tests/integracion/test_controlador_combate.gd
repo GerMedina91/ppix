@@ -201,7 +201,7 @@ func test_zancada_imposible_muestra_el_motivo_en_el_registro() -> void:
 
 
 func _casilla_a_zancadas(n: int) -> Vector2i:
-	var alcance: Dictionary = _control.alcance_actual()
+	var alcance: Dictionary = _control.prevision_actual().por_casilla
 	var candidatas: Array = alcance.keys().filter(func(c: Vector2i) -> bool: return alcance[c] == n)
 	candidatas.sort()
 	return candidatas[0]
@@ -215,8 +215,8 @@ func test_click_lejano_hace_dos_zancadas_seguidas_como_acciones_separadas() -> v
 	assert_bool(_control.en_curso()).is_true()
 	var actor: Combatiente = _control.combate().turno_actual()
 	var destino: Vector2i = _casilla_a_zancadas(2)
-	assert_int(_control.costo_previsto(destino)).is_equal(2)
-	assert_array(_control.camino_previsto(destino)).is_not_empty()
+	assert_int(_control.prevision_actual().costo(destino)).is_equal(2)
+	assert_array(_control.prevision_actual().camino(destino)).is_not_empty()
 	var registro_antes: int = _control.combate().registro.size()
 	_control.click_en_celda(destino)
 	assert_bool(await _esperar(func() -> bool: return _control.esperando_decision() or not _control.en_curso())).is_true()
@@ -248,13 +248,13 @@ func test_costo_previsto_de_un_golpe_es_una_accion() -> void:
 	_control.actor_de(enemigo.id).colocar(junto, mapa.celda_a_posicion(junto))
 	var arma: DefinicionArma = actor.arma_principal()
 	assert_int(Golpe.validar(actor, enemigo, arma, _control.combate().vision())).is_equal(Golpe.Motivo.VALIDO)
-	assert_int(_control.costo_previsto(junto)).is_equal(Combate.COSTO_GOLPE)
+	assert_int(_control.prevision_actual().costo(junto)).is_equal(Combate.COSTO_GOLPE)
 
 
 func test_el_alcance_distingue_una_dos_y_tres_acciones() -> void:
 	await _entrar_a_la_zona()
 	assert_bool(await _esperar_turno_de_la_party()).is_true()
-	var valores: Array = _control.alcance_actual().values()
+	var valores: Array = _control.prevision_actual().por_casilla.values()
 	for n: int in [1, 2, 3]:
 		assert_bool(valores.has(n)).override_failure_message("sin casillas a %d Zancadas" % n).is_true()
 
@@ -340,7 +340,8 @@ func test_la_bruja_lanza_mal_de_ojo_desde_el_mapa() -> void:
 	enemigo.celda = junto
 	_control.actor_de(enemigo.id).colocar(junto, mapa.celda_a_posicion(junto))
 	assert_str(hud.texto_acciones()).starts_with("1 Mal de ojo ◆")
-	_control.elegir_accion(0)
+	_runner.simulate_key_pressed(KEY_1)  # por EntradaCombate, como el jugador
+	await _runner.simulate_frames(2)
 	assert_str(hud.texto_acciones()).starts_with("Mal de ojo: click en el objetivo")
 	_control.click_en_celda(junto)
 	assert_bool(await _esperar(func() -> bool: return not _control.animando())).is_true()

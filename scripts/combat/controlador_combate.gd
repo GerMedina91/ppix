@@ -2,7 +2,8 @@ class_name ControladorCombate
 extends Node2D
 ## Presentación del combate en el mismo mapa de exploración. Arma el Combate (rules/) a partir del
 ## Encuentro y la party, pasa sus eventos al AnimadorCombate en orden y traduce la entrada del jugador
-## en intenciones. Los resaltados del suelo los dibuja ResaltadosCombate (hijo).
+## en intenciones. Hijos: ResaltadosCombate (suelo) y EntradaCombate (mouse y teclado). El armado y el
+## cierre del Combate están en ArmadoCombate.
 ## - Enemigos: IASimple, una decisión por vez (se anima cada una antes de pedir la siguiente, así el
 ##   estado del Combate y lo que se ve en el mapa avanzan juntos).
 ## - Party: click en enemigo = Golpe; click en el suelo = Zancada; Shift + click = Paso;
@@ -22,7 +23,6 @@ signal accion_elegida
 ## Respuestas al aviso de reacción. SIEMPRE: la usa ahora y en adelante, por el resto de la sesión.
 enum Respuesta { SI, NO, SIEMPRE }
 
-const ACCION_TERMINAR_TURNO: StringName = &"terminar_turno"
 ## Grupo para que herramientas (overlay de depuración) encuentren al controlador.
 const GRUPO: StringName = &"controlador_combate"
 const _SIN_CURSOR: Vector2i = Vector2i(-9999, -9999)
@@ -51,8 +51,6 @@ var _prevision: PrevisionTurno
 ## Tramos pendientes de un movimiento de varias Zancadas (se ejecutan de a una, animando cada una).
 var _plan: Array[Array] = []
 var _modo: ModoAccion = ModoAccion.new()
-## Mitad del tamaño del rombo de una casilla (del TileSet del mapa del combate).
-var _medio_rombo: Vector2 = Vector2.ZERO
 
 
 func _ready() -> void:
@@ -61,6 +59,10 @@ func _ready() -> void:
 	_resaltados.name = "Resaltados"
 	_resaltados.controlador = self
 	add_child(_resaltados)
+	var entrada: EntradaCombate = EntradaCombate.new()
+	entrada.name = "Entrada"
+	entrada.controlador = self
+	add_child(entrada)
 
 
 static func activo(arbol: SceneTree) -> ControladorCombate:
@@ -87,26 +89,6 @@ func actor_de(id: StringName) -> ActorMapa:
 
 func celda_cursor() -> Vector2i:
 	return _celda_cursor
-
-
-## Casilla -> cantidad mínima de Zancadas, durante la decisión del jugador.
-func alcance_actual() -> Dictionary[Vector2i, int]:
-	var prevision: PrevisionTurno = prevision_actual()
-	var vacio: Dictionary[Vector2i, int] = {}
-	return prevision.por_casilla if prevision != null else vacio
-
-
-## Costo en acciones de hacer click en `celda` ahora: Zancadas necesarias o el Golpe; 0 si no se puede.
-func costo_previsto(celda: Vector2i) -> int:
-	var prevision: PrevisionTurno = prevision_actual()
-	return prevision.costo(celda) if prevision != null else 0
-
-
-## Camino completo (todas las Zancadas) hasta `celda`, para la previsualización.
-func camino_previsto(celda: Vector2i) -> Array[Vector2i]:
-	var prevision: PrevisionTurno = prevision_actual()
-	var vacio: Array[Vector2i] = []
-	return prevision.camino(celda) if prevision != null else vacio
 
 
 ## Previsión de la decisión en curso: se calcula una vez y se rehace solo si cambió el estado del combate.
@@ -166,17 +148,24 @@ func responder_reaccion(respuesta: Respuesta) -> void:
 	_encolar(_combate.responder_reaccion(respuesta != Respuesta.NO))
 
 
+## Casilla del mapa bajo una posición global (cursor).
+func celda_en(posicion_global: Vector2) -> Vector2i:
+	return _mapa.posicion_a_celda(posicion_global)
+
+
+func mover_cursor(celda: Vector2i) -> void:
+	if celda != _celda_cursor:
+		_celda_cursor = celda
+		_resaltados.queue_redraw()
+
+
 func centro_global(celda: Vector2i) -> Vector2:
 	return _mapa.celda_a_posicion(celda)
 
 
 ## Rombo de la casilla en coordenadas globales.
 func rombo_global(celda: Vector2i) -> PackedVector2Array:
-	var centro: Vector2 = centro_global(celda)
-	var medio: Vector2 = _medio_rombo
-	return PackedVector2Array([
-		centro + Vector2(0, -medio.y), centro + Vector2(medio.x, 0),
-		centro + Vector2(0, medio.y), centro + Vector2(-medio.x, 0)])
+	return _mapa.rombo_global(celda)
 
 
 # --- Inicio e intenciones ---
@@ -186,25 +175,12 @@ func iniciar(encuentro: Encuentro, mapa: Mapa, party: ControlParty, camara: Cama
 	_mapa = mapa
 	_party = party
 	_camara = camara
-	_medio_rombo = Vector2((mapa.get_node("Suelo") as TileMapLayer).tile_set.tile_size) / 2.0
 	_party.entrar_en_combate()
 	_animador = AnimadorCombate.new(config, mapa, get_parent(), camara)
-	_actores.clear()
-	var participantes: Array[Combatiente] = []
-	for miembro: MiembroParty in party.miembros():
-		var c: Combatiente = Combatiente.desde_personaje(StringName(miembro.name), miembro.definicion_de_reglas(), miembro.celda)
-		EstadoPartyCombate.aplicar(c)
-		if auto_jugar_party or _reacciones_siempre.has(c.id):
-			c.politica_reacciones = Combatiente.PoliticaReaccion.SIEMPRE
-		participantes.append(c)
-		_actores[c.id] = miembro
-	for enemigo: EnemigoEnMapa in encuentro.enemigos():
-		var c: Combatiente = Combatiente.desde_criatura(StringName(enemigo.name), enemigo.definicion, enemigo.celda)
-		participantes.append(c)
-		_actores[c.id] = enemigo
-	_combate = Combate.new(participantes, mapa.construir_grilla(), GameState.dados)
-	_combate.pausar_tras_reacciones = true
-	_combate.reacciones_antes_del_primer_turno = config.reacciones_antes_del_primer_turno
+	var armado: Dictionary = ArmadoCombate.participantes(party, encuentro,
+		func(id: StringName) -> bool: return auto_jugar_party or _reacciones_siempre.has(id))
+	_actores = armado.actores
+	_combate = ArmadoCombate.nuevo_combate(armado.participantes, mapa, config)
 	combate_iniciado.emit()
 	_encolar(_combate.iniciar())
 
@@ -245,38 +221,6 @@ func restaurar_party_depuracion() -> void:
 	_resaltados.queue_redraw()
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	if not en_curso():
-		return
-	if event is InputEventMouseMotion:
-		var celda: Vector2i = _mapa.posicion_a_celda(get_global_mouse_position())
-		if celda != _celda_cursor:
-			_celda_cursor = celda
-			_resaltados.queue_redraw()
-	elif event.is_action_pressed("mover_a_click"):
-		var es_paso: bool = event is InputEventMouseButton and (event as InputEventMouseButton).shift_pressed
-		click_en_celda(_mapa.posicion_a_celda(get_global_mouse_position()), es_paso)
-		get_viewport().set_input_as_handled()
-	elif event is InputEventKey and event.pressed and not event.echo and _teclas_de_accion(event as InputEventKey):
-		get_viewport().set_input_as_handled()
-	elif event is InputEventMouseButton and event.pressed and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_RIGHT:
-		cancelar_accion()
-	elif event.is_action_pressed(ACCION_TERMINAR_TURNO):
-		terminar_turno_jugador()
-		get_viewport().set_input_as_handled()
-
-
-## 1-9: elegir acción; Esc: cancelar. Teclas fijas hasta la barra del HUD (C6).
-func _teclas_de_accion(tecla: InputEventKey) -> bool:
-	if tecla.keycode >= KEY_1 and tecla.keycode <= KEY_9:
-		elegir_accion(tecla.keycode - KEY_1)
-		return true
-	if tecla.keycode == KEY_ESCAPE and _modo.elegido != null:
-		cancelar_accion()
-		return true
-	return false
-
-
 # --- Cola de eventos ---
 
 func _encolar(eventos: Array[EventoCombate]) -> void:
@@ -302,7 +246,7 @@ func _procesar_cola() -> void:
 		return
 	if _combate.hay_reaccion_pendiente():
 		_resaltados.queue_redraw()
-		pregunta_reaccion.emit(_texto_pregunta())
+		pregunta_reaccion.emit(FormatoRegistro.pregunta_reaccion(_combate.pregunta_de_reaccion()))
 		return
 	if _combate.hay_continuacion():
 		# La acción interrumpida por una reacción sigue, ya animada la reacción.
@@ -329,21 +273,10 @@ func _zancada_del_plan() -> void:
 	_encolar(_combate.zancada(tramo.back(), tramo))
 
 
-func _texto_pregunta() -> String:
-	var pregunta: Dictionary = _combate.pregunta_de_reaccion()
-	return "%s: ¿usar %s contra %s?" % [pregunta.reactor.id, (pregunta.capacidad as Capacidad).nombre, pregunta.disparo.actor.id]
-
-
 # --- Fin del combate ---
 
 func _terminar() -> void:
-	var victoria: bool = _combate.estado == Combate.Estado.VICTORIA
-	if victoria:
-		EstadoPartyCombate.guardar(_party, _combate)
-		for enemigo: EnemigoEnMapa in _encuentro.enemigos():
-			if _combate.combatiente(StringName(enemigo.name)).condiciones.muerto:
-				enemigo.queue_free()
-		_encuentro.resuelto = true
+	var victoria: bool = ArmadoCombate.cerrar(_combate, _party, _encuentro)
 	_combate = null
 	_plan.clear()
 	_resaltados.queue_redraw()

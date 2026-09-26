@@ -57,6 +57,15 @@ func celda_a_posicion(celda: Vector2i) -> Vector2:
 	return _suelo.to_global(_suelo.map_to_local(celda))
 
 
+## Rombo de la celda (sus 4 vértices), en coordenadas globales.
+func rombo_global(celda: Vector2i) -> PackedVector2Array:
+	var centro: Vector2 = celda_a_posicion(celda)
+	var medio: Vector2 = Vector2(_suelo.tile_set.tile_size) / 2.0
+	return PackedVector2Array([
+		centro + Vector2(0, -medio.y), centro + Vector2(medio.x, 0),
+		centro + Vector2(0, medio.y), centro + Vector2(-medio.x, 0)])
+
+
 func posicion_a_celda(posicion_global: Vector2) -> Vector2i:
 	return _suelo.local_to_map(_suelo.to_local(posicion_global))
 

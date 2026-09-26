@@ -6,7 +6,8 @@ extends RefCounted
 ## - Turno: 3 acciones. Zancada, Paso, Golpe y Arcadas cuestan 1. Moribundo: prueba de recuperación al
 ##   empezar. Quien no puede actuar (inconsciente, muerto o aturdido sin acciones) pierde el turno.
 ## - Condiciones con valor (duraciones, asustado, aturdido, huyendo): ver ReglasCondiciones.
-## - Movimiento (Zancada, Paso): AccionesMovimiento. Conjuros (lanzar, Sostener): AccionesConjuro.
+## - Movimiento (Zancada, Paso): AccionesMovimiento. Golpe: AccionesGolpe. Conjuros (lanzar, Sostener):
+##   AccionesConjuro. Inicio y fin de turno: CicloTurno. Arcadas y condiciones: ReglasCondiciones.
 ## - Fin: victoria si todos los enemigos murieron; derrota si toda la party está fuera de combate.
 ## - Reacciones (GestorReacciones): la Zancada se procesa casilla por casilla y el Golpe avisa antes de
 ##   tirar; si una reacción necesita la decisión del jugador, el combate queda en pausa con una pregunta
@@ -35,6 +36,7 @@ var reacciones: GestorReacciones = GestorReacciones.new(self)
 ## Zancada y Paso (se crea con la grilla).
 var movimiento: AccionesMovimiento
 var conjuros: AccionesConjuro = AccionesConjuro.new(self)
+var golpes: AccionesGolpe = AccionesGolpe.new(self)
 ## La presentación lo activa: después de usar una reacción, la acción interrumpida no sigue sola; espera
 ## continuar(), así se puede animar la reacción con el estado del combate en ese punto.
 var pausar_tras_reacciones: bool = false
@@ -159,59 +161,24 @@ func sostener() -> Array[EventoCombate]:
 
 
 func golpe(id_objetivo: StringName, arma: DefinicionArma = null) -> Array[EventoCombate]:
-	var actor: Combatiente = turno_actual()
-	var invalido: EventoCombate = validar_accion(actor, COSTO_GOLPE, ACCION_GOLPE)
-	if invalido != null:
-		return [invalido]
-	var objetivo: Combatiente = combatiente(id_objetivo)
-	if objetivo == null:
-		return [invalida(actor, ACCION_GOLPE, "objetivo inexistente")]
-	var arma_usada: DefinicionArma = arma if arma != null else actor.arma_principal()
-	var motivo: Golpe.Motivo = Golpe.validar(actor, objetivo, arma_usada, _vision)
-	if motivo != Golpe.Motivo.VALIDO:
-		return [_golpe_invalido(actor, motivo)]
-	actor.gastar_acciones(COSTO_GOLPE)
-	# Antes de tirar: reacciones al ataque a distancia (p. ej. Golpe reactivo) y al ser objetivo (Esquiva ágil).
-	var al_objetivo: DisparoReaccion = DisparoReaccion.objetivo_de_ataque(actor, objetivo, arma_usada)
-	var tirar: Callable = func() -> Array[EventoCombate]: return _tirar_golpe(actor, objetivo, arma_usada, al_objetivo)
-	var avisar_objetivo: Callable = func() -> Array[EventoCombate]: return reacciones.procesar(al_objetivo, tirar)
-	if arma_usada.a_distancia:
-		return reacciones.procesar(DisparoReaccion.ataque_a_distancia(actor, arma_usada), avisar_objetivo)
-	return avisar_objetivo.call()
+	return golpes.golpe(id_objetivo, arma)
 
 
 ## Golpe de una reacción (Golpe reactivo): no gasta acciones ni cuenta para el penalizador por ataque múltiple.
 func golpe_de_reaccion(reactor: Combatiente, objetivo: Combatiente, arma: DefinicionArma) -> Array[EventoCombate]:
-	var estaba_en_pie: bool = objetivo.condiciones.en_pie()
-	var resultado: ResultadoGolpe = Golpe.resolver(reactor, objetivo, arma, _dados, participantes, _vision, [], false)
-	if not resultado.es_valido():
-		return []
-	var eventos: Array[EventoCombate] = [emitir(EventoCombate.new(EventoCombate.Tipo.GOLPE, reactor.id,
-		{"objetivo": objetivo.id, "resultado": resultado, "reaccion": true}))]
-	eventos.append_array(_eventos_de_estado(objetivo, estaba_en_pie))
-	eventos.append_array(_verificar_fin())
-	return eventos
+	return golpes.golpe_de_reaccion(reactor, objetivo, arma)
 
 
-## Arcadas: 1 acción para intentar bajar indispuesto (salvación de Fortaleza contra la CD del efecto).
+## Arcadas: 1 acción para intentar bajar indispuesto (ReglasCondiciones).
 func arcadas() -> Array[EventoCombate]:
-	var actor: Combatiente = turno_actual()
-	var invalido: EventoCombate = validar_accion(actor, COSTO_ARCADAS, ACCION_ARCADAS)
-	if invalido != null:
-		return [invalido]
-	if not actor.condiciones.tiene(Condiciones.Tipo.INDISPUESTO):
-		return [invalida(actor, ACCION_ARCADAS, "no está indispuesto")]
-	actor.gastar_acciones(COSTO_ARCADAS)
-	var eventos: Array[EventoCombate] = conjuros.actualizar_pisos()
-	eventos.append_array(ReglasCondiciones.arcadas(self, actor, _dados))
-	return eventos
+	return ReglasCondiciones.accion_arcadas(self)
 
 
 func terminar_turno() -> Array[EventoCombate]:
 	var actor: Combatiente = turno_actual()
 	if actor == null or hay_reaccion_pendiente() or hay_continuacion():
 		return []
-	var eventos: Array[EventoCombate] = _fin_de_turno(actor)
+	var eventos: Array[EventoCombate] = CicloTurno.fin(self, actor)
 	eventos.append(_emitir(EventoCombate.new(EventoCombate.Tipo.FIN_TURNO, actor.id)))
 	eventos.append_array(_avanzar_turno())
 	return eventos
@@ -220,30 +187,12 @@ func terminar_turno() -> Array[EventoCombate]:
 # --- Internos ---
 
 func _empezar_turno() -> Array[EventoCombate]:
-	var eventos: Array[EventoCombate] = []
 	var actor: Combatiente = turno_actual()
-	actor.empezar_turno()
-	eventos.append(_emitir(EventoCombate.new(EventoCombate.Tipo.INICIO_TURNO, actor.id, {"ronda": ronda})))
-	eventos.append_array(ReglasCondiciones.inicio_de_turno(self, actor))
-	if actor.condiciones.moribundo > 0:
-		var resultado: ResultadoPrueba = actor.prueba_de_recuperacion(_dados)
-		eventos.append(_emitir(EventoCombate.new(EventoCombate.Tipo.RECUPERACION, actor.id,
-			{"resultado": resultado, "moribundo": actor.condiciones.moribundo})))
-		if actor.condiciones.muerto:
-			eventos.append(_emitir(EventoCombate.new(EventoCombate.Tipo.MUERTE, actor.id)))
-			eventos.append_array(_verificar_fin())
-	if estado == Estado.EN_CURSO and (not actor.condiciones.puede_actuar() or actor.acciones_restantes == 0):
+	var eventos: Array[EventoCombate] = CicloTurno.inicio(self, actor)
+	if estado == Estado.EN_CURSO and CicloTurno.pierde_el_turno(actor):
 		eventos.append(_emitir(EventoCombate.new(EventoCombate.Tipo.TURNO_PERDIDO, actor.id)))
-		eventos.append_array(_fin_de_turno(actor))
+		eventos.append_array(CicloTurno.fin(self, actor))
 		eventos.append_array(_avanzar_turno())
-	return eventos
-
-
-## Lo que pasa al final del turno de `actor`: condiciones y conjuros sostenidos.
-func _fin_de_turno(actor: Combatiente) -> Array[EventoCombate]:
-	var eventos: Array[EventoCombate] = ReglasCondiciones.fin_de_turno(self, actor)
-	eventos.append_array(conjuros.fin_de_turno(actor))
-	eventos.append_array(conjuros.actualizar_pisos())
 	return eventos
 
 
@@ -264,22 +213,8 @@ func _avanzar_turno() -> Array[EventoCombate]:
 	return eventos
 
 
-## Tira el Golpe si el atacante sigue en pie después de las reacciones (si cayó, el ataque se pierde).
-func _tirar_golpe(actor: Combatiente, objetivo: Combatiente, arma: DefinicionArma, disparo: DisparoReaccion) -> Array[EventoCombate]:
-	if estado != Estado.EN_CURSO or not actor.condiciones.puede_actuar() or objetivo.condiciones.muerto:
-		return []
-	var estaba_en_pie: bool = objetivo.condiciones.en_pie()
-	var resultado: ResultadoGolpe = Golpe.resolver(actor, objetivo, arma, _dados, participantes, _vision, disparo.bonificadores_ca)
-	if not resultado.es_valido():
-		return [_golpe_invalido(actor, resultado.motivo)]
-	var eventos: Array[EventoCombate] = [emitir(EventoCombate.new(EventoCombate.Tipo.GOLPE, actor.id,
-		{"objetivo": objetivo.id, "resultado": resultado}))]
-	eventos.append_array(_eventos_de_estado(objetivo, estaba_en_pie))
-	eventos.append_array(_verificar_fin())
-	return eventos
-
-
-func _eventos_de_estado(objetivo: Combatiente, estaba_en_pie: bool) -> Array[EventoCombate]:
+## MUERTE o CAIDO del objetivo si corresponde (también lo usan los conjuros con daño).
+func eventos_de_estado(objetivo: Combatiente, estaba_en_pie: bool) -> Array[EventoCombate]:
 	var eventos: Array[EventoCombate] = []
 	if objetivo.condiciones.muerto:
 		eventos.append(_emitir(EventoCombate.new(EventoCombate.Tipo.MUERTE, objetivo.id)))
@@ -288,7 +223,8 @@ func _eventos_de_estado(objetivo: Combatiente, estaba_en_pie: bool) -> Array[Eve
 	return eventos
 
 
-func _verificar_fin() -> Array[EventoCombate]:
+## Victoria o derrota si corresponde (FIN_COMBATE); vacío si el combate sigue.
+func verificar_fin() -> Array[EventoCombate]:
 	if estado != Estado.EN_CURSO:
 		return []
 	var enemigos_vivos: bool = participantes.any(func(c: Combatiente) -> bool:
@@ -317,7 +253,7 @@ func validar_accion(actor: Combatiente, costo: int, accion: String) -> EventoCom
 		return invalida(actor, accion, MOTIVO_HUYENDO)
 	if actor.acciones_restantes < costo:
 		if accion == ACCION_GOLPE:
-			return _golpe_invalido(actor, Golpe.Motivo.SIN_ACCIONES)
+			return golpes.invalido_por(actor, Golpe.Motivo.SIN_ACCIONES)
 		return invalida(actor, accion, Golpe.texto_motivo(Golpe.Motivo.SIN_ACCIONES))
 	return null
 
@@ -325,13 +261,6 @@ func validar_accion(actor: Combatiente, costo: int, accion: String) -> EventoCom
 ## Acción imposible: {"accion": "Golpe" | "Zancada" | "Paso", "motivo": texto para mostrar}.
 func invalida(actor: Combatiente, accion: String, motivo: String) -> EventoCombate:
 	return EventoCombate.new(EventoCombate.Tipo.ACCION_INVALIDA, actor.id, {"accion": accion, "motivo": motivo})
-
-
-## Golpe imposible: además del texto, el Golpe.Motivo.
-func _golpe_invalido(actor: Combatiente, motivo: Golpe.Motivo) -> EventoCombate:
-	var evento: EventoCombate = invalida(actor, ACCION_GOLPE, Golpe.texto_motivo(motivo))
-	evento.datos["motivo_golpe"] = motivo
-	return evento
 
 
 func _va_antes(a: Combatiente, b: Combatiente, tiradas: Dictionary[Combatiente, int]) -> bool:

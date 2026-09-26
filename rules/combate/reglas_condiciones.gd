@@ -40,6 +40,20 @@ static func fin_de_turno(combate: Combate, actor: Combatiente) -> Array[EventoCo
 	return _cambios(combate, antes)
 
 
+## Acción Arcadas del actor en turno: valida, paga y resuelve (con los pisos de Mal de ojo al día).
+static func accion_arcadas(combate: Combate) -> Array[EventoCombate]:
+	var actor: Combatiente = combate.turno_actual()
+	var invalido: EventoCombate = combate.validar_accion(actor, Combate.COSTO_ARCADAS, Combate.ACCION_ARCADAS)
+	if invalido != null:
+		return [invalido]
+	if not actor.condiciones.tiene(Condiciones.Tipo.INDISPUESTO):
+		return [combate.invalida(actor, Combate.ACCION_ARCADAS, "no está indispuesto")]
+	actor.gastar_acciones(Combate.COSTO_ARCADAS)
+	var eventos: Array[EventoCombate] = combate.conjuros.actualizar_pisos()
+	eventos.append_array(arcadas(combate, actor, combate.dados()))
+	return eventos
+
+
 ## Resuelve Arcadas (la acción ya se validó y se pagó).
 static func arcadas(combate: Combate, actor: Combatiente, dados: Dados) -> Array[EventoCombate]:
 	var efecto: EfectoCondicion = actor.condiciones.principal(Condiciones.Tipo.INDISPUESTO)

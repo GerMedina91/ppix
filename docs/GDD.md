@@ -144,6 +144,8 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
   - **[pendiente]** Duraciones de un lanzador muerto: según las reglas siguen corriendo en su lugar de la iniciativa; hoy los muertos no tienen turno y esas duraciones quedan congeladas. Los conjuros sostenidos sí terminan si muere el lanzador o el objetivo.
   - Reacciones antes del primer turno: **habilitadas para ambos bandos** (el Player Core p. 436 lo deja al DJ). Opción `reacciones_antes_del_primer_turno` en `ConfigCombate`, true por defecto.
   - Objetivos de conjuros: se permiten aliados (reglas), resaltados con otro color que los oponentes. La IA nunca elige aliados como objetivo de un conjuro dañino.
+  - Clérigo: prepara Miedo en sus 2 espacios de rango 1 (la lista tiene un solo conjuro de rango 1).
+  - Daño no letal (Aturdir): el enemigo que queda a 0 PG queda inconsciente, no muere. La victoria cuenta a los enemigos fuera de combate (muertos o inconscientes) y al ganar se sacan todos del mapa.
   - Huyendo simplificado: en su turno solo puede hacer Zancadas o Pasos que terminen más lejos de la fuente del miedo (party e IA).
   - Pasos: C4a condiciones y estadísticas de conjuro → C4b motor de lanzamiento (Mal de ojo, Debilitar, Pies ágiles, Sostener, un maleficio por turno, manipular dispara el Golpe reactivo) → C4c el resto de la lista.
 - **Después de M3:** cobertura (menor / normal / mayor) calculada con la línea de visión; posicionamiento previo de la party antes del combate.

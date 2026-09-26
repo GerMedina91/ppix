@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="DefinicionConjuro" format=3]
+
+[ext_resource type="Script" path="res://rules/datos/efecto_por_grado.gd" id="1_xm765"]
+[ext_resource type="Script" path="res://rules/datos/definicion_conjuro.gd" id="2_uuf3n"]
+
+[sub_resource type="Resource" id="Resource_wprga"]
+script = ExtResource("1_xm765")
+grado = 2
+
+[sub_resource type="Resource" id="Resource_43xq7"]
+script = ExtResource("1_xm765")
+valor = 2
+
+[sub_resource type="Resource" id="Resource_k2ron"]
+script = ExtResource("1_xm765")
+grado = 0
+valor = 3
+
+[sub_resource type="Resource" id="Resource_nqcyk"]
+script = ExtResource("1_xm765")
+grado = 0
+condicion = 4
+rondas = 1
+
+[resource]
+script = ExtResource("2_uuf3n")
+id = &"miedo"
+nombre = "Miedo"
+tradiciones = Array[int]([0, 1, 2, 3])
+rasgos = Array[int]([1, 6, 7, 0, 5])
+defensa = 4
+efectos = Array[ExtResource("1_xm765")]([SubResource("Resource_wprga"), SubResource("Resource_43xq7"), SubResource("Resource_k2ron"), SubResource("Resource_nqcyk")])

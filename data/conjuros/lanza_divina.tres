@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="DefinicionConjuro" format=3]
+
+[ext_resource type="Script" path="res://rules/datos/efecto_por_grado.gd" id="1_gg1c2"]
+[ext_resource type="Script" path="res://rules/datos/definicion_conjuro.gd" id="2_mtomy"]
+
+[resource]
+script = ExtResource("2_mtomy")
+id = &"lanza_divina"
+nombre = "Lanza divina"
+tipo = 0
+tradiciones = Array[int]([1])
+rasgos = Array[int]([4, 1, 0, 12, 11])
+alcance_pies = 60
+defensa = 1
+danio_dados = 2
+danio_caras = 4
+tipo_danio = 3

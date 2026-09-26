@@ -3,7 +3,8 @@ extends Resource
 ## Arma: dados y tipo de daño, categoría (para la competencia) y rasgos (Player Core; ver
 ## docs/verificacion/c1_clases.md). Nombres de las armas de prueba: TODO_LORE.
 
-enum TipoDanio { CORTANTE, PERFORANTE, CONTUNDENTE }
+## Tipos de daño (Player Core p. 407). Espíritu y mental: solo de conjuros por ahora.
+enum TipoDanio { CORTANTE, PERFORANTE, CONTUNDENTE, ESPIRITU, MENTAL }
 enum Categoria { SIMPLE, MARCIAL, AVANZADA, SIN_ARMAS }
 
 const CARAS_VALIDAS: Array[int] = [4, 6, 8, 10, 12]

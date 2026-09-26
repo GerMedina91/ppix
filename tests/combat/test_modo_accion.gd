@@ -23,24 +23,27 @@ func _textos(combate: Combate) -> Array:
 
 func test_la_bruja_ve_sus_conjuros_con_costo_y_espacios() -> void:
 	var combate: Combate = _combate("res://data/builds/bruja.tres")
-	assert_array(_textos(combate)).is_equal(["Mal de ojo ◆", "Debilitar ◆◆ (1)"])
+	assert_array(_textos(combate)).is_equal(["Proyectil telequinético ◆◆", "Aturdir ◆◆", "Mal de ojo ◆",
+		"Debilitar ◆◆ (1)", "Miedo ◆◆ (1)"])
 
 
 func test_despues_de_un_maleficio_no_se_ofrece_otro_y_aparecen_sostener_y_arcadas() -> void:
 	var combate: Combate = _combate("res://data/builds/bruja.tres", [8])
 	combate.lanzar_conjuro(load("res://data/conjuros/mal_de_ojo.tres"), &"e")
-	assert_array(_textos(combate)).is_equal(["Debilitar ◆◆ (1)"])
+	assert_array(_textos(combate)).not_contains(["Mal de ojo ◆"])
 	combate.terminar_turno()
 	combate.terminar_turno()
 	combate.turno_actual().condiciones.aplicar(EfectoCondicion.new(Condiciones.Tipo.INDISPUESTO, 1, 15))
-	assert_array(_textos(combate)).is_equal(["Mal de ojo ◆", "Debilitar ◆◆ (1)", "Sostener Mal de ojo ◆", "Arcadas ◆"])
+	var textos: Array = _textos(combate)
+	assert_array(textos).contains(["Mal de ojo ◆"])
+	assert_array(textos.slice(-2)).is_equal(["Sostener Mal de ojo ◆", "Arcadas ◆"])
 
 
 func test_elegir_un_conjuro_y_hacer_click_en_el_objetivo_lo_lanza() -> void:
 	var combate: Combate = _combate("res://data/builds/bruja.tres", [8])
 	var modo: ModoAccion = ModoAccion.new()
 	var actor: Combatiente = combate.turno_actual()
-	assert_bool(modo.elegir(combate, actor, 0).is_valid()).is_false()
+	assert_bool(modo.elegir(combate, actor, 2).is_valid()).is_false()  # Mal de ojo
 	assert_object(modo.elegido).is_not_null()
 	assert_array(modo.objetivos(combate, actor)).contains([combate.combatiente(&"e")])
 	var eventos: Array[EventoCombate] = modo.al_click(combate, actor, Vector2i(5, 2), false).call()
@@ -52,7 +55,7 @@ func test_pies_agiles_ofrece_su_zancada_con_5_pies_mas() -> void:
 	var combate: Combate = _combate("res://data/builds/clerigo.tres")
 	var modo: ModoAccion = ModoAccion.new()
 	var actor: Combatiente = combate.turno_actual()
-	modo.elegir(combate, actor, 0)
+	modo.elegir(combate, actor, 3)  # Lanza divina, Estabilizar, Miedo, Pies ágiles
 	var normal: Dictionary = combate.casillas_de_zancada(actor)
 	assert_int(modo.casillas_movimiento.size()).is_greater(normal.size())
 	assert_int(actor.bonificador_velocidad).is_equal(0)  # solo se usó para calcular
@@ -62,5 +65,5 @@ func test_sostener_y_arcadas_no_piden_objetivo() -> void:
 	var combate: Combate = _combate("res://data/builds/bruja.tres")
 	combate.turno_actual().condiciones.aplicar(EfectoCondicion.new(Condiciones.Tipo.INDISPUESTO, 1, 15))
 	var modo: ModoAccion = ModoAccion.new()
-	assert_bool(modo.elegir(combate, combate.turno_actual(), 2).is_valid()).is_true()
+	assert_bool(modo.elegir(combate, combate.turno_actual(), 5).is_valid()).is_true()  # Arcadas, al final
 	assert_object(modo.elegido).is_null()

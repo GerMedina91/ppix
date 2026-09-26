@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="DefinicionConjuro" format=3]
+
+[ext_resource type="Script" path="res://rules/datos/efecto_por_grado.gd" id="1_i8rb7"]
+[ext_resource type="Script" path="res://rules/datos/definicion_conjuro.gd" id="2_d5gn5"]
+
+[sub_resource type="Resource" id="Resource_2qeao"]
+script = ExtResource("1_i8rb7")
+grado = 0
+condicion = 3
+
+[resource]
+script = ExtResource("2_d5gn5")
+id = &"aturdir"
+nombre = "Aturdir"
+tipo = 0
+tradiciones = Array[int]([0, 1, 2])
+rasgos = Array[int]([1, 0, 5, 8])
+alcance_pies = 60
+defensa = 4
+efectos = Array[ExtResource("1_i8rb7")]([SubResource("Resource_2qeao")])
+danio_dados = 1
+tipo_danio = 4
+salvacion_basica = true

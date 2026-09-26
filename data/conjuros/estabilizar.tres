@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="DefinicionConjuro" format=3]
+
+[ext_resource type="Script" path="res://rules/datos/efecto_por_grado.gd" id="1_25mfr"]
+[ext_resource type="Script" path="res://rules/datos/definicion_conjuro.gd" id="2_6t8ym"]
+
+[resource]
+script = ExtResource("2_6t8ym")
+id = &"estabilizar"
+nombre = "Estabilizar"
+tipo = 0
+tradiciones = Array[int]([1, 3])
+rasgos = Array[int]([1, 9, 0, 10])
+objetivo = 2
+estabiliza = true

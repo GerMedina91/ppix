@@ -339,8 +339,8 @@ func test_la_bruja_lanza_mal_de_ojo_desde_el_mapa() -> void:
 	var junto: Vector2i = _casilla_vecina_libre(bruja.celda)
 	enemigo.celda = junto
 	_control.actor_de(enemigo.id).colocar(junto, mapa.celda_a_posicion(junto))
-	assert_str(hud.texto_acciones()).starts_with("1 Mal de ojo ◆")
-	_runner.simulate_key_pressed(KEY_1)  # por EntradaCombate, como el jugador
+	assert_str(hud.texto_acciones()).contains("3 Mal de ojo ◆")
+	_runner.simulate_key_pressed(KEY_3)  # por EntradaCombate, como el jugador
 	await _runner.simulate_frames(2)
 	assert_str(hud.texto_acciones()).starts_with("Mal de ojo: click en el objetivo")
 	_control.click_en_celda(junto)

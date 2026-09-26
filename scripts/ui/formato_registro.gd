@@ -64,16 +64,40 @@ static func texto(evento: EventoCombate, combate: Combate) -> String:
 	return ""
 
 
-## "e: Voluntad 12 contra CD 17: fallo"; sobre uno mismo, el bonificador que da.
+const _NOMBRE_DANIO: Dictionary[DefinicionArma.TipoDanio, String] = {
+	DefinicionArma.TipoDanio.CORTANTE: "cortante", DefinicionArma.TipoDanio.PERFORANTE: "perforante",
+	DefinicionArma.TipoDanio.CONTUNDENTE: "contundente", DefinicionArma.TipoDanio.ESPIRITU: "de espíritu",
+	DefinicionArma.TipoDanio.MENTAL: "mental",
+}
+
+
+## Ataque: "pj → e (Lanza divina): 14 (+4 Sabiduría, ...) = 21 contra CA 16: éxito, 5 de daño de espíritu".
+## Salvación: "e: Voluntad 12 contra CD 17: fallo, 3 de daño mental". Estabilizar: "e se estabiliza".
+## Sobre uno mismo: el bonificador que da.
 static func _efecto_conjuro(evento: EventoCombate) -> String:
 	var conjuro: DefinicionConjuro = evento.datos.conjuro
 	var r: ResultadoPrueba = evento.datos.resultado
-	if r != null:
-		return "%s: %s %d contra CD %d: %s" % [evento.datos.objetivo, Estadisticas.nombre_salvacion(conjuro.salvacion()),
+	var texto: String = ""
+	if conjuro.estabiliza:
+		return "%s se estabiliza" % evento.datos.objetivo
+	if r != null and conjuro.es_ataque():
+		texto = "%s → %s (%s): %s = %d contra CA %d: %s" % [evento.actor, evento.datos.objetivo, conjuro.nombre,
+			_tirada_con_desglose(r), r.total, r.cd, GradoExito.nombre(r.grado)]
+	elif r != null:
+		texto = "%s: %s %d contra CD %d: %s" % [evento.datos.objetivo, Estadisticas.nombre_salvacion(conjuro.salvacion()),
 			r.total, r.cd, GradoExito.nombre(r.grado)]
-	if conjuro.bonificador_velocidad > 0:
+	elif conjuro.bonificador_velocidad > 0:
 		return "%s: +%d pies de Velocidad hasta el final del turno" % [evento.actor, conjuro.bonificador_velocidad]
-	return ""
+	if evento.datos.get("danio", 0) > 0:
+		texto += ", %d de daño %s" % [evento.datos.danio, _NOMBRE_DANIO[conjuro.tipo_danio]]
+	return texto
+
+
+static func _tirada_con_desglose(r: ResultadoPrueba) -> String:
+	var partes: PackedStringArray = PackedStringArray()
+	for parte: Dictionary in r.desglose:
+		partes.append("%+d %s" % [parte.valor, parte.fuente])
+	return "%d (%s)" % [r.natural, ", ".join(partes)]
 
 
 ## Texto del aviso de reacción: "Miembro1: ¿usar Golpe reactivo contra X?".

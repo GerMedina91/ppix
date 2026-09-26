@@ -101,3 +101,16 @@ resumidas y referencias; no se copia texto de reglas.
 ## Rasgos
 - **Manipular** (PC p. 458 · `/Traits.aspx?ID=645`): gestos o manipulación; suele disparar reacciones (Golpe reactivo).
 - **Concentrar** (PC p. 454 · `ID=561`): requiere concentración mental.
+
+## C4c — daño y reglas generales
+- **Rasgo ataque** (PC p. 452 · `/Traits.aspx?ID=540`): cada ataque después del primero en el turno sufre el
+  penalizador por ataque múltiple (también los ataques de conjuro).
+- **Mitades y dobles** (PC p. 398 · `/Rules.aspx?ID=2266` y p. 407 · `ID=2307`): la mitad se redondea hacia abajo;
+  1 de daño a la mitad sigue siendo 1. Se tira el daño normal y después se duplica o se divide.
+- **No letal** (PC p. 407 · `ID=2311`, rasgo p. 282 · `/Traits.aspx?ID=661`): un conjuro no letal que deja a 0 PG
+  noquea en vez de matar.
+- **Daño de espíritu y mental** (PC p. 407 · `ID=2308`): el de espíritu no daña a criaturas sin espíritu
+  (constructos); los descerebrados suelen ser inmunes al mental. Las criaturas de prueba no tienen inmunidades
+  (pendiente cuando haya monstruos reales).
+- **Santificado** (PC p. 113 · `ID=519`): si el lanzador es sagrado o sacrílego, el conjuro toma ese rasgo; El Umbral
+  no tiene santificación, así que no cambia nada.

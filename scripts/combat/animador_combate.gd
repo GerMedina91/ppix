@@ -61,8 +61,13 @@ func animar(evento: EventoCombate, actores: Dictionary[StringName, ActorMapa]) -
 			await _texto(actor, (evento.datos.conjuro as DefinicionConjuro).nombre, COLOR_CONJURO)
 		EventoCombate.Tipo.EFECTO_CONJURO:
 			var r: ResultadoPrueba = evento.datos.resultado
-			if r != null:
-				await _texto(actores[evento.datos.objetivo], GradoExito.nombre(r.grado), COLOR_CONJURO)
+			var objetivo: ActorMapa = actores[evento.datos.objetivo]
+			if evento.datos.get("danio", 0) > 0:
+				await _texto(objetivo, str(evento.datos.danio), COLOR_DANIO)
+			elif r != null:
+				await _texto(objetivo, GradoExito.nombre(r.grado), COLOR_CONJURO)
+			elif (evento.datos.conjuro as DefinicionConjuro).estabiliza:
+				await _texto(objetivo, "estable", COLOR_INFO)
 		EventoCombate.Tipo.CONJURO_FALLIDO:
 			await _texto(actor, "sin efecto: %s" % evento.datos.motivo, COLOR_INVALIDA)
 		EventoCombate.Tipo.FIN_CONJURO:

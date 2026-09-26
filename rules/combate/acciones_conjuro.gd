@@ -38,6 +38,8 @@ func motivo_imposible(lanzador: Combatiente, conjuro: DefinicionConjuro, objetiv
 		return _motivo_movimiento(lanzador, conjuro, destino, recorrido, es_paso)
 	if objetivo == null or objetivo.condiciones.muerto or objetivo == lanzador:
 		return "sin objetivo"
+	if conjuro.objetivo == DefinicionConjuro.Objetivo.UNA_CRIATURA_MORIBUNDA and objetivo.condiciones.moribundo <= 0:
+		return "el objetivo no está moribundo"
 	if Medicion.pies_entre(lanzador.celda, objetivo.celda) > conjuro.alcance_pies:
 		return "fuera de alcance"
 	if not _combate().vision().hay_linea(lanzador.celda, objetivo.celda):
@@ -76,7 +78,7 @@ func lanzar(conjuro: DefinicionConjuro, id_objetivo: StringName, destino: Vector
 	var invalido: EventoCombate = combate.validar_accion(actor, conjuro.acciones, conjuro.nombre)
 	if invalido != null:
 		return [invalido]
-	var objetivo: Combatiente = combate.combatiente(id_objetivo) if conjuro.objetivo == DefinicionConjuro.Objetivo.UNA_CRIATURA else actor
+	var objetivo: Combatiente = actor if conjuro.objetivo == DefinicionConjuro.Objetivo.UNO_MISMO else combate.combatiente(id_objetivo)
 	var motivo: String = motivo_imposible(actor, conjuro, objetivo, destino, recorrido, es_paso)
 	if motivo != "":
 		return [combate.invalida(actor, conjuro.nombre, motivo)]
@@ -89,13 +91,22 @@ func lanzar(conjuro: DefinicionConjuro, id_objetivo: StringName, destino: Vector
 			eventos.append(_fallido(actor, conjuro, "ya lanzó un maleficio este turno"))
 			return eventos
 		actor.maleficio_en_turno = true
+	# Reacciones, en orden: a la acción de manipular (Golpe reactivo) y, si es un ataque, al ser objetivo
+	# (Esquiva ágil). Después, el efecto.
 	var disparo: DisparoReaccion = DisparoReaccion.usa_manipular(actor)
+	var al_objetivo: DisparoReaccion = DisparoReaccion.objetivo_de_ataque(actor, objetivo, null)
 	var resolver: Callable = func() -> Array[EventoCombate]:
-		return _resolver(actor, conjuro, objetivo, destino, recorrido, es_paso, disparo)
+		return _resolver(actor, conjuro, objetivo, destino, recorrido, es_paso, disparo, al_objetivo.bonificadores_ca)
+	var tras_manipular: Callable = resolver
+	if conjuro.es_ataque():
+		tras_manipular = func() -> Array[EventoCombate]:
+			if disparo.interrumpida or not actor.condiciones.en_pie():
+				return resolver.call()
+			return combate.reacciones.procesar(al_objetivo, resolver)
 	if conjuro.tiene(DefinicionConjuro.Rasgo.MANIPULAR):
-		eventos.append_array(combate.reacciones.procesar(disparo, resolver))
+		eventos.append_array(combate.reacciones.procesar(disparo, tras_manipular))
 	else:
-		eventos.append_array(resolver.call())
+		eventos.append_array(tras_manipular.call())
 	return eventos
 
 
@@ -154,7 +165,7 @@ func actualizar_pisos() -> Array[EventoCombate]:
 # --- Internos ---
 
 func _resolver(actor: Combatiente, conjuro: DefinicionConjuro, objetivo: Combatiente, destino: Vector2i,
-		recorrido: Array[Vector2i], es_paso: bool, disparo: DisparoReaccion) -> Array[EventoCombate]:
+		recorrido: Array[Vector2i], es_paso: bool, disparo: DisparoReaccion, bonificadores_ca: Array[Modificador]) -> Array[EventoCombate]:
 	var combate: Combate = _combate()
 	if combate.estado != Combate.Estado.EN_CURSO or not actor.condiciones.en_pie():
 		return []
@@ -162,24 +173,13 @@ func _resolver(actor: Combatiente, conjuro: DefinicionConjuro, objetivo: Combati
 		return [_fallido(actor, conjuro, "interrumpido")]
 	if conjuro.objetivo == DefinicionConjuro.Objetivo.UNO_MISMO:
 		return _sobre_uno_mismo(actor, conjuro, destino, recorrido, es_paso)
-	var antes: Dictionary = ReglasCondiciones.valores(combate)
-	var resultado: ResultadoPrueba = null
-	var aplicados: int = 0
-	if conjuro.pide_salvacion():
-		resultado = objetivo.prueba_salvacion(conjuro.salvacion()).resolver(combate.dados(), actor.prueba_conjuro().cd())
-		for efecto: EfectoPorGrado in conjuro.efectos_de(resultado.grado):
-			var condicion: EfectoCondicion = EfectoCondicion.new(efecto.condicion, efecto.valor, resultado.cd, actor.id)
-			if efecto.rondas > 0:
-				condicion.con_duracion(actor.id, efecto.rondas, true)
-			objetivo.condiciones.aplicar(condicion)
-			aplicados += 1
-	var eventos: Array[EventoCombate] = [combate.emitir(EventoCombate.new(EventoCombate.Tipo.EFECTO_CONJURO, actor.id,
-		{"conjuro": conjuro, "objetivo": objetivo.id, "resultado": resultado}))]
-	if conjuro.es_sostenido() and aplicados > 0:
+	if objetivo.condiciones.muerto:
+		return []  # murió por una reacción antes del efecto
+	var efecto: Dictionary = EfectosConjuro.sobre_criatura(combate, actor, conjuro, objetivo, bonificadores_ca)
+	if conjuro.es_sostenido() and efecto.aplicadas > 0:
 		sostenidos.append(EfectoSostenido.new(actor.id, conjuro, objetivo.id))
 		actualizar_pisos()
-	eventos.append_array(ReglasCondiciones.cambios_desde(combate, antes))
-	return eventos
+	return efecto.eventos
 
 
 func _sobre_uno_mismo(actor: Combatiente, conjuro: DefinicionConjuro, destino: Vector2i, recorrido: Array[Vector2i], es_paso: bool) -> Array[EventoCombate]:

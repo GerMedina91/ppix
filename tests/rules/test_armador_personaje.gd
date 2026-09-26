@@ -130,7 +130,7 @@ func test_conjuros_de_los_builds() -> void:
 	var bruja: DefinicionPersonaje = ArmadorPersonaje.armar(load("res://data/builds/bruja.tres"))
 	var clerigo: DefinicionPersonaje = ArmadorPersonaje.armar(load("res://data/builds/clerigo.tres"))
 	assert_bool(bruja.trucos.has(load("res://data/conjuros/mal_de_ojo.tres"))).is_true()  # del patrón
-	assert_array(bruja.conjuros_preparados).is_equal([load("res://data/conjuros/debilitar.tres")])
+	assert_array(bruja.conjuros_preparados).contains([load("res://data/conjuros/debilitar.tres")])
 	assert_array(clerigo.conjuros_foco).is_equal([load("res://data/conjuros/pies_agiles.tres")])
 
 

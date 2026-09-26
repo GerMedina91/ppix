@@ -32,14 +32,15 @@ static func nuevo_combate(participantes_combate: Array[Combatiente], mapa: Mapa,
 	return combate
 
 
-## Al terminar: si ganaron, guarda el estado de la party, saca a los enemigos muertos y marca el encuentro
+## Al terminar: si ganaron, guarda el estado de la party, saca a los enemigos derrotados (muertos o
+## noqueados) y marca el encuentro
 ## como resuelto. Devuelve si fue victoria.
 static func cerrar(combate: Combate, party: ControlParty, encuentro: Encuentro) -> bool:
 	var victoria: bool = combate.estado == Combate.Estado.VICTORIA
 	if victoria:
 		EstadoPartyCombate.guardar(party, combate)
 		for enemigo: EnemigoEnMapa in encuentro.enemigos():
-			if combate.combatiente(StringName(enemigo.name)).condiciones.muerto:
+			if combate.combatiente(StringName(enemigo.name)).condiciones.fuera_de_combate():
 				enemigo.queue_free()
 		encuentro.resuelto = true
 	return victoria

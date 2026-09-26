@@ -96,3 +96,8 @@ Términos de reglas en castellano, según la edición oficial en castellano de l
 | Evil Eye / Enfeeble / Agile Feet | Mal de ojo / Debilitar / Pies ágiles | `mal_de_ojo`, `debilitar`, `pies_agiles` | Provisorio |
 | tradition (arcane / divine / occult / primal) | tradición (arcana / divina / ocultista / primigenia) | `Tradicion` | Provisorio |
 | disrupt (an action) | interrumpir | `interrumpida` | Provisorio |
+| spirit / mental (daño) | de espíritu / mental | `ESPIRITU`, `MENTAL` | Provisorio |
+| nonlethal | no letal | `NO_LETAL` | Provisorio |
+| spell attack roll / basic save | ataque de conjuro / salvación básica | `es_ataque()`, `salvacion_basica` | Provisorio |
+| Divine Lance / Stabilize / Fear | Lanza divina / Estabilizar / Miedo | `lanza_divina`, `estabilizar`, `miedo` | Provisorio |
+| Telekinetic Projectile / Daze | Proyectil telequinético / Aturdir | `proyectil_telequinetico`, `aturdir` | Provisorio |

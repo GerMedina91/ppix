@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="DefinicionConjuro" format=3]
+
+[ext_resource type="Script" path="res://rules/datos/efecto_por_grado.gd" id="1_rt0t5"]
+[ext_resource type="Script" path="res://rules/datos/definicion_conjuro.gd" id="2_1pjlh"]
+
+[resource]
+script = ExtResource("2_1pjlh")
+id = &"proyectil_telequinetico"
+nombre = "Proyectil telequinético"
+tipo = 0
+tradiciones = Array[int]([0, 2])
+rasgos = Array[int]([4, 1, 0])
+defensa = 1
+danio_dados = 2

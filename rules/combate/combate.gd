@@ -227,8 +227,9 @@ func eventos_de_estado(objetivo: Combatiente, estaba_en_pie: bool) -> Array[Even
 func verificar_fin() -> Array[EventoCombate]:
 	if estado != Estado.EN_CURSO:
 		return []
+	# Enemigos derrotados: muertos o inconscientes (p. ej. por daño no letal).
 	var enemigos_vivos: bool = participantes.any(func(c: Combatiente) -> bool:
-		return c.bando == Combatiente.Bando.ENEMIGOS and not c.condiciones.muerto)
+		return c.bando == Combatiente.Bando.ENEMIGOS and c.condiciones.en_pie())
 	var party_en_pie: bool = participantes.any(func(c: Combatiente) -> bool:
 		return c.bando == Combatiente.Bando.PARTY and c.condiciones.en_pie())
 	if not enemigos_vivos:

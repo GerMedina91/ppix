@@ -198,12 +198,9 @@ func test_pies_agiles_no_llega_mas_alla_de_la_velocidad_con_el_bonificador() -> 
 
 # --- Golpe reactivo ante manipular ---
 
-## Guerrero enemigo pegado a la bruja, con la reacción disponible (antes de su primer turno la decide el
-## DJ, Player Core p. 436; el motor hoy no la da).
+## Guerrero enemigo pegado a la bruja (reacciona antes de su primer turno: opción por defecto).
 func _guerrero_enemigo_al_lado() -> Combatiente:
-	var guerrero: Combatiente = _personaje(&"g", GUERRERO, Vector2i(3, 2), Combatiente.Bando.ENEMIGOS)
-	guerrero.reaccion_disponible = true
-	return guerrero
+	return _personaje(&"g", GUERRERO, Vector2i(3, 2), Combatiente.Bando.ENEMIGOS)
 
 
 func test_el_golpe_reactivo_con_critico_interrumpe_el_conjuro() -> void:

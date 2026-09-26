@@ -204,6 +204,7 @@ func iniciar(encuentro: Encuentro, mapa: Mapa, party: ControlParty, camara: Cama
 		_actores[c.id] = enemigo
 	_combate = Combate.new(participantes, mapa.construir_grilla(), GameState.dados)
 	_combate.pausar_tras_reacciones = true
+	_combate.reacciones_antes_del_primer_turno = config.reacciones_antes_del_primer_turno
 	combate_iniciado.emit()
 	_encolar(_combate.iniciar())
 

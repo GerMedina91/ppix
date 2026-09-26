@@ -142,7 +142,8 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
   - Bruja: patrón El Rencor (mecánica de *The Resentment*); familiar sin rol mecánico por ahora.
   - Conjuros del slice. Clérigo: trucos Lanza divina y Estabilizar; rango 1: Miedo; fuente divina: Curar; foco: Pies ágiles (dominio Viaje). Bruja: trucos Mal de ojo, Proyectil telequinético (sin el requisito del objeto suelto) y Aturdir; rango 1: Debilitar y Miedo. La bruja no tiene conjuro de foco (sus maleficios de foco dependen del familiar).
   - **[pendiente]** Duraciones de un lanzador muerto: según las reglas siguen corriendo en su lugar de la iniciativa; hoy los muertos no tienen turno y esas duraciones quedan congeladas. Los conjuros sostenidos sí terminan si muere el lanzador o el objetivo.
-  - Reacciones antes del primer turno: el Player Core (p. 436) lo deja al DJ; hoy nadie reacciona antes de su primer turno (decisión a revisar).
+  - Reacciones antes del primer turno: **habilitadas para ambos bandos** (el Player Core p. 436 lo deja al DJ). Opción `reacciones_antes_del_primer_turno` en `ConfigCombate`, true por defecto.
+  - Objetivos de conjuros: se permiten aliados (reglas), resaltados con otro color que los oponentes. La IA nunca elige aliados como objetivo de un conjuro dañino.
   - Huyendo simplificado: en su turno solo puede hacer Zancadas o Pasos que terminen más lejos de la fuente del miedo (party e IA).
   - Pasos: C4a condiciones y estadísticas de conjuro → C4b motor de lanzamiento (Mal de ojo, Debilitar, Pies ágiles, Sostener, un maleficio por turno, manipular dispara el Golpe reactivo) → C4c el resto de la lista.
 - **Después de M3:** cobertura (menor / normal / mayor) calculada con la línea de visión; posicionamiento previo de la party antes del combate.
@@ -203,6 +204,7 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
 | 2026-09-25 | Movimiento de varias acciones: un click puede encadenar hasta 3 Zancadas (cada una es una acción separada); previsualización de costo con ◆. |
 | 2026-09-25 | **M3 cerrado.** |
 | 2026-09-25 | Conjuros del slice (decisión del director, Germán puede vetar): clérigo Lanza divina, Estabilizar, Miedo, Curar; bruja Mal de ojo, Proyectil telequinético (sin objeto suelto), Aturdir, Debilitar, Miedo. Huyendo simplificado: solo movimientos que alejan de la fuente. |
+| 2026-09-25 | Reacciones antes del primer turno habilitadas para ambos bandos (opción de ConfigCombate, true por defecto). Conjuros sobre aliados permitidos con otro color; la IA no elige aliados para conjuros dañinos. |
 | 2026-09-25 | Dominios de El Umbral: viaje, sueños y **muerte** (Player Core p. 39, verificado en AoN). Muerte reemplaza a vigilia; vigilia y reposo solo están en *Divine Mysteries*. |
 | 2026-09-25 | Clases del slice: guerrero, pícaro, clérigo y bruja (Player Core, Remaster), nivel 1. |
 | 2026-09-25 | `remata_caidos`: **decidido**, depende de cada criatura (perfil de IA en `DefinicionCriatura`). |

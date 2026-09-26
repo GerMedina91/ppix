@@ -38,6 +38,9 @@ var conjuros: AccionesConjuro = AccionesConjuro.new(self)
 ## La presentación lo activa: después de usar una reacción, la acción interrumpida no sigue sola; espera
 ## continuar(), así se puede animar la reacción con el estado del combate en ese punto.
 var pausar_tras_reacciones: bool = false
+## Si todos tienen su reacción desde que empieza el combate, antes de su primer turno (Player Core p. 436:
+## lo decide el DJ; nuestra decisión: sí). Se fija antes de iniciar().
+var reacciones_antes_del_primer_turno: bool = true
 
 var _indice_turno: int = 0
 var _dados: Dados
@@ -64,6 +67,8 @@ func iniciar() -> Array[EventoCombate]:
 	orden.sort_custom(func(a: Combatiente, b: Combatiente) -> bool: return _va_antes(a, b, tiradas))
 	estado = Estado.EN_CURSO
 	ronda = 1
+	for c: Combatiente in participantes:
+		c.reaccion_disponible = reacciones_antes_del_primer_turno
 	_indice_turno = 0
 	eventos.append(_emitir(EventoCombate.new(EventoCombate.Tipo.INICIO_RONDA, &"", {"ronda": ronda})))
 	eventos.append_array(_empezar_turno())

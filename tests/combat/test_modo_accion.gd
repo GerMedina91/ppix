@@ -42,7 +42,7 @@ func test_elegir_un_conjuro_y_hacer_click_en_el_objetivo_lo_lanza() -> void:
 	var actor: Combatiente = combate.turno_actual()
 	assert_bool(modo.elegir(combate, actor, 0).is_valid()).is_false()
 	assert_object(modo.elegido).is_not_null()
-	assert_array(modo.objetivos(combate, actor)).contains([Vector2i(5, 2)])
+	assert_array(modo.objetivos(combate, actor)).contains([combate.combatiente(&"e")])
 	var eventos: Array[EventoCombate] = modo.al_click(combate, actor, Vector2i(5, 2), false).call()
 	assert_int(eventos[0].tipo).is_equal(EventoCombate.Tipo.LANZAMIENTO)
 	assert_object(modo.elegido).is_null()

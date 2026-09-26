@@ -8,6 +8,7 @@ extends RefCounted
 ## 3. A distancia: si empieza pegado a un oponente, primero se aleja con un Paso (si hay dónde).
 ## Caídos (inconscientes): solo los ataca si su perfil de IA tiene `remata_caidos` (por defecto no).
 ## Huyendo: Zancada a la casilla más lejana de la fuente (si lo aleja); si no puede, termina el turno.
+## Conjuros (cuando los enemigos lancen): nunca elige aliados como objetivo de un conjuro dañino.
 ## Indispuesto: si no puede golpear a nadie este turno (ni desde donde está ni tras una Zancada), Arcadas.
 
 ## Tope de seguridad de decisiones por turno (cada una gasta al menos una acción o termina).

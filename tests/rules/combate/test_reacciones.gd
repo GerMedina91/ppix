@@ -42,9 +42,7 @@ func _combate(participantes: Array[Combatiente], dados: Array) -> Combate:
 	for c: Combatiente in participantes:
 		iniciativa.append(20 if c.bando == Combatiente.Bando.ENEMIGOS else 1)
 	var combate: Combate = Combate.new(participantes, _grilla(), DadosFijos.new(iniciativa + dados))
-	combate.iniciar()
-	for c: Combatiente in participantes:
-		c.reaccion_disponible = true  # el guerrero todavía no tuvo turno, pero su reacción está disponible desde el inicio
+	combate.iniciar()  # el guerrero todavía no tuvo turno: su reacción está disponible desde el inicio
 	return combate
 
 
@@ -208,3 +206,13 @@ func test_con_pausa_si_nadie_reacciona_no_hay_nada_que_continuar() -> void:
 	combate.pausar_tras_reacciones = true
 	assert_array(_tipos(combate.zancada(Vector2i(10, 5)))).is_equal([T.MOV])
 	assert_bool(combate.hay_continuacion()).is_false()
+
+
+func test_con_la_opcion_desactivada_nadie_reacciona_antes_de_su_primer_turno() -> void:
+	var guerrero: Combatiente = _guerrero(Vector2i(5, 5))
+	var enemigo: Combatiente = _enemigo(Vector2i(6, 5))
+	var participantes: Array[Combatiente] = [guerrero, enemigo]
+	var combate: Combate = Combate.new(participantes, _grilla(), DadosFijos.new([1, 20]))
+	combate.reacciones_antes_del_primer_turno = false
+	combate.iniciar()
+	assert_array(_tipos(combate.zancada(Vector2i(10, 5)))).is_equal([T.MOV])

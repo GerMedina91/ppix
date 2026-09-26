@@ -74,18 +74,16 @@ func cancelar() -> void:
 	casillas_movimiento.clear()
 
 
-## Casillas a resaltar como objetivo del conjuro elegido.
-func objetivos(combate: Combate, actor: Combatiente) -> Array[Vector2i]:
-	var celdas: Array[Vector2i] = []
+## Criaturas que puede elegir con el conjuro elegido (aliados incluidos, como permiten las reglas).
+## Sobre uno mismo: solo el actor (el movimiento posible está en casillas_movimiento).
+func objetivos(combate: Combate, actor: Combatiente) -> Array[Combatiente]:
+	var lista: Array[Combatiente] = []
 	if elegido == null:
-		return celdas
+		return lista
 	if elegido.objetivo == DefinicionConjuro.Objetivo.UNO_MISMO:
-		celdas.append(actor.celda)
-		celdas.append_array(casillas_movimiento.keys())
-		return celdas
-	for c: Combatiente in combate.conjuros.objetivos_validos(actor, elegido):
-		celdas.append(c.celda)
-	return celdas
+		lista.append(actor)
+		return lista
+	return combate.conjuros.objetivos_validos(actor, elegido)
 
 
 ## Intención del click en `celda` con el conjuro elegido (el Combate avisa si es imposible).

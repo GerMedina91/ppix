@@ -350,4 +350,9 @@ func test_la_bruja_lanza_mal_de_ojo_desde_el_mapa() -> void:
 	assert_bool(Array(hud.lineas_registro()).any(func(l: String) -> bool:
 		return l == "Miembro4 lanza Mal de ojo sobre EnemigoCuerpoACuerpo")).is_true()
 	assert_int(bruja.acciones_restantes).is_equal(2)
+	# Ficha al pasar el cursor por el enemigo.
+	_control.mover_cursor(junto)
+	await _runner.simulate_frames(2)
+	assert_bool(hud.ficha().visible).is_true()
+	assert_str(hud.ficha().texto_para(junto)).starts_with("EnemigoCuerpoACuerpo\n")
 	assert_array(violaciones).is_empty()

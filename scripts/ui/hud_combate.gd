@@ -19,6 +19,7 @@ var _activo: Label
 var _registro: Label
 var _ayuda: Label
 var _barra: BarraAcciones
+var _ficha: FichaCombatiente
 var _lineas: PackedStringArray = PackedStringArray()
 var _aviso: PanelContainer
 var _texto_aviso: Label
@@ -58,6 +59,10 @@ func texto_acciones() -> String:
 
 func barra() -> BarraAcciones:
 	return _barra
+
+
+func ficha() -> FichaCombatiente:
+	return _ficha
 
 
 func aviso_visible() -> bool:
@@ -140,10 +145,13 @@ func _construir() -> void:
 	var abajo_izq: PanelContainer = _panel()
 	_anclar_abajo(abajo_izq, 0.0)
 	var columna: VBoxContainer = VBoxContainer.new()
+	columna.custom_minimum_size = Vector2(estilo.ancho_panel_actor, 0)
 	_activo = _etiqueta("")
+	_activo.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_barra = BarraAcciones.new()
 	_barra.controlador = controlador
 	_ayuda = _etiqueta(AYUDA)
+	_ayuda.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_ayuda.add_theme_color_override("font_color", estilo.color_ayuda)
 	columna.add_child(_activo)
 	columna.add_child(_barra)
@@ -155,7 +163,15 @@ func _construir() -> void:
 	_registro.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_registro.custom_minimum_size = Vector2(estilo.ancho_registro, 0)
 	abajo_der.add_child(_registro)
-	for panel: Control in [arriba, abajo_izq, abajo_der]:
+	_ficha = FichaCombatiente.new()
+	_ficha.controlador = controlador
+	_ficha.anchor_left = 1.0
+	_ficha.anchor_right = 1.0
+	_ficha.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	_ficha.offset_left = -estilo.margen
+	_ficha.offset_right = -estilo.margen
+	_ficha.offset_top = estilo.margen
+	for panel: Control in [arriba, abajo_izq, abajo_der, _ficha]:
 		_raiz.add_child(panel)
 	_construir_aviso()
 

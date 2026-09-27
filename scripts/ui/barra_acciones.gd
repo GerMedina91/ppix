@@ -1,9 +1,9 @@
 class_name BarraAcciones
-extends HBoxContainer
+extends HFlowContainer
 ## Barra de acciones del HUD (funcional, placeholder): botones con las opciones del actor (conjuros,
 ## Sostener, Arcadas) y su atajo; con un conjuro elegido, su instrucción y, según el caso, el selector de
 ## costo (acciones de Curar) o el interruptor para incluirse en la emanación; siempre, Cancelar.
-## Los botones no toman el foco (Espacio sigue terminando el turno) y frenan el click (no llega al mapa).
+## Salta de línea si no entra en el ancho del panel. Los botones no toman el foco (Espacio sigue terminando el turno) y frenan el click (no llega al mapa).
 ## Solo llama al controlador; el aspecto sale del Theme del HUD.
 
 var controlador: ControladorCombate
@@ -11,7 +11,8 @@ var _instruccion: Label
 
 
 func _ready() -> void:
-	add_theme_constant_override("separation", 4)
+	add_theme_constant_override("h_separation", 4)
+	add_theme_constant_override("v_separation", 2)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 

@@ -19,6 +19,8 @@ extends Resource
 @export var margen: int = 6
 @export var relleno_panel: int = 4
 @export var ancho_registro: int = 520
+## Panel del actor (abajo a la izquierda): lo que queda a la izquierda del registro en 960 px.
+@export var ancho_panel_actor: int = 420
 
 @export_group("Texto del HUD")
 @export var color_party: Color = Color(0.75, 0.9, 1.0)

@@ -16,6 +16,8 @@ const _PIP: String = "◆"
 var elegido: DefinicionConjuro
 ## Acciones elegidas para un conjuro de costo variable (0 = todavía no).
 var acciones: int = 0
+## Emanación: el lanzador no se incluye (se alterna con `alternar_incluirse`).
+var excluirse: bool = false
 ## Pies ágiles: casillas de su Zancada con el bonificador ya puesto.
 var casillas_movimiento: Dictionary[Vector2i, int] = {}
 
@@ -51,7 +53,8 @@ func texto(combate: Combate, actor: Combatiente) -> String:
 		if pide_acciones():
 			return "%s: %s · Esc cancela" % [elegido.nombre, " · ".join(_formas(actor))]
 		if es_area():
-			return "%s %s: click en tu casilla para lanzarlo · Esc cancela" % [elegido.nombre, _PIP.repeat(acciones)]
+			return "%s %s: click en tu casilla para lanzarlo · E: %s · Esc cancela" % [elegido.nombre,
+				_PIP.repeat(acciones), "no te incluye" if excluirse else "te incluye"]
 		if elegido.objetivo == DefinicionConjuro.Objetivo.UNO_MISMO:
 			return "%s: click en tu casilla o donde moverte (Shift: Paso) · Esc cancela" % elegido.nombre
 		return "%s: click en el objetivo · Esc cancela" % elegido.nombre
@@ -119,6 +122,7 @@ func elegir(combate: Combate, actor: Combatiente, indice: int) -> Callable:
 func cancelar() -> void:
 	elegido = null
 	acciones = 0
+	excluirse = false
 	casillas_movimiento.clear()
 
 
@@ -129,11 +133,18 @@ func objetivos(combate: Combate, actor: Combatiente) -> Array[Combatiente]:
 	if elegido == null or pide_acciones():
 		return lista
 	if es_area():
-		return ObjetivosConjuro.afectados_por_area(combate, actor, PedidoConjuro.new(elegido, &"", acciones))
+		return ObjetivosConjuro.afectados_por_area(combate, actor, _pedido(&""))
 	if elegido.objetivo == DefinicionConjuro.Objetivo.UNO_MISMO:
 		lista.append(actor)
 		return lista
 	return combate.conjuros.objetivos_validos(actor, elegido, acciones)
+
+
+## Pedido del conjuro elegido con las acciones y la opción de excluirse.
+func _pedido(objetivo: StringName) -> PedidoConjuro:
+	var pedido: PedidoConjuro = PedidoConjuro.new(elegido, objetivo, acciones)
+	pedido.excluir_lanzador = excluirse
+	return pedido
 
 
 ## Casillas de la emanación elegida (vacío si no es de área).
@@ -152,10 +163,11 @@ func al_click(combate: Combate, actor: Combatiente, celda: Vector2i, es_paso: bo
 	var conjuro: DefinicionConjuro = elegido
 	var cantidad: int = acciones
 	var area: bool = es_area()
+	var pedido_area: PedidoConjuro = _pedido(&"")
 	cancelar()
 	var recorrido: Array[Vector2i] = []
 	if area:
-		return combate.lanzar_conjuro.bind(conjuro, &"", AccionesConjuro.SIN_CELDA, recorrido, false, cantidad)
+		return combate.lanzar_pedido.bind(pedido_area)
 	if conjuro.objetivo == DefinicionConjuro.Objetivo.UNO_MISMO:
 		if celda == actor.celda:
 			return combate.lanzar_conjuro.bind(conjuro)

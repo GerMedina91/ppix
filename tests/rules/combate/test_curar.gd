@@ -153,3 +153,14 @@ func test_el_modo_de_accion_pide_las_acciones_y_confirma_la_emanacion() -> void:
 	var eventos: Array[EventoCombate] = modo.al_click(combate, clerigo, clerigo.celda, false).call()
 	assert_int(eventos[0].tipo).is_equal(EventoCombate.Tipo.LANZAMIENTO)
 	assert_str(FormatoRegistro.texto(eventos[0], combate)).is_equal("clerigo lanza Curar (◆◆◆)")
+
+
+func test_el_clerigo_puede_excluirse_de_su_emanacion() -> void:
+	var combate: Combate = _combate([4])
+	for c: Combatiente in combate.participantes:
+		c.pg -= 6
+	var pedido: PedidoConjuro = PedidoConjuro.new(load(CURAR), &"", 3)
+	pedido.excluir_lanzador = true
+	var curados: Array = _efectos(combate.lanzar_pedido(pedido)).map(func(e: EventoCombate) -> StringName: return e.datos.objetivo)
+	assert_array(curados).not_contains([&"clerigo"])
+	assert_array(curados).contains([&"aliada", &"e"])

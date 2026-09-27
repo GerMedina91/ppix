@@ -26,4 +26,7 @@ func curar_party() -> void:
 	for miembro: MiembroParty in party.miembros():
 		miembro.mostrar_estado(ActorMapa.EstadoVisual.NORMAL)
 	if controlador.en_curso():
-		controlador.restaurar_party_depuracion()
+		for c: Combatiente in controlador.combate().participantes:
+			if c.bando == Combatiente.Bando.PARTY:
+				c.restaurar_por_completo()
+		controlador.redibujar()

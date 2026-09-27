@@ -8,7 +8,7 @@ extends RefCounted
 ## - Curación a una criatura: un ser vivo que acepte (aliado o uno mismo; los enemigos no aceptan) o un
 ##   muerto viviente de cualquier bando.
 ## - Emanación: sin objetivo único; afecta a todos los que están dentro con línea de efecto al lanzador
-##   (el lanzador elige incluirse: se incluye).
+##   (el lanzador elige si se incluye: `PedidoConjuro.excluir_lanzador`).
 ## - Sobre uno mismo con movimiento incluido: el movimiento se valida con el bonificador del conjuro puesto.
 
 const ALCANCE_TOQUE_PIES: int = 5
@@ -48,12 +48,14 @@ static func validos(combate: Combate, lanzador: Combatiente, conjuro: Definicion
 	return lista
 
 
-## Criaturas dentro de la emanación del pedido, con línea de efecto al lanzador (incluido él).
+## Criaturas dentro de la emanación del pedido, con línea de efecto al lanzador (él, salvo que se excluya).
 static func afectados_por_area(combate: Combate, lanzador: Combatiente, pedido: PedidoConjuro) -> Array[Combatiente]:
 	var lista: Array[Combatiente] = []
 	var radio: int = pedido.variante().emanacion_pies
 	for c: Combatiente in combate.participantes:
 		if c.condiciones.muerto or Medicion.pies_entre(lanzador.celda, c.celda) > radio:
+			continue
+		if c == lanzador and pedido.excluir_lanzador:
 			continue
 		if c == lanzador or combate.vision().hay_linea(lanzador.celda, c.celda):
 			lista.append(c)

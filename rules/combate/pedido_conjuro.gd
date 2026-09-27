@@ -13,6 +13,8 @@ var recorrido: Array[Vector2i] = []
 var es_paso: bool = false
 ## Acciones elegidas en un conjuro de costo variable (0 = las de siempre).
 var acciones: int = 0
+## Emanación: el lanzador elige no incluirse (Player Core p. 428).
+var excluir_lanzador: bool = false
 
 
 func _init(conjuro_pedido: DefinicionConjuro, id_objetivo: StringName = &"", cantidad_acciones: int = 0) -> void:

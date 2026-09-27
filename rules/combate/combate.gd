@@ -158,6 +158,10 @@ func lanzar_conjuro(conjuro: DefinicionConjuro, id_objetivo: StringName = &"", d
 	pedido.destino = destino
 	pedido.recorrido = recorrido
 	pedido.es_paso = es_paso
+	return lanzar_pedido(pedido)
+
+
+func lanzar_pedido(pedido: PedidoConjuro) -> Array[EventoCombate]:
 	return conjuros.lanzar(pedido)
 
 

@@ -120,12 +120,23 @@ func elegir_accion(indice: int) -> void:
 	var inmediata: Callable = _modo.elegir(_combate, _combate.turno_actual(), indice)
 	if inmediata.is_valid():
 		_encolar(inmediata.call())
-	accion_elegida.emit()
-	_resaltados.queue_redraw()
+	redibujar()
+
+
+## Emanación elegida: alterna si el lanzador se incluye.
+func alternar_incluirse() -> void:
+	if _modo.es_area():
+		_modo.excluirse = not _modo.excluirse
+		redibujar()
 
 
 func cancelar_accion() -> void:
 	_modo.cancelar()
+	redibujar()
+
+
+## Avisa que cambió lo elegido (HUD) y redibuja los resaltados (también tras cambios de depuración).
+func redibujar() -> void:
 	accion_elegida.emit()
 	_resaltados.queue_redraw()
 
@@ -217,14 +228,6 @@ func click_en_celda(celda: Vector2i, es_paso: bool = false) -> void:
 func terminar_turno_jugador() -> void:
 	if esperando_decision():
 		_encolar(_combate.terminar_turno())
-
-
-## Depuración: restaura por completo a los miembros de la party en el combate en curso.
-func restaurar_party_depuracion() -> void:
-	for c: Combatiente in _combate.participantes:
-		if c.bando == Combatiente.Bando.PARTY:
-			c.restaurar_por_completo()
-	_resaltados.queue_redraw()
 
 
 # --- Cola de eventos ---

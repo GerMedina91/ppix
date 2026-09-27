@@ -340,9 +340,11 @@ func test_la_bruja_lanza_mal_de_ojo_desde_el_mapa() -> void:
 	enemigo.celda = junto
 	_control.actor_de(enemigo.id).colocar(junto, mapa.celda_a_posicion(junto))
 	assert_str(hud.texto_acciones()).contains("3 Mal de ojo ◆")
+	assert_array(Array(hud.barra().textos())).contains(["3 Mal de ojo ◆"])
 	_runner.simulate_key_pressed(KEY_3)  # por EntradaCombate, como el jugador
 	await _runner.simulate_frames(2)
 	assert_str(hud.texto_acciones()).starts_with("Mal de ojo: click en el objetivo")
+	assert_array(Array(hud.barra().textos())).contains(["Mal de ojo: click en el objetivo", "Cancelar (Esc)"])
 	_control.click_en_celda(junto)
 	assert_bool(await _esperar(func() -> bool: return not _control.animando())).is_true()
 	assert_bool(Array(hud.lineas_registro()).any(func(l: String) -> bool:

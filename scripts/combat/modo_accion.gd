@@ -65,6 +65,16 @@ func texto(combate: Combate, actor: Combatiente) -> String:
 	return " · ".join(partes)
 
 
+## Formas del conjuro elegido que le alcanzan con sus acciones: [{"acciones", "texto"}] (selector de costo).
+func formas(actor: Combatiente) -> Array[Dictionary]:
+	var lista: Array[Dictionary] = []
+	if not pide_acciones():
+		return lista
+	for texto_forma: String in _formas(actor):
+		lista.append({"acciones": int(texto_forma.get_slice(" ", 0)), "texto": texto_forma})
+	return lista
+
+
 ## "1 ◆ toque", "2 ◆◆ 30 pies (+8)", "3 ◆◆◆ emanación de 30 pies" (las que le alcanzan).
 func _formas(actor: Combatiente) -> PackedStringArray:
 	var partes: PackedStringArray = PackedStringArray()

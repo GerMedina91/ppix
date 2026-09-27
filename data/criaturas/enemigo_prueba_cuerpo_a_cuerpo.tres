@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://rules/datos/definicion_arma.gd" id="1_qhver"]
 [ext_resource type="Resource" path="res://data/armas/arma_prueba_garras.tres" id="2_7xctt"]
 [ext_resource type="Script" path="res://rules/datos/definicion_criatura.gd" id="3_fegbf"]
+[ext_resource type="Resource" path="res://data/recuerdos/destreza_duro_de_matar.tres" id="9_rec"]
 
 [resource]
 script = ExtResource("3_fegbf")
@@ -16,3 +17,4 @@ percepcion = 6
 bonificador_ataque = 9
 bonificador_danio = 3
 armas = Array[ExtResource("1_qhver")]([ExtResource("2_7xctt")])
+recuerdo = ExtResource("9_rec")

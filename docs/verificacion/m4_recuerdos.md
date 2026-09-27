@@ -65,3 +65,23 @@ resumidas y referencias. Principio de diseño: opciones, no poder bruto (sin bon
 - Descansar en un punto estable = descanso completo + preparativos: PG completos (en vez de Con × nivel), todos
   los espacios y puntos de foco, sin herido (queda con PG completos y descansa) y sin inmunidades a Medicina en
   batalla. Los muertos siguen muertos. Sin límite de una vez por día (no hay paso del tiempo todavía).
+
+## Muerto viviente de prueba (verificado para M4e)
+- **Base: Zombie Shambler** (Monster Core p. 356 · `/Monsters.aspx?ID=3249`): nivel -1, CA 12, 20 PG, Fort +6, Ref +0,
+  Vol +2, Percepción +0, Atletismo +7, Velocidad 25; puño +7, 1d6+3 contundente (más Agarrar y Mordisco, que no
+  se implementan). **Debilidades:** cortante 5 y vitalidad 5. **Inmunidades:** sin sangrado, efectos de muerte,
+  enfermedad, **mental**, paralizado, veneno, **inconsciente**. **Lento:** permanentemente lento 1 y sin reacciones.
+- **Muerto viviente** (PC p. 462 · `/Traits.aspx?ID=722`): destruido a 0 PG; el daño de vitalidad lo daña.
+- **Sin mente** (PC p. 458 · `/Traits.aspx?ID=652`): inmune a los efectos mentales.
+- **Debilidad** (PC p. 408 · `/Rules.aspx?ID=2317`): se suma el valor al daño de ese tipo, una vez por efecto.
+- **Inmunidad** (PC p. 408 · `/Rules.aspx?ID=2313`): se lo puede elegir como objetivo; el efecto no se aplica.
+- **Lento** (PC p. 446 · `/Conditions.aspx?ID=92`): recupera tantas acciones menos al empezar su turno.
+- **CD de Recordar conocimiento:** la tabla del GM Core empieza en nivel 0 (14); a nivel -1 se usa 14 (el bloque de
+  AoN muestra 13, extrapolado).
+
+## Inconsciente estable (verificado para la propuesta de M4e)
+- **Inconsciente** (PC p. 446 · `/Conditions.aspx?ID=95`): a 0 PG sin moribundo, vuelve a 1 PG y despierta cuando
+  pasa suficiente tiempo (el DJ decide: de 10 minutos a varias horas). Si lo curan, despierta y actúa en su turno
+  siguiente.
+- **Moribundo** (PC p. 443 · `/Conditions.aspx?ID=69`): al perder moribundo con éxito en la prueba de
+  recuperación y seguir a 0 PG, sigue inconsciente y despierta como dice inconsciente.

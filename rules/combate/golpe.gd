@@ -108,6 +108,8 @@ static func resolver(atacante: Combatiente, objetivo: Combatiente, arma: Definic
 			if arma.letal_caras > 0:
 				resultado.danio_letal = dados.tirar(arma.letal_caras)
 				resultado.danio += resultado.danio_letal
+		resultado.debilidad = objetivo.fuente.debilidad(arma.tipo_danio)
+		resultado.danio += resultado.debilidad
 		objetivo.recibir_danio(resultado.danio, resultado.critico, no_letal)
 	return resultado
 

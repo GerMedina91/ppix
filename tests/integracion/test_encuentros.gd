@@ -43,14 +43,16 @@ func test_un_disparador_generico_nuevo_funciona_sin_tocar_nada() -> void:
 	assert_bool(encuentro.evaluar([])).is_true()
 
 
-func test_el_mapa_b_tiene_el_encuentro_de_prueba_con_dos_enemigos() -> void:
+func test_el_mapa_b_tiene_el_encuentro_de_prueba_y_el_de_muertos_vivientes() -> void:
 	var runner: GdUnitSceneRunner = scene_runner(ESCENA)
 	await _ir_al_mapa_b(runner)
 	var mapa: Mapa = runner.find_child("MapaActual").get_child(0)
 	var encuentros: Array[Encuentro] = mapa.encuentros()
-	assert_int(encuentros.size()).is_equal(1)
+	assert_int(encuentros.size()).is_equal(2)
 	var celdas: Array = encuentros[0].enemigos().map(func(e: EnemigoEnMapa) -> Vector2i: return e.celda)
 	assert_array(celdas).contains_exactly([Vector2i(20, 9), Vector2i(24, 11)])
+	var muertos: Array = encuentros[1].enemigos().map(func(e: EnemigoEnMapa) -> bool: return e.definicion.rasgo == RasgoCriatura.Tipo.MUERTO_VIVIENTE)
+	assert_array(muertos).contains_exactly([true, true])
 
 
 func test_el_mapa_a_no_tiene_encuentros() -> void:

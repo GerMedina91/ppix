@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="DefinicionCriatura" format=3]
+
+[ext_resource type="Script" path="res://rules/datos/definicion_arma.gd" id="1_arma"]
+[ext_resource type="Resource" path="res://data/armas/arma_zombi_puno.tres" id="2_puno"]
+[ext_resource type="Script" path="res://rules/datos/definicion_criatura.gd" id="3_crit"]
+
+[resource]
+script = ExtResource("3_crit")
+nombre = "TODO_LORE: un muerto que no terminó de irse (base: Zombie Shambler, Monster Core p. 356)"
+nivel = -1
+rasgo = 16
+ca = 12
+pg = 20
+fortaleza = 6
+reflejos = 0
+voluntad = 2
+debilidades = Dictionary[int, int]({0: 5, 5: 5})
+inmune_mental = true
+lento = 1
+habilidades = Dictionary[int, int]({2: 7})
+percepcion = 0
+bonificador_ataque = 7
+bonificador_danio = 3
+armas = Array[ExtResource("1_arma")]([ExtResource("2_puno")])

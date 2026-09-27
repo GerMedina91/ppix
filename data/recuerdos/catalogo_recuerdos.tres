@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="CatalogoRecuerdos" format=3]
+
+[ext_resource type="Script" path="res://rules/recuerdos/catalogo_recuerdos.gd" id="1_cat"]
+[ext_resource type="Script" path="res://rules/recuerdos/definicion_recuerdo.gd" id="2_def"]
+[ext_resource type="Resource" path="res://data/recuerdos/destreza_medicina.tres" id="r0"]
+[ext_resource type="Resource" path="res://data/recuerdos/destreza_medicina_en_batalla.tres" id="r1"]
+[ext_resource type="Resource" path="res://data/recuerdos/destreza_duro_de_matar.tres" id="r2"]
+[ext_resource type="Resource" path="res://data/recuerdos/destreza_sigilo.tres" id="r3"]
+[ext_resource type="Resource" path="res://data/recuerdos/destreza_religion.tres" id="r4"]
+[ext_resource type="Resource" path="res://data/recuerdos/destreza_ocultismo.tres" id="r5"]
+[ext_resource type="Resource" path="res://data/recuerdos/vivencia_1.tres" id="r6"]
+[ext_resource type="Resource" path="res://data/recuerdos/vivencia_2.tres" id="r7"]
+[ext_resource type="Resource" path="res://data/recuerdos/vivencia_3.tres" id="r8"]
+[ext_resource type="Resource" path="res://data/recuerdos/vivencia_4.tres" id="r9"]
+[ext_resource type="Resource" path="res://data/recuerdos/doliente_1.tres" id="r10"]
+[ext_resource type="Resource" path="res://data/recuerdos/doliente_2.tres" id="r11"]
+[ext_resource type="Resource" path="res://data/recuerdos/doliente_3.tres" id="r12"]
+[ext_resource type="Resource" path="res://data/recuerdos/irsa_destreza.tres" id="r13"]
+[ext_resource type="Resource" path="res://data/recuerdos/irsa_vivencia.tres" id="r14"]
+[ext_resource type="Resource" path="res://data/recuerdos/orven_destreza.tres" id="r15"]
+[ext_resource type="Resource" path="res://data/recuerdos/orven_vivencia.tres" id="r16"]
+[ext_resource type="Resource" path="res://data/recuerdos/vaisha_destreza.tres" id="r17"]
+[ext_resource type="Resource" path="res://data/recuerdos/vaisha_vivencia.tres" id="r18"]
+
+[resource]
+script = ExtResource("1_cat")
+recuerdos = Array[ExtResource("2_def")]([ExtResource("r0"), ExtResource("r1"), ExtResource("r2"), ExtResource("r3"), ExtResource("r4"), ExtResource("r5"), ExtResource("r6"), ExtResource("r7"), ExtResource("r8"), ExtResource("r9"), ExtResource("r10"), ExtResource("r11"), ExtResource("r12"), ExtResource("r13"), ExtResource("r14"), ExtResource("r15"), ExtResource("r16"), ExtResource("r17"), ExtResource("r18")])

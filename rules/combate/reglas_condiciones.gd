@@ -20,8 +20,14 @@ static func inicio_de_turno(combate: Combate, actor: Combatiente) -> Array[Event
 	var antes: Dictionary = _valores(combate)
 	for c: Combatiente in combate.participantes:
 		c.condiciones.descontar_turno(actor.id, true)
-	var perdidas: int = mini(actor.condiciones.valor(Condiciones.Tipo.ATURDIDO), actor.acciones_restantes)
 	var eventos: Array[EventoCombate] = []
+	# Lento permanente de la criatura (p. ej. zombi): recupera menos acciones.
+	var lento: int = mini(actor.fuente.lento(), actor.acciones_restantes)
+	if lento > 0:
+		actor.acciones_restantes -= lento
+		eventos.append(combate.emitir(EventoCombate.new(EventoCombate.Tipo.ACCIONES_PERDIDAS, actor.id,
+			{"cantidad": lento, "condicion": Condiciones.Tipo.LENTO})))
+	var perdidas: int = mini(actor.condiciones.valor(Condiciones.Tipo.ATURDIDO), actor.acciones_restantes)
 	if perdidas > 0:
 		actor.acciones_restantes -= perdidas
 		actor.condiciones.reducir(Condiciones.Tipo.ATURDIDO, perdidas)

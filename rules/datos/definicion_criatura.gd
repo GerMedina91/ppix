@@ -15,6 +15,12 @@ extends Resource
 @export var fortaleza: int = 0
 @export var reflejos: int = 0
 @export var voluntad: int = 0
+## Debilidades por tipo de daño (Player Core p. 408): se suman una vez al daño de ese tipo.
+@export var debilidades: Dictionary[DefinicionArma.TipoDanio, int] = {}
+## Inmune a los efectos mentales (sin mente, Player Core p. 458).
+@export var inmune_mental: bool = false
+## Lento permanente (Player Core p. 446): recupera menos acciones al empezar su turno.
+@export var lento: int = 0
 
 ## Modificadores totales de habilidad (las que no figuran: +0).
 @export var habilidades: Dictionary[Habilidad.Tipo, int] = {}
@@ -27,6 +33,10 @@ extends Resource
 ## Bonificador fijo que se suma al daño de sus Golpes.
 @export var bonificador_danio: int = 0
 @export var armas: Array[DefinicionArma] = []
+
+@export_group("Recuerdos")
+## Lo que el Eco puede extraerle si queda inconsciente tras la victoria (GDD 4.2); null = nada.
+@export var recuerdo: DefinicionRecuerdo
 
 @export_group("Perfil de IA")
 ## Si es true, también ataca a personajes caídos (inconscientes). Decidido: depende de cada criatura;

@@ -10,6 +10,8 @@ extends Resource
 @export var porcentaje_venta: int = 100
 ## Recargo sobre el precio de venta de los recuerdos de un residuo perdido que pasan al Tasador.
 @export var recargo_residuo: int = 50
+## Stock del Tasador al empezar una partida (GDD 4.2: 3 de destreza, 1 vivencia y un fragmento del Doliente).
+@export var stock_inicial_tasador: Array[DefinicionRecuerdo] = []
 
 
 func capacidad(nivel: int) -> int:

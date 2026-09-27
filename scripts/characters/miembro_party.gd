@@ -9,6 +9,9 @@ extends ActorMapa
 @export var definicion: DefinicionPersonaje
 ## El Eco (el protagonista): el único que integra recuerdos (GDD 4.2). En el slice, el guerrero.
 @export var es_eco: bool = false
+## Lo que el Eco puede extraer de su cuerpo si muere (GDD 4.3; docs/lore/companeros.md): recuerdos de
+## destreza y la vivencia con su secreto (Irsa, además, el fragmento del Doliente que lleva).
+@export var recuerdos_del_cuerpo: Array[DefinicionRecuerdo] = []
 
 var _armado: DefinicionPersonaje
 

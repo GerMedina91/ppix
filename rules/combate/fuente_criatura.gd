@@ -56,6 +56,18 @@ func prueba_habilidad(habilidad: Habilidad.Tipo) -> Prueba:
 	return Prueba.fija(Habilidad.nombre(habilidad), Habilidad.nombre(habilidad), _criatura.habilidades.get(habilidad, 0))
 
 
+func debilidad(tipo: DefinicionArma.TipoDanio) -> int:
+	return _criatura.debilidades.get(tipo, 0)
+
+
+func inmune_mental() -> bool:
+	return _criatura.inmune_mental
+
+
+func lento() -> int:
+	return _criatura.lento
+
+
 func es_muerto_viviente() -> bool:
 	return _criatura.rasgo == RasgoCriatura.Tipo.MUERTO_VIVIENTE
 

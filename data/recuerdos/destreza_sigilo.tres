@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="DefinicionRecuerdo" format=3]
+
+[ext_resource type="Script" path="res://rules/recuerdos/definicion_recuerdo.gd" id="1_def"]
+[ext_resource type="Script" path="res://rules/recuerdos/beneficio_habilidad.gd" id="2_ben"]
+
+[sub_resource type="Resource" id="Resource_ben"]
+script = ExtResource("2_ben")
+habilidad = 13
+
+[resource]
+script = ExtResource("1_def")
+id = &"destreza_sigilo"
+nombre = "Entrenado en Sigilo (TODO_LORE)"
+valor = 30
+beneficio = SubResource("Resource_ben")
+texto = "TODO_LORE"

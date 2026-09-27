@@ -1,6 +1,13 @@
 [gd_resource type="Resource" script_class="ConfigRecuerdos" format=3]
 
 [ext_resource type="Script" path="res://rules/recuerdos/config_recuerdos.gd" id="1_s3nx8"]
+[ext_resource type="Script" path="res://rules/recuerdos/definicion_recuerdo.gd" id="2_def"]
+[ext_resource type="Resource" path="res://data/recuerdos/destreza_medicina_en_batalla.tres" id="3_a"]
+[ext_resource type="Resource" path="res://data/recuerdos/destreza_religion.tres" id="4_b"]
+[ext_resource type="Resource" path="res://data/recuerdos/destreza_ocultismo.tres" id="5_c"]
+[ext_resource type="Resource" path="res://data/recuerdos/vivencia_1.tres" id="6_d"]
+[ext_resource type="Resource" path="res://data/recuerdos/doliente_1.tres" id="7_e"]
 
 [resource]
 script = ExtResource("1_s3nx8")
+stock_inicial_tasador = Array[ExtResource("2_def")]([ExtResource("3_a"), ExtResource("4_b"), ExtResource("5_c"), ExtResource("6_d"), ExtResource("7_e")])

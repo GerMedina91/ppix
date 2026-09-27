@@ -26,6 +26,11 @@ static func sobre_criatura(combate: Combate, actor: Combatiente, conjuro: Defini
 	var estaba_en_pie: bool = objetivo.condiciones.en_pie()
 	var datos: Dictionary = {"conjuro": conjuro, "objetivo": objetivo.id, "resultado": null, "danio": 0, "tirada": null}
 	var aplicadas: int = 0
+	if conjuro.tiene(DefinicionConjuro.Rasgo.MENTAL) and objetivo.fuente.inmune_mental():
+		# Inmunidad (Player Core p. 408): se lo puede elegir, pero el efecto no se aplica.
+		var inmune: Array[EventoCombate] = [combate.emitir(EventoCombate.new(EventoCombate.Tipo.CONJURO_FALLIDO, actor.id,
+			{"conjuro": conjuro, "motivo": "%s es inmune a los efectos mentales" % objetivo.nombre_visible}))]
+		return {"eventos": inmune, "aplicadas": 0}
 	if conjuro.estabiliza:
 		objetivo.estabilizar()
 	elif conjuro.es_ataque():
@@ -118,5 +123,7 @@ static func _aplicar_danio(conjuro: DefinicionConjuro, objetivo: Combatiente, ba
 	if multiplicador <= 0.0:
 		return
 	var danio: int = maxi(Golpe.DANIO_MINIMO, floori(maxi(Golpe.DANIO_MINIMO, base) * multiplicador))
+	datos["debilidad"] = objetivo.fuente.debilidad(conjuro.tipo_danio)
+	danio += datos.debilidad
 	datos.danio = danio
 	objetivo.recibir_danio(danio, por_critico, conjuro.tiene(DefinicionConjuro.Rasgo.NO_LETAL))

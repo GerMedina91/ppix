@@ -114,3 +114,6 @@ Términos de reglas en castellano, según la edición oficial en castellano de l
 | nonlethal attack | ataque no letal | `no_letal` | Provisorio |
 | memory (skill / experience / of the Mourner) | recuerdo (de destreza / vivencia / del Doliente) | `DefinicionRecuerdo` | Provisorio |
 | rest / daily preparations | descanso, descansar / preparativos diarios | `Descanso`, `descansar()` | Provisorio |
+| weakness / immunity / resistance | debilidad / inmunidad / resistencia | `debilidades`, `inmune_mental` | Provisorio |
+| slowed | lento | `LENTO`, `lento` | Provisorio |
+| mindless | sin mente | — | Provisorio |

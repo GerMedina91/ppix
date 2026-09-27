@@ -125,6 +125,8 @@ static func _efecto_conjuro(evento: EventoCombate, combate: Combate) -> String:
 		return "%s: +%d pies de Velocidad hasta el final del turno" % [actor, conjuro.bonificador_velocidad]
 	if evento.datos.get("danio", 0) > 0:
 		texto += ", %d de daño %s" % [evento.datos.danio, _NOMBRE_DANIO[conjuro.tipo_danio]]
+		if evento.datos.get("debilidad", 0) > 0:
+			texto += " (+%d debilidad)" % evento.datos.debilidad
 	return texto
 
 
@@ -199,4 +201,6 @@ static func _golpe(atacante: String, objetivo: String, resultado: ResultadoGolpe
 		texto += ", %d de daño" % resultado.danio
 		for adicional: Dictionary in resultado.danio_adicional:
 			texto += " (+%d %s)" % [(adicional.tirada as ResultadoTirada).total(), adicional.fuente]
+		if resultado.debilidad > 0:
+			texto += " (+%d debilidad)" % resultado.debilidad
 	return texto

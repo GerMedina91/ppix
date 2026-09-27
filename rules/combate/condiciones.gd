@@ -7,13 +7,14 @@ extends RefCounted
 ## EfectoCondicion con su duración; vale la más alta, y una reducción baja todas las de ese tipo.
 
 ## Condiciones con valor y duración. HUYENDO no tiene valor (se guarda con valor 1).
-enum Tipo { ASUSTADO, INDISPUESTO, DEBILITADO, ATURDIDO, HUYENDO }
+## LENTO: solo el permanente de algunas criaturas (DefinicionCriatura.lento), no se aplica como efecto.
+enum Tipo { ASUSTADO, INDISPUESTO, DEBILITADO, ATURDIDO, HUYENDO, LENTO }
 
 ## Con este valor de moribundo, el personaje muere.
 const MORIBUNDO_MUERTE: int = 4
 const _NOMBRES: Dictionary[Tipo, String] = {
 	Tipo.ASUSTADO: "asustado", Tipo.INDISPUESTO: "indispuesto", Tipo.DEBILITADO: "debilitado",
-	Tipo.ATURDIDO: "aturdido", Tipo.HUYENDO: "huyendo",
+	Tipo.ATURDIDO: "aturdido", Tipo.HUYENDO: "huyendo", Tipo.LENTO: "lento",
 }
 
 var moribundo: int = 0

@@ -33,13 +33,19 @@ func reiniciar_dados(nueva_semilla: int) -> void:
 	dados = Dados.new(nueva_semilla)
 
 
-## Vuelve al estado de una partida nueva (no toca el RNG). Lo usan los tests que cargan el mundo.
+const CONFIG_RECUERDOS: String = "res://data/config/config_recuerdos.tres"
+
+
+## Vuelve al estado de una partida nueva (no toca el RNG): el Tasador con su stock inicial. También la usan
+## los tests que cargan el mundo.
 func nueva_partida() -> void:
 	id_mapa_actual = &""
 	id_ultimo_punto_estable = &""
 	id_mapa_ultimo_punto_estable = &""
 	estado_party.clear()
 	recuerdos = EstadoRecuerdos.new()
+	for recuerdo: DefinicionRecuerdo in (load(CONFIG_RECUERDOS) as ConfigRecuerdos).stock_inicial_tasador:
+		recuerdos.tasador.agregar_al_stock(recuerdo)
 	mundo = EstadoMundo.new()
 	suenos_vistos.clear()
 
@@ -66,4 +72,5 @@ func cargar_diccionario(datos: Dictionary, catalogo: CatalogoRecuerdos) -> void:
 
 
 func _ready() -> void:
+	nueva_partida()
 	reiniciar_dados(int(Time.get_unix_time_from_system()))

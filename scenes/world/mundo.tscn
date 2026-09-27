@@ -24,6 +24,16 @@
 [ext_resource type="Script" path="res://scripts/ui/panel_perdida.gd" id="20_pper"]
 [ext_resource type="Script" path="res://scripts/ui/aviso_mundo.gd" id="21_avis"]
 [ext_resource type="Resource" path="res://data/config/config_recuerdos.tres" id="22_crec"]
+[ext_resource type="Resource" path="res://data/recuerdos/irsa_destreza.tres" id="23_irsa_d"]
+[ext_resource type="Resource" path="res://data/recuerdos/irsa_vivencia.tres" id="24_irsa_v"]
+[ext_resource type="Resource" path="res://data/recuerdos/doliente_3.tres" id="25_dolien"]
+[ext_resource type="Resource" path="res://data/recuerdos/orven_destreza.tres" id="26_orven_"]
+[ext_resource type="Resource" path="res://data/recuerdos/orven_vivencia.tres" id="27_orven_"]
+[ext_resource type="Resource" path="res://data/recuerdos/vaisha_destreza.tres" id="28_vaisha"]
+[ext_resource type="Resource" path="res://data/recuerdos/vaisha_vivencia.tres" id="29_vaisha"]
+[ext_resource type="Script" path="res://rules/recuerdos/definicion_recuerdo.gd" id="30_drec"]
+[ext_resource type="Script" path="res://scripts/world/fuentes_recuerdos.gd" id="31_fuen"]
+[ext_resource type="Script" path="res://scripts/ui/panel_opciones.gd" id="32_popc"]
 
 [node name="Mundo" type="Node2D" unique_id=459014428]
 y_sort_enabled = true
@@ -54,14 +64,17 @@ color_placeholder = Color(0.85, 0.75, 0.35, 1)
 [node name="Miembro2" parent="Party" unique_id=430451014 instance=ExtResource("5_dsmiq")]
 build = ExtResource("9_umup1")
 color_placeholder = Color(0.35, 0.6, 0.85, 1)
+recuerdos_del_cuerpo = Array[ExtResource("30_drec")]([ExtResource("23_irsa_d"), ExtResource("24_irsa_v"), ExtResource("25_dolien")])
 
 [node name="Miembro3" parent="Party" unique_id=1362231908 instance=ExtResource("5_dsmiq")]
 build = ExtResource("10_uth38")
 color_placeholder = Color(0.75, 0.35, 0.35, 1)
+recuerdos_del_cuerpo = Array[ExtResource("30_drec")]([ExtResource("26_orven_"), ExtResource("27_orven_")])
 
 [node name="Miembro4" parent="Party" unique_id=814235133 instance=ExtResource("5_dsmiq")]
 build = ExtResource("11_akupr")
 color_placeholder = Color(0.45, 0.75, 0.45, 1)
+recuerdos_del_cuerpo = Array[ExtResource("30_drec")]([ExtResource("28_vaisha"), ExtResource("29_vaisha")])
 
 [node name="Camara" type="Camera2D" parent="." unique_id=970090675]
 script = ExtResource("6_kn5no")
@@ -100,5 +113,15 @@ estilo = ExtResource("17_estil")
 script = ExtResource("19_gmue")
 config = ExtResource("22_crec")
 panel_perdida = NodePath("../PanelPerdida")
+aviso = NodePath("../AvisoMundo")
+party = NodePath("../Party")
+
+[node name="PanelOpciones" type="CanvasLayer" parent="."]
+script = ExtResource("32_popc")
+estilo = ExtResource("17_estil")
+
+[node name="FuentesRecuerdos" type="Node" parent="." node_paths=PackedStringArray("panel", "aviso", "party")]
+script = ExtResource("31_fuen")
+panel = NodePath("../PanelOpciones")
 aviso = NodePath("../AvisoMundo")
 party = NodePath("../Party")

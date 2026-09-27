@@ -6,6 +6,9 @@
 [ext_resource type="Script" path="res://scripts/world/entrada_mapa.gd" id="4_uijl3"]
 [ext_resource type="Script" path="res://scripts/world/salida_mapa.gd" id="5_oafth"]
 [ext_resource type="Script" path="res://scripts/world/punto_estable.gd" id="6_pesta"]
+[ext_resource type="Script" path="res://scripts/world/objeto_recuerdo.gd" id="7_objr"]
+[ext_resource type="Resource" path="res://data/recuerdos/destreza_medicina.tres" id="8_rmed"]
+[ext_resource type="Resource" path="res://data/recuerdos/vivencia_2.tres" id="9_viv2"]
 
 [node name="MapaPruebaA" type="Node2D" unique_id=601651974]
 y_sort_enabled = true
@@ -50,3 +53,15 @@ position = Vector2(-128, 224)
 script = ExtResource("6_pesta")
 id = &"punto_estable_prueba_a"
 color_placeholder = Color(0.55, 0.8, 0.95, 1)
+
+[node name="RecuerdoMedicina" type="Node2D" parent="Interactuables"]
+position = Vector2(96, 336)
+script = ExtResource("7_objr")
+recuerdo = ExtResource("8_rmed")
+color_placeholder = Color(0.95, 0.85, 0.5, 1)
+
+[node name="Vivencia2" type="Node2D" parent="Interactuables"]
+position = Vector2(64, 64)
+script = ExtResource("7_objr")
+recuerdo = ExtResource("9_viv2")
+color_placeholder = Color(0.95, 0.85, 0.5, 1)

@@ -12,6 +12,8 @@ var danio: int = 0
 var danio_adicional: Array[Dictionary] = []
 ## Dado letal tirado en el crítico (ya sumado en `danio`; 0 si no hubo).
 var danio_letal: int = 0
+## Debilidad del objetivo al tipo de daño del arma, ya sumada a `danio`.
+var debilidad: int = 0
 var critico: bool = false
 ## Ataque no letal: a 0 PG deja inconsciente en vez de matar.
 var no_letal: bool = false

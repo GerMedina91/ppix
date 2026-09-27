@@ -36,8 +36,8 @@ static func nuevo_combate(participantes_combate: Array[Combatiente], mapa: Mapa,
 
 ## Al terminar arma el ResultadoCombate y deja anotado en el mundo (GameState.mundo) lo que no se revierte
 ## (los compañeros muertos dejan su cuerpo donde cayeron):
-## - Victoria: guarda el estado de la party, saca a los enemigos derrotados (muertos o noqueados) y marca el
-##   encuentro como resuelto.
+## - Victoria: guarda el estado de la party, saca a los enemigos muertos y marca el encuentro como resuelto.
+##   Los inconscientes quedan en el mapa: los resuelve FuentesRecuerdos (extraer, perdonar o rematar).
 ## - Derrota (muerte del Eco): los enemigos muertos siguen muertos; el encuentro queda sin resolver (los demás
 ##   vuelven a su lugar con todos sus PG al recargar el mapa) y la party queda rearmada (Rearmado). El
 ##   residuo, la reaparición y la pérdida los hace GestorMuerte.
@@ -54,7 +54,7 @@ static func cerrar(combate: Combate, party: ControlParty, encuentro: Encuentro) 
 		GameState.mundo.dejar_cuerpo(id, id_mapa, combate.combatiente(id).celda)
 	for enemigo: EnemigoEnMapa in encuentro.enemigos():
 		var c: Combatiente = combate.combatiente(StringName(enemigo.name))
-		if c.condiciones.muerto or (resultado.victoria and c.condiciones.fuera_de_combate()):
+		if c.condiciones.muerto:
 			GameState.mundo.retirar_enemigo(id_mapa, c.id)
 			enemigo.queue_free()
 	return resultado

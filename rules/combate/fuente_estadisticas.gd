@@ -98,6 +98,20 @@ func cd_recordar() -> int:
 
 
 ## Muerto viviente (Curar lo daña en vez de curarlo).
+## Debilidad al tipo de daño (0 = ninguna).
+func debilidad(_tipo: DefinicionArma.TipoDanio) -> int:
+	return 0
+
+
+func inmune_mental() -> bool:
+	return false
+
+
+## Lento permanente (acciones de menos al empezar cada turno).
+func lento() -> int:
+	return 0
+
+
 func es_muerto_viviente() -> bool:
 	return false
 

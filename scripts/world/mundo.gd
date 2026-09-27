@@ -19,6 +19,7 @@ signal encuentro_disparado(encuentro: Encuentro)
 var _mapa: Mapa
 var _ultima_entrada: StringName = &""
 var _id_encuentro_actual: StringName = &""
+var _encuentro_actual: Encuentro
 
 @onready var _contenedor_mapa: Node2D = $MapaActual
 @onready var _combate: ControladorCombate = $ControladorCombate
@@ -27,6 +28,7 @@ var _id_encuentro_actual: StringName = &""
 @onready var _fundido: Fundido = $Fundido
 @onready var _panel_punto: PanelPuntoEstable = $PanelPuntoEstable
 @onready var _muerte: GestorMuerte = $GestorMuerte
+@onready var _fuentes: FuentesRecuerdos = $FuentesRecuerdos
 
 
 func _ready() -> void:
@@ -51,6 +53,7 @@ func _al_llegar_lider(celda: Vector2i) -> void:
 
 func _iniciar_combate(encuentro: Encuentro) -> void:
 	_id_encuentro_actual = encuentro.id
+	_encuentro_actual = encuentro
 	_combate.iniciar(encuentro, _mapa, _party, _camara)
 
 
@@ -61,6 +64,7 @@ func _al_terminar_combate(resultado: ResultadoCombate) -> void:
 		return
 	_party.fijar_retirados(GestorMuerte.companeros_muertos())
 	_muerte.colocar_cuerpos(_mapa, GameState.id_mapa_actual)
+	await _fuentes.resolver_inconscientes(resultado, _encuentro_actual)
 	var grilla: GrillaMapa = _grilla_exploracion()
 	_party.set_grilla(grilla)
 	_party.reagrupar(Formacion.cadena(grilla, _party.celda_lider(), _party.miembros().size(), []) + _relleno())
@@ -103,7 +107,14 @@ func _mostrar_estado_party() -> void:
 
 ## La party llegó al lado de un objeto: se abre según su tipo (la party queda quieta mientras tanto).
 func _al_interactuar(objeto: Interactuable) -> void:
-	if objeto is PuntoEstable:
+	if objeto is ObjetoRecuerdo:
+		_fuentes.tomar_objeto(objeto, _mapa)
+		_party.set_grilla(_grilla_exploracion())  # la casilla del objeto queda libre
+	elif objeto is CuerpoCompanero:
+		_party.bloqueado = true
+		await _fuentes.extraer_de_cuerpo(objeto)
+		_party.bloqueado = false
+	elif objeto is PuntoEstable:
 		_party.bloqueado = true
 		_panel_punto.abrir(objeto)
 

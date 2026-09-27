@@ -54,6 +54,15 @@ func aplicar_estado(mundo: EstadoMundo, id_mapa: StringName) -> void:
 			if mundo.enemigo_retirado(id_mapa, StringName(enemigo.name)):
 				encuentro.remove_child(enemigo)
 				enemigo.queue_free()
+	for objeto: Interactuable in interactuables():
+		if objeto is ObjetoRecuerdo and mundo.objeto_tomado(id_mapa, StringName(objeto.name)):
+			quitar_interactuable(objeto)
+
+
+## Saca un objeto interactuable del mapa (p. ej. un recuerdo ya tomado).
+func quitar_interactuable(objeto: Interactuable) -> void:
+	objeto.get_parent().remove_child(objeto)
+	objeto.queue_free()
 
 
 func interactuables() -> Array[Interactuable]:

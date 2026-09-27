@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://rules/datos/definicion_arma.gd" id="1_fub3o"]
 [ext_resource type="Resource" path="res://data/armas/arma_prueba_proyectil.tres" id="2_rrmjf"]
 [ext_resource type="Script" path="res://rules/datos/definicion_criatura.gd" id="3_8m53x"]
+[ext_resource type="Resource" path="res://data/recuerdos/vivencia_4.tres" id="9_rec"]
 
 [resource]
 script = ExtResource("3_8m53x")
@@ -16,3 +17,4 @@ percepcion = 7
 bonificador_ataque = 8
 bonificador_danio = 2
 armas = Array[ExtResource("1_fub3o")]([ExtResource("2_rrmjf")])
+recuerdo = ExtResource("9_rec")

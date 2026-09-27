@@ -208,15 +208,43 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
     - **[pregunta abierta]** Costo de descansar. Idea del director: descansar es dormir, y dormir abre la puerta a la Marea del Sueño; conectarlo con los sueños de la persona amada (ver `docs/lore/verdad.md`) y con los Insomnes.
     - Tiempos de los tests (2026-09-27): el costo fijo por test subió de ~14 ms a ~92 ms sin cambios de código (el commit anterior, medido de nuevo, da lo mismo; un test vacío tarda ~90 ms y un frame vacío ~5,5 ms). Es de la máquina (CPU compartida, antivirus), no del proyecto.
   - **M4d (1 y 2) hecho — muerte del Eco:**
-    - Reglas: `Combatiente.es_eco`; el combate termina en derrota si muere el Eco o cae toda la party (la derrota tiene prioridad si coincide con la victoria). `ResultadoCombate` (lo arma `ArmadoCombate.cerrar` y viaja en `combate_terminado`). `Rearmado` calcula la party rearmada.
+    - Reglas: `Combatiente.es_eco`; el combate termina en derrota si muere el Eco o cae toda la party (**decidido:** la derrota tiene prioridad si coincide con la victoria en la misma acción). `ResultadoCombate` (lo arma `ArmadoCombate.cerrar` y viaja en `combate_terminado`). `Rearmado` calcula la party rearmada.
     - Mundo: `EstadoMundo` en `GameState.mundo` (encuentros resueltos y enemigos retirados, serializable) se aplica al cargar cada mapa: los muertos siguen muertos; tras la muerte del Eco el encuentro queda sin resolver y los demás enemigos vuelven a su lugar con todos sus PG (el mapa se recarga).
     - `GestorMuerte`: residuo en la casilla donde cayó (marca en el suelo; se recupera cuando el Eco la pisa en exploración, con aviso) y `PanelPerdida` para elegir el integrado que se pierde. El Mundo hace reaparecer a la party al lado del último punto estable.
-    - **[provisorio]** Rearmado = descanso completo (PG, espacios, foco, inmunidades), pero los compañeros conservan su herido y los moribundos suman +1; el Eco se rearma sin herido.
-    - **[provisorio]** Sin punto estable registrado, la party reaparece en la última entrada del mapa.
-    - **[provisorio]** Los enemigos inconscientes vencidos todavía se retiran del mapa (M4e los deja con extraer / perdonar / rematar).
+    - **Decidido (2026-09-27):** rearmado = descanso completo (PG, espacios, foco, inmunidades), pero los compañeros conservan su herido y los moribundos suman +1; el Eco se rearma sin herido.
+    - **Decidido:** sin punto estable registrado, la party reaparece en la última entrada del mapa.
+    - **Decidido:** los enemigos inconscientes vencidos se retiran del mapa hasta M4e (que los deja con extraer / perdonar / rematar).
     - Capturas en `docs/capturas/m4/10` a `13`.
   - **M4d (3) hecho — muerte permanente de compañeros:** el compañero muerto deja su cuerpo (`CuerpoCompanero`, interactuable; en M4e se le extraen recuerdos) en la casilla donde cayó, anotado en `EstadoMundo.cuerpos` (persiste al cambiar de mapa), y sale de la fila (`ControlParty.fijar_retirados`; el Eco nunca se retira). F4 ya no revive a los muertos. Capturas `m4/14` y `15`.
     - **[pendiente]** Los caídos a 0 PG (inconscientes, no muertos) siguen caminando en la fila hasta que los curen o descansen.
+  - **M4e hecho — fuentes de recuerdos en el mundo:**
+    - `ObjetoRecuerdo` (interactuable): el Eco lo toma y desaparece para siempre (`EstadoMundo.objetos_tomados`).
+    - Enemigos inconscientes tras la victoria: `FuentesRecuerdos` pregunta por cada uno (`PanelOpciones`): **extraer** (su `DefinicionCriatura.recuerdo`), **perdonar** o **rematar**; se registra el destino en `GameState.recuerdos.destinos` y el enemigo se retira del mapa. **[provisorio]** Los tres destinos lo retiran (extraído: queda vacío y se va; perdonado: se va).
+    - Cuerpo de un compañero: se le extraen una vez sus recuerdos predefinidos (`MiembroParty.recuerdos_del_cuerpo`; Irsa lleva además el tercer fragmento del Doliente).
+    - Muerto viviente de prueba (base: Zombie Shambler, Monster Core p. 356; verificado en `docs/verificacion/m4_recuerdos.md`): debilidad cortante y vitalidad 5, inmune a lo mental, lento 1, destruido a 0 PG aunque el daño sea no letal. Dos en un encuentro al fondo del mapa B. **[aproximación]** Sin Agarrar ni Mordisco.
+    - Contenido placeholder en `data/recuerdos/` (catálogo en `catalogo_recuerdos.tres`); stock inicial del Tasador en `ConfigRecuerdos`.
+    - Capturas `m4/16` a `22`.
+  - **Balance de recuerdos sueltos (M4e).** Capacidad a nivel 1: 3 integrados de destreza. El Tasador acredita el 50 % y vende al 100 %.
+
+    | Fuente | Recuerdo | Tipo | Valor | Vendible |
+    |---|---|---|---|---|
+    | Objeto, mapa A | Entrenado en Medicina | destreza | 20 | sí |
+    | Objeto, mapa A | Vivencia 2 | vivencia | 10 | sí |
+    | Objeto, mapa B (detrás de los muertos vivientes) | Entrenado en Sigilo | destreza | 30 | sí |
+    | Objeto, mapa B | Vivencia 3 | vivencia | 10 | sí |
+    | Objeto, mapa B | Fragmento del Doliente 2 | Doliente | 50 | no |
+    | Extraer, enemigo cuerpo a cuerpo | Duro de matar | destreza | 30 | sí |
+    | Extraer, enemigo a distancia | Vivencia 4 | vivencia | 10 | sí |
+    | Stock del Tasador | Medicina en batalla (requiere Medicina) | destreza | 30 (precio) | — |
+    | Stock del Tasador | Entrenado en Religión / en Ocultismo | destreza | 20 c/u (precio) | — |
+    | Stock del Tasador | Vivencia 1 | vivencia | 10 (precio) | — |
+    | Stock del Tasador | Fragmento del Doliente 1 | Doliente | 50 (precio) | — |
+    | Cuerpo de Irsa (si muere) | Sigilo 20 + vivencia 10 + Fragmento del Doliente 3 | — | 30 vendible | parcial |
+    | Cuerpo de Orven / de Vaisha (si mueren) | Religión / Ocultismo 20 + vivencia 10 | — | 30 vendible c/u | sí |
+
+    - **Camino normal** (todos los objetos y extraer a los dos enemigos): 110 de valor vendible → vendiendo todo, 55 de crédito. El fragmento del Tasador cuesta 50: comprarlo obliga a vender casi todo (incluidas las vivencias sin verlas) y renunciar a integrar Medicina, Sigilo y Duro de matar. Sin comprarlo, sobran recuerdos para llenar los 3 espacios y todavía cambiar algo en el Tasador.
+    - Rematar o perdonar a un enemigo baja el total: sin Duro de matar quedan 80 (40 de crédito, no alcanza para el fragmento); sin la vivencia 4 quedan 100 (50, justo).
+    - Extraer de compañeros muertos no es el camino normal: suma hasta 90 vendibles más.
 - **M5 — Contenido del slice:** mapas, NPCs, diálogos, arte final.
 
 ## 9. Preguntas abiertas

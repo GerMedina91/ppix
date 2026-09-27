@@ -182,12 +182,13 @@ func _aplicar_inconsciente(prueba: Prueba) -> void:
 
 ## Aplica daño. Personajes: a 0 PG caen moribundos (reglas completas). Criaturas: mueren a 0 PG.
 ## `no_letal` (Player Core p. 407): si lo deja a 0 PG, queda inconsciente en vez de morir o quedar moribundo.
+## Los muertos vivientes quedan destruidos a 0 PG aunque el daño sea no letal (Player Core p. 462).
 func recibir_danio(cantidad: int, por_critico: bool, no_letal: bool = false) -> void:
 	if condiciones.muerto or cantidad <= 0:
 		return
 	if pg > 0:
 		pg = maxi(0, pg - cantidad)
-		if pg == 0 and no_letal:
+		if pg == 0 and no_letal and not fuente.es_muerto_viviente():
 			condiciones.inconsciente = true
 		elif pg == 0:
 			_caer(por_critico)

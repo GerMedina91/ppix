@@ -11,6 +11,7 @@ var _party: ControlParty
 
 
 func before_test() -> void:
+	GameState.nueva_partida()
 	GameState.reiniciar_dados(11)
 	GameState.estado_party.clear()
 	_runner = scene_runner(ESCENA)
@@ -111,8 +112,8 @@ func test_combate_completo_vuelve_a_exploracion() -> void:
 		# El clérigo (Miembro3) conserva su punto de foco: se recupera 1 al terminar cada combate.
 		assert_int(GameState.estado_party[&"Miembro3"].conjuros.foco).is_equal(1)
 	else:
-		# Derrota (placeholder hasta M4): la party vuelve a la entrada con los PG completos.
-		assert_bool(GameState.estado_party.is_empty()).is_true()
+		# Derrota (muerte del Eco): la party se rearmó; el Eco, entero.
+		assert_bool(GameState.estado_party.has(&"Miembro1")).is_false()
 
 
 func test_el_hud_aparece_con_el_combate_y_registra_eventos() -> void:

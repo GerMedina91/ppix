@@ -43,7 +43,7 @@ func recuperar_residuo() -> Array[DefinicionRecuerdo]:
 
 
 static func id_enemigo(id_mapa: StringName, nombre: StringName) -> StringName:
-	return StringName("%s/%s" % [id_mapa, nombre])
+	return EstadoMundo.id_global(id_mapa, nombre)
 
 
 func registrar_destino(id_global: StringName, destino: Destino) -> void:

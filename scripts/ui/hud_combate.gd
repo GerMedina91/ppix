@@ -31,7 +31,7 @@ func _ready() -> void:
 	controlador.evento_mostrado.connect(_al_mostrar_evento)
 	controlador.esperando_jugador.connect(_actualizar)
 	controlador.combate_iniciado.connect(_al_iniciar)
-	controlador.combate_terminado.connect(func(_victoria: bool) -> void: visible = false)
+	controlador.combate_terminado.connect(func(_resultado: ResultadoCombate) -> void: visible = false)
 	controlador.pregunta_reaccion.connect(_mostrar_aviso)
 	controlador.accion_elegida.connect(_actualizar)
 

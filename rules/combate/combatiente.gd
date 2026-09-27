@@ -23,6 +23,8 @@ var id: StringName = &""
 ## Nombre que se muestra (HUD, registro). Por defecto, el id; la presentación pone el de la party (Irsa, el Eco...).
 var nombre_visible: String = ""
 var bando: Bando = Bando.PARTY
+## El Eco (GDD 4.3): si muere, el combate termina en derrota aunque quede party en pie.
+var es_eco: bool = false
 var celda: Vector2i = Vector2i.ZERO
 var pg: int = 0
 var acciones_restantes: int = 0

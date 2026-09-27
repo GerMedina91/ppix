@@ -16,6 +16,7 @@ var _paredes: CapaParedes
 
 
 func before_test() -> void:
+	GameState.nueva_partida()
 	_runner = scene_runner(ESCENA)
 	_party = _runner.find_child("Party")
 	_mapa = _runner.find_child("MapaActual").get_child(0)

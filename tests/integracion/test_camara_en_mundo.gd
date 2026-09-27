@@ -11,6 +11,7 @@ var _mapa: Mapa
 
 
 func before_test() -> void:
+	GameState.nueva_partida()
 	_runner = scene_runner(ESCENA)
 	_party = _runner.find_child("Party")
 	_camara = _runner.find_child("Camara")

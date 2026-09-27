@@ -14,6 +14,7 @@ var _party: ControlParty
 
 
 func before_test() -> void:
+	GameState.nueva_partida()
 	_runner = scene_runner(ESCENA)
 	_party = _runner.find_child("Party")
 	# false: no liberar el autoload al terminar el test

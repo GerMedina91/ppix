@@ -17,6 +17,9 @@ var estado_party: Dictionary[StringName, Dictionary] = {}
 ## Recuerdos del Eco, el Tasador, el residuo y el destino de los enemigos inconscientes (GDD 4.2 y 4.3).
 var recuerdos: EstadoRecuerdos = EstadoRecuerdos.new()
 
+## Encuentros resueltos y enemigos que ya no están en cada mapa (se aplica al cargar el mapa).
+var mundo: EstadoMundo = EstadoMundo.new()
+
 ## Sueños que ya se vieron al descansar (no se repiten).
 var suenos_vistos: Array[StringName] = []
 
@@ -30,11 +33,23 @@ func reiniciar_dados(nueva_semilla: int) -> void:
 	dados = Dados.new(nueva_semilla)
 
 
+## Vuelve al estado de una partida nueva (no toca el RNG). Lo usan los tests que cargan el mundo.
+func nueva_partida() -> void:
+	id_mapa_actual = &""
+	id_ultimo_punto_estable = &""
+	id_mapa_ultimo_punto_estable = &""
+	estado_party.clear()
+	recuerdos = EstadoRecuerdos.new()
+	mundo = EstadoMundo.new()
+	suenos_vistos.clear()
+
+
 ## Datos serializables a JSON (M4g suma el resto: estado de la party y del RNG).
 func a_diccionario() -> Dictionary:
 	return {
 		"punto_estable": {"id": String(id_ultimo_punto_estable), "mapa": String(id_mapa_ultimo_punto_estable)},
 		"recuerdos": recuerdos.a_diccionario(),
+		"mundo": mundo.a_diccionario(),
 		"suenos_vistos": suenos_vistos.map(func(id: StringName) -> String: return String(id)),
 	}
 
@@ -44,6 +59,7 @@ func cargar_diccionario(datos: Dictionary, catalogo: CatalogoRecuerdos) -> void:
 	id_ultimo_punto_estable = StringName(punto.get("id", ""))
 	id_mapa_ultimo_punto_estable = StringName(punto.get("mapa", ""))
 	recuerdos = EstadoRecuerdos.desde_diccionario(datos.get("recuerdos", {}), catalogo)
+	mundo = EstadoMundo.desde_diccionario(datos.get("mundo", {}))
 	suenos_vistos.clear()
 	for id: Variant in datos.get("suenos_vistos", []):
 		suenos_vistos.append(StringName(id))

@@ -11,9 +11,7 @@ var _panel: PanelPuntoEstable
 
 
 func before_test() -> void:
-	GameState.estado_party.clear()
-	GameState.id_ultimo_punto_estable = &""
-	GameState.suenos_vistos.clear()
+	GameState.nueva_partida()
 	_runner = scene_runner(ESCENA)
 	_party = _runner.find_child("Party")
 	_panel = _runner.find_child("PanelPuntoEstable")

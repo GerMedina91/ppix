@@ -20,6 +20,10 @@
 [ext_resource type="Script" path="res://scripts/ui/panel_punto_estable.gd" id="16_pnlpe"]
 [ext_resource type="Resource" path="res://data/config/estilo_hud.tres" id="17_estil"]
 [ext_resource type="Resource" path="res://data/suenos/catalogo_suenos.tres" id="18_suen"]
+[ext_resource type="Script" path="res://scripts/world/gestor_muerte.gd" id="19_gmue"]
+[ext_resource type="Script" path="res://scripts/ui/panel_perdida.gd" id="20_pper"]
+[ext_resource type="Script" path="res://scripts/ui/aviso_mundo.gd" id="21_avis"]
+[ext_resource type="Resource" path="res://data/config/config_recuerdos.tres" id="22_crec"]
 
 [node name="Mundo" type="Node2D" unique_id=459014428]
 y_sort_enabled = true
@@ -83,3 +87,17 @@ controlador = NodePath("../ControladorCombate")
 [node name="PanelPuntoEstable" type="CanvasLayer" parent="."]
 script = ExtResource("16_pnlpe")
 estilo = ExtResource("17_estil")
+
+[node name="PanelPerdida" type="CanvasLayer" parent="."]
+script = ExtResource("20_pper")
+estilo = ExtResource("17_estil")
+
+[node name="AvisoMundo" type="CanvasLayer" parent="."]
+script = ExtResource("21_avis")
+estilo = ExtResource("17_estil")
+
+[node name="GestorMuerte" type="Node" parent="." node_paths=PackedStringArray("panel_perdida", "aviso")]
+script = ExtResource("19_gmue")
+config = ExtResource("22_crec")
+panel_perdida = NodePath("../PanelPerdida")
+aviso = NodePath("../AvisoMundo")

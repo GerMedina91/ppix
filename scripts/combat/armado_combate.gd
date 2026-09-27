@@ -12,6 +12,7 @@ static func participantes(party: ControlParty, encuentro: Encuentro, siempre: Ca
 	for miembro: MiembroParty in party.miembros():
 		var c: Combatiente = Combatiente.desde_personaje(StringName(miembro.name), miembro.definicion_de_reglas(), miembro.celda)
 		c.nombre_visible = miembro.nombre_visible()
+		c.es_eco = miembro.es_eco
 		EstadoPartyCombate.aplicar(c)
 		if siempre.call(c.id):
 			c.politica_reacciones = Combatiente.PoliticaReaccion.SIEMPRE
@@ -33,15 +34,24 @@ static func nuevo_combate(participantes_combate: Array[Combatiente], mapa: Mapa,
 	return combate
 
 
-## Al terminar: si ganaron, guarda el estado de la party, saca a los enemigos derrotados (muertos o
-## noqueados) y marca el encuentro
-## como resuelto. Devuelve si fue victoria.
-static func cerrar(combate: Combate, party: ControlParty, encuentro: Encuentro) -> bool:
-	var victoria: bool = combate.estado == Combate.Estado.VICTORIA
-	if victoria:
+## Al terminar arma el ResultadoCombate y deja anotado en el mundo (GameState.mundo) lo que no se revierte:
+## - Victoria: guarda el estado de la party, saca a los enemigos derrotados (muertos o noqueados) y marca el
+##   encuentro como resuelto.
+## - Derrota (muerte del Eco): los enemigos muertos siguen muertos; el encuentro queda sin resolver (los demás
+##   vuelven a su lugar con todos sus PG al recargar el mapa) y la party queda rearmada (Rearmado). El
+##   residuo, la reaparición y la pérdida los hace GestorMuerte.
+static func cerrar(combate: Combate, party: ControlParty, encuentro: Encuentro) -> ResultadoCombate:
+	var resultado: ResultadoCombate = ResultadoCombate.desde(combate)
+	var id_mapa: StringName = GameState.id_mapa_actual
+	if resultado.victoria:
 		EstadoPartyCombate.guardar(party, combate)
-		for enemigo: EnemigoEnMapa in encuentro.enemigos():
-			if combate.combatiente(StringName(enemigo.name)).condiciones.fuera_de_combate():
-				enemigo.queue_free()
 		encuentro.resuelto = true
-	return victoria
+		GameState.mundo.resolver_encuentro(id_mapa, encuentro.id)
+	else:
+		GameState.estado_party = Rearmado.estado_party(combate)
+	for enemigo: EnemigoEnMapa in encuentro.enemigos():
+		var c: Combatiente = combate.combatiente(StringName(enemigo.name))
+		if c.condiciones.muerto or (resultado.victoria and c.condiciones.fuera_de_combate()):
+			GameState.mundo.retirar_enemigo(id_mapa, c.id)
+			enemigo.queue_free()
+	return resultado

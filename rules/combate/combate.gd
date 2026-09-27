@@ -244,10 +244,12 @@ func verificar_fin() -> Array[EventoCombate]:
 		return c.bando == Combatiente.Bando.ENEMIGOS and c.condiciones.en_pie())
 	var party_en_pie: bool = participantes.any(func(c: Combatiente) -> bool:
 		return c.bando == Combatiente.Bando.PARTY and c.condiciones.en_pie())
-	if not enemigos_vivos:
-		estado = Estado.VICTORIA
-	elif not party_en_pie:
+	# Muerte del Eco (GDD 4.3): muere el Eco o cae toda la party.
+	var murio_el_eco: bool = participantes.any(func(c: Combatiente) -> bool: return c.es_eco and c.condiciones.muerto)
+	if murio_el_eco or not party_en_pie:
 		estado = Estado.DERROTA
+	elif not enemigos_vivos:
+		estado = Estado.VICTORIA
 	else:
 		return []
 	return [_emitir(EventoCombate.new(EventoCombate.Tipo.FIN_COMBATE, &"", {"estado": estado}))]

@@ -5,6 +5,10 @@ const ESPERA_MS: int = 8000
 const FRAMES_MAXIMOS: int = 3000
 
 
+func before_test() -> void:
+	GameState.nueva_partida()
+
+
 ## Cruza del mapa A al B (donde está el encuentro de prueba) y espera a que la party se pueda mover.
 func _ir_al_mapa_b(runner: GdUnitSceneRunner) -> void:
 	var party: ControlParty = runner.find_child("Party")

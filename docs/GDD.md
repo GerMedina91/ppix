@@ -207,6 +207,14 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
     - **Nombres de la party** (`docs/lore/companeros.md`): Irsa (pícara), Orven (clérigo), Vaisha (bruja), en los builds; el Eco se muestra siempre como "el Eco" (`MiembroParty.nombre_visible()`). El HUD, la ficha y el registro muestran `Combatiente.nombre_visible`; los ids internos siguen siendo los nodos (Miembro1-4). En el registro: "El Eco" al empezar la línea y "del Eco".
     - **[pregunta abierta]** Costo de descansar. Idea del director: descansar es dormir, y dormir abre la puerta a la Marea del Sueño; conectarlo con los sueños de la persona amada (ver `docs/lore/verdad.md`) y con los Insomnes.
     - Tiempos de los tests (2026-09-27): el costo fijo por test subió de ~14 ms a ~92 ms sin cambios de código (el commit anterior, medido de nuevo, da lo mismo; un test vacío tarda ~90 ms y un frame vacío ~5,5 ms). Es de la máquina (CPU compartida, antivirus), no del proyecto.
+  - **M4d (1 y 2) hecho — muerte del Eco:**
+    - Reglas: `Combatiente.es_eco`; el combate termina en derrota si muere el Eco o cae toda la party (la derrota tiene prioridad si coincide con la victoria). `ResultadoCombate` (lo arma `ArmadoCombate.cerrar` y viaja en `combate_terminado`). `Rearmado` calcula la party rearmada.
+    - Mundo: `EstadoMundo` en `GameState.mundo` (encuentros resueltos y enemigos retirados, serializable) se aplica al cargar cada mapa: los muertos siguen muertos; tras la muerte del Eco el encuentro queda sin resolver y los demás enemigos vuelven a su lugar con todos sus PG (el mapa se recarga).
+    - `GestorMuerte`: residuo en la casilla donde cayó (marca en el suelo; se recupera cuando el Eco la pisa en exploración, con aviso) y `PanelPerdida` para elegir el integrado que se pierde. El Mundo hace reaparecer a la party al lado del último punto estable.
+    - **[provisorio]** Rearmado = descanso completo (PG, espacios, foco, inmunidades), pero los compañeros conservan su herido y los moribundos suman +1; el Eco se rearma sin herido.
+    - **[provisorio]** Sin punto estable registrado, la party reaparece en la última entrada del mapa.
+    - **[provisorio]** Los enemigos inconscientes vencidos todavía se retiran del mapa (M4e los deja con extraer / perdonar / rematar).
+    - Capturas en `docs/capturas/m4/10` a `13`.
 - **M5 — Contenido del slice:** mapas, NPCs, diálogos, arte final.
 
 ## 9. Preguntas abiertas

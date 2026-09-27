@@ -10,7 +10,7 @@ extends Node2D
 ##   acción `terminar_turno` (Espacio); teclas 1-9 = conjuros, Sostener y Arcadas (ModoAccion).
 
 signal combate_iniciado
-signal combate_terminado(victoria: bool)
+signal combate_terminado(resultado: ResultadoCombate)
 ## Se emite al animar cada evento (lo usa el HUD para el registro).
 signal evento_mostrado(evento: EventoCombate)
 ## Se emite cuando no queda nada por animar y le toca decidir al jugador.
@@ -285,11 +285,11 @@ func _zancada_del_plan() -> void:
 # --- Fin del combate ---
 
 func _terminar() -> void:
-	var victoria: bool = ArmadoCombate.cerrar(_combate, _party, _encuentro)
+	var resultado: ResultadoCombate = ArmadoCombate.cerrar(_combate, _party, _encuentro)
 	_combate = null
 	_plan.clear()
 	_resaltados.queue_redraw()
-	combate_terminado.emit(victoria)
+	combate_terminado.emit(resultado)
 
 
 func _combatiente_vivo_en(celda: Vector2i) -> Combatiente:

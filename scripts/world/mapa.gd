@@ -46,6 +46,16 @@ func encuentros() -> Array[Encuentro]:
 	return lista
 
 
+## Aplica lo que no se revierte (GDD 4.3): encuentros resueltos y enemigos que ya no están.
+func aplicar_estado(mundo: EstadoMundo, id_mapa: StringName) -> void:
+	for encuentro: Encuentro in encuentros():
+		encuentro.resuelto = mundo.encuentro_resuelto(id_mapa, encuentro.id)
+		for enemigo: EnemigoEnMapa in encuentro.enemigos():
+			if mundo.enemigo_retirado(id_mapa, StringName(enemigo.name)):
+				encuentro.remove_child(enemigo)
+				enemigo.queue_free()
+
+
 func interactuables() -> Array[Interactuable]:
 	var lista: Array[Interactuable] = []
 	if _interactuables != null:
@@ -164,6 +174,20 @@ func celdas_de_formacion(id_entrada: StringName, cantidad: int, grilla: GrillaMa
 	while celdas.size() < cantidad:
 		celdas.append(celdas.back())
 	return celdas.slice(0, cantidad)
+
+
+## Casillas de formación al lado del punto estable `id_punto` (al reaparecer tras la muerte del Eco).
+func celdas_junto_a_punto(id_punto: StringName, cantidad: int, grilla: GrillaMapa) -> Array[Vector2i]:
+	for objeto: Interactuable in interactuables():
+		if objeto is PuntoEstable and (objeto as PuntoEstable).id == id_punto:
+			for vecina: Vector2i in VECINAS:
+				if grilla.es_transitable(objeto.celda + vecina):
+					var celdas: Array[Vector2i] = Formacion.cadena(grilla, objeto.celda + vecina, cantidad, [])
+					while celdas.size() < cantidad:
+						celdas.append(celdas.back())
+					return celdas.slice(0, cantidad)
+	push_error("Mapa %s: no existe el punto estable '%s'" % [name, id_punto])
+	return celdas_de_formacion((_entradas.get_child(0) as EntradaMapa).id, cantidad, grilla)
 
 
 ## Devuelve la salida ubicada en `celda`, o null si no hay ninguna.

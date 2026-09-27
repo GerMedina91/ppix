@@ -6,6 +6,10 @@ extends Resource
 ## Todos pueden reaccionar antes de su primer turno (Player Core p. 436 lo deja al DJ; decisión: sí).
 @export var reacciones_antes_del_primer_turno: bool = true
 
+@export_group("Aspecto")
+## Colores, tamaños y fuente del HUD y de los resaltados (null = EstiloHud por defecto).
+@export var estilo: EstiloHud
+
 @export_group("Tiempos")
 
 ## Segundos por casilla ortogonal al moverse en combate (diagonal ×√2).
@@ -16,3 +20,9 @@ extends Resource
 @export var segundos_golpe: float = 0.2
 ## Duración del texto flotante (daño, "falla", etc.).
 @export var segundos_texto_flotante: float = 0.8
+
+
+func estilo_efectivo() -> EstiloHud:
+	if estilo == null:
+		estilo = EstiloHud.por_defecto()
+	return estilo

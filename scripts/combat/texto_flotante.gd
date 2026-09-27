@@ -1,21 +1,21 @@
 class_name TextoFlotante
 extends Node2D
-## Texto que sube y se desvanece sobre un actor (daño, "falla", etc.). Fuente de Godot como placeholder.
+## Texto que sube y se desvanece sobre un actor (daño, "falla", etc.). Fuente y tamaño: EstiloHud.
 
-const TAMANO_FUENTE: int = 12
 const DESPLAZAMIENTO: Vector2 = Vector2(0, -24)
 ## Altura sobre los pies del actor donde aparece.
 const ALTURA_INICIAL: float = 64.0
 
 
-static func mostrar(padre: Node, posicion_global: Vector2, texto: String, color: Color, segundos: float) -> TextoFlotante:
+static func mostrar(padre: Node, posicion_global: Vector2, texto: String, color: Color, segundos: float, estilo: EstiloHud) -> TextoFlotante:
 	var flotante: TextoFlotante = TextoFlotante.new()
 	var etiqueta: Label = Label.new()
 	etiqueta.text = texto
-	etiqueta.add_theme_font_size_override("font_size", TAMANO_FUENTE)
+	etiqueta.add_theme_font_override("font", estilo.fuente_efectiva())
+	etiqueta.add_theme_font_size_override("font_size", estilo.tamano_texto_flotante)
 	etiqueta.add_theme_color_override("font_color", color)
-	etiqueta.add_theme_color_override("font_outline_color", Color.BLACK)
-	etiqueta.add_theme_constant_override("outline_size", 3)
+	etiqueta.add_theme_color_override("font_outline_color", estilo.color_borde_texto)
+	etiqueta.add_theme_constant_override("outline_size", estilo.borde_texto)
 	etiqueta.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	etiqueta.position = Vector2(-40, 0)
 	etiqueta.size = Vector2(80, 16)

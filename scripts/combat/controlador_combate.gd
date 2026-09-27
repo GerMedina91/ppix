@@ -79,6 +79,10 @@ func combate() -> Combate:
 	return _combate
 
 
+func estilo() -> EstiloHud:
+	return config.estilo_efectivo()
+
+
 func animando() -> bool:
 	return _animando
 

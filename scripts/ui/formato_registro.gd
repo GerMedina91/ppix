@@ -113,6 +113,22 @@ static func pregunta_reaccion(pregunta: Dictionary) -> String:
 	return "%s: ¿usar %s contra %s?" % [pregunta.reactor.id, (pregunta.capacidad as Capacidad).nombre, pregunta.disparo.actor.id]
 
 
+## Condiciones de un combatiente: "moribundo 1, herido 1, asustado 2" ("" si no tiene ninguna).
+static func condiciones_de(c: Combatiente) -> String:
+	var partes: PackedStringArray = PackedStringArray()
+	if c.condiciones.moribundo > 0:
+		partes.append("moribundo %d" % c.condiciones.moribundo)
+	if c.condiciones.herido > 0:
+		partes.append("herido %d" % c.condiciones.herido)
+	if c.condiciones.inconsciente:
+		partes.append("inconsciente")
+	var valores: Dictionary[Condiciones.Tipo, int] = c.condiciones.valores()
+	for tipo: Condiciones.Tipo in valores:
+		if valores[tipo] > 0:
+			partes.append(condicion(tipo, valores[tipo]))
+	return ", ".join(partes)
+
+
 ## "asustado 2"; las condiciones sin valor (huyendo), solo el nombre.
 static func condicion(tipo: Condiciones.Tipo, valor: int) -> String:
 	if tipo == Condiciones.Tipo.HUYENDO:

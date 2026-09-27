@@ -5,26 +5,7 @@ extends Node2D
 ## camino completo hasta el cursor con su costo (◆◆) y enemigos golpeables (◆ al pasar el cursor).
 ## Lee el estado del ControladorCombate (su padre); no decide nada.
 
-const COLOR_ACTIVO: Color = Color(1.0, 0.85, 0.3, 0.5)
-## Alcance según las acciones que cuesta llegar: índice = cantidad de Zancadas.
-const COLOR_POR_ZANCADAS: Array[Color] = [
-	Color.TRANSPARENT,
-	Color(0.3, 0.6, 1.0, 0.22),
-	Color(0.3, 0.85, 0.7, 0.18),
-	Color(0.7, 0.45, 1.0, 0.15),
-]
-const COLOR_CAMINO: Color = Color(0.4, 0.75, 1.0, 0.5)
-const COLOR_OBJETIVO: Color = Color(1.0, 0.25, 0.25, 0.45)
-## Objetivos posibles del conjuro elegido: oponentes, aliados (se permiten, con otro color) y las
-## casillas del movimiento incluido (Pies ágiles).
-const COLOR_CONJURO_OPONENTE: Color = Color(0.75, 0.4, 1.0, 0.5)
-const COLOR_CONJURO_ALIADO: Color = Color(0.3, 0.9, 0.6, 0.45)
-const COLOR_CONJURO_MOVIMIENTO: Color = Color(0.55, 0.45, 1.0, 0.25)
-## Emanación del conjuro elegido (Curar de 3 acciones).
-const COLOR_CONJURO_AREA: Color = Color(1.0, 0.95, 0.6, 0.18)
-const COLOR_COSTO: Color = Color(1.0, 0.95, 0.6)
 const PIP_ACCION: String = "◆"
-const TAMANO_FUENTE_COSTO: int = 12
 ## Altura sobre el centro de la casilla donde se muestra el costo.
 const ALTURA_COSTO: float = 40.0
 const ANCHO_COSTO: float = 60.0
@@ -41,7 +22,8 @@ func _ready() -> void:
 func _draw() -> void:
 	if controlador == null or not controlador.en_curso():
 		return
-	_rombo(controlador.combate().turno_actual().celda, COLOR_ACTIVO)
+	var estilo: EstiloHud = controlador.estilo()
+	_rombo(controlador.combate().turno_actual().celda, estilo.resaltado_activo)
 	# Todo sale de la previsión de la decisión en curso: acá solo se consulta.
 	var prevision: PrevisionTurno = controlador.prevision_actual()
 	if prevision == null:
@@ -50,20 +32,20 @@ func _draw() -> void:
 	if modo.elegido != null:
 		var actor: Combatiente = controlador.combate().turno_actual()
 		for casilla: Vector2i in modo.casillas_movimiento:
-			_rombo(casilla, COLOR_CONJURO_MOVIMIENTO)
+			_rombo(casilla, estilo.resaltado_conjuro_movimiento)
 		for casilla: Vector2i in modo.casillas_area(controlador.combate(), actor):
-			_rombo(casilla, COLOR_CONJURO_AREA)
+			_rombo(casilla, estilo.resaltado_conjuro_area)
 		for c: Combatiente in modo.objetivos(controlador.combate(), actor):
-			_rombo(c.celda, COLOR_CONJURO_ALIADO if c.es_aliado_de(actor) else COLOR_CONJURO_OPONENTE)
+			_rombo(c.celda, estilo.resaltado_conjuro_aliado if c.es_aliado_de(actor) else estilo.resaltado_conjuro_oponente)
 		return
 	var alcance: Dictionary[Vector2i, int] = prevision.por_casilla
 	for casilla: Vector2i in alcance:
-		_rombo(casilla, COLOR_POR_ZANCADAS[alcance[casilla]])
+		_rombo(casilla, estilo.color_zancadas(alcance[casilla]))
 	var cursor: Vector2i = controlador.celda_cursor()
 	for casilla: Vector2i in prevision.camino(cursor):
-		_rombo(casilla, COLOR_CAMINO)
+		_rombo(casilla, estilo.resaltado_camino)
 	for casilla: Vector2i in prevision.golpeables:
-		_rombo(casilla, COLOR_OBJETIVO)
+		_rombo(casilla, estilo.resaltado_objetivo)
 	var costo: int = prevision.costo(cursor)
 	if costo > 0:
 		_texto_costo(cursor, PIP_ACCION.repeat(costo))
@@ -77,7 +59,8 @@ func _rombo(celda: Vector2i, color: Color) -> void:
 
 
 func _texto_costo(celda: Vector2i, texto: String) -> void:
-	var fuente: Font = ThemeDB.fallback_font
+	var estilo: EstiloHud = controlador.estilo()
+	var fuente: Font = estilo.fuente_efectiva()
 	var posicion: Vector2 = to_local(controlador.centro_global(celda)) + Vector2(-ANCHO_COSTO / 2.0, -ALTURA_COSTO)
-	draw_string_outline(fuente, posicion, texto, HORIZONTAL_ALIGNMENT_CENTER, ANCHO_COSTO, TAMANO_FUENTE_COSTO, 3, Color.BLACK)
-	draw_string(fuente, posicion, texto, HORIZONTAL_ALIGNMENT_CENTER, ANCHO_COSTO, TAMANO_FUENTE_COSTO, COLOR_COSTO)
+	draw_string_outline(fuente, posicion, texto, HORIZONTAL_ALIGNMENT_CENTER, ANCHO_COSTO, estilo.tamano_costo, estilo.borde_texto, estilo.color_borde_texto)
+	draw_string(fuente, posicion, texto, HORIZONTAL_ALIGNMENT_CENTER, ANCHO_COSTO, estilo.tamano_costo, estilo.color_costo)

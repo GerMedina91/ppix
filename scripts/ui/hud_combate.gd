@@ -1,19 +1,11 @@
 class_name HudCombate
 extends CanvasLayer
-## HUD mínimo del combate (fuente de Godot como placeholder): orden de iniciativa, actor activo
-## (PG, acciones, condiciones), registro de tiradas con desglose y ayuda de controles.
-## Solo muestra: escucha al ControladorCombate.
+## HUD del combate (funcional, placeholder): orden de iniciativa, actor activo (PG, acciones, condiciones),
+## registro de tiradas con desglose, ayuda de controles, línea de acciones y aviso de reacción.
+## Todo el aspecto sale del EstiloHud de la config (Theme en un Control raíz). Solo muestra: escucha al
+## ControladorCombate.
 
-const TAMANO_FUENTE: int = 10
 const LINEAS_REGISTRO: int = 6
-const MARGEN: int = 6
-const ANCHO_REGISTRO: int = 520
-const COLOR_PARTY: Color = Color(0.75, 0.9, 1.0)
-const COLOR_ENEMIGO: Color = Color(1.0, 0.7, 0.7)
-const COLOR_ACTIVO: Color = Color(1.0, 0.85, 0.3)
-const COLOR_MUERTO: Color = Color(0.45, 0.45, 0.45)
-const COLOR_FONDO: Color = Color(0.0, 0.0, 0.0, 0.55)
-const COLOR_CONJURO: Color = Color(0.85, 0.7, 1.0)
 const PIP_LLENO: String = "◆"
 const PIP_VACIO: String = "◇"
 ## Ayuda de controles (placeholder), visible durante el turno de la party.
@@ -21,6 +13,7 @@ const AYUDA: String = "Click en el suelo: Zancada (1 acción) · Click en un ene
 
 @export var controlador: ControladorCombate
 
+var _raiz: Control
 var _orden: HBoxContainer
 var _activo: Label
 var _registro: Label
@@ -67,6 +60,10 @@ func aviso_visible() -> bool:
 	return _aviso.visible
 
 
+func _estilo() -> EstiloHud:
+	return controlador.estilo()
+
+
 ## Aviso de reacción: el combate queda en pausa hasta que el jugador responda.
 func _mostrar_aviso(texto: String) -> void:
 	_texto_aviso.text = texto
@@ -98,48 +95,42 @@ func _actualizar() -> void:
 	var combate: Combate = controlador.combate()
 	if combate == null:
 		return
+	var estilo: EstiloHud = _estilo()
 	for hijo: Node in _orden.get_children():
 		hijo.queue_free()
 	var actual: Combatiente = combate.turno_actual()
 	for c: Combatiente in combate.orden:
 		var etiqueta: Label = _etiqueta(String(c.id))
-		var color: Color = COLOR_PARTY if c.bando == Combatiente.Bando.PARTY else COLOR_ENEMIGO
+		var color: Color = estilo.color_party if c.bando == Combatiente.Bando.PARTY else estilo.color_enemigo
 		if c.condiciones.muerto:
-			color = COLOR_MUERTO
+			color = estilo.color_muerto
 		if c == actual:
 			etiqueta.text = "[%s]" % etiqueta.text
-			color = COLOR_ACTIVO
+			color = estilo.color_activo
 		etiqueta.add_theme_color_override("font_color", color)
 		_orden.add_child(etiqueta)
 	if actual != null:
+		var condiciones: String = FormatoRegistro.condiciones_de(actual)
 		_activo.text = "%s   PG %d/%d   Acciones %s%s%s" % [
 			actual.id, actual.pg, actual.pg_maximos(),
 			PIP_LLENO.repeat(actual.acciones_restantes), PIP_VACIO.repeat(Combatiente.ACCIONES_POR_TURNO - actual.acciones_restantes),
-			_condiciones(actual)]
+			"" if condiciones.is_empty() else "   (%s)" % condiciones]
 	_ayuda.visible = controlador.esperando_decision()
 	_acciones.text = controlador.texto_acciones()
 	_acciones.visible = not _acciones.text.is_empty()
 	_aviso.visible = controlador.esperando_reaccion()
 
 
-static func _condiciones(c: Combatiente) -> String:
-	var partes: PackedStringArray = PackedStringArray()
-	if c.condiciones.moribundo > 0:
-		partes.append("moribundo %d" % c.condiciones.moribundo)
-	if c.condiciones.herido > 0:
-		partes.append("herido %d" % c.condiciones.herido)
-	if c.condiciones.inconsciente:
-		partes.append("inconsciente")
-	var valores: Dictionary[Condiciones.Tipo, int] = c.condiciones.valores()
-	for tipo: Condiciones.Tipo in valores:
-		if valores[tipo] > 0:
-			partes.append(FormatoRegistro.condicion(tipo, valores[tipo]))
-	return "" if partes.is_empty() else "   (%s)" % ", ".join(partes)
-
-
 func _construir() -> void:
+	var estilo: EstiloHud = _estilo()
+	_raiz = Control.new()
+	_raiz.name = "Raiz"
+	_raiz.theme = estilo.tema()
+	_raiz.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_raiz.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_raiz)
 	var arriba: PanelContainer = _panel()
-	arriba.position = Vector2(MARGEN, MARGEN)
+	arriba.position = Vector2(estilo.margen, estilo.margen)
 	_orden = HBoxContainer.new()
 	_orden.add_theme_constant_override("separation", 8)
 	arriba.add_child(_orden)
@@ -147,10 +138,10 @@ func _construir() -> void:
 	_anclar_abajo(abajo_izq, 0.0)
 	var columna: VBoxContainer = VBoxContainer.new()
 	_activo = _etiqueta("")
-	_ayuda = _etiqueta(AYUDA)
-	_ayuda.add_theme_color_override("font_color", COLOR_MUERTO.lightened(0.4))
 	_acciones = _etiqueta("")
-	_acciones.add_theme_color_override("font_color", COLOR_CONJURO)
+	_acciones.add_theme_color_override("font_color", estilo.color_conjuro)
+	_ayuda = _etiqueta(AYUDA)
+	_ayuda.add_theme_color_override("font_color", estilo.color_ayuda)
 	columna.add_child(_activo)
 	columna.add_child(_acciones)
 	columna.add_child(_ayuda)
@@ -159,10 +150,10 @@ func _construir() -> void:
 	_anclar_abajo(abajo_der, 1.0)
 	_registro = _etiqueta("")
 	_registro.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_registro.custom_minimum_size = Vector2(ANCHO_REGISTRO, 0)
+	_registro.custom_minimum_size = Vector2(estilo.ancho_registro, 0)
 	abajo_der.add_child(_registro)
 	for panel: Control in [arriba, abajo_izq, abajo_der]:
-		add_child(panel)
+		_raiz.add_child(panel)
 	_construir_aviso()
 
 
@@ -184,43 +175,33 @@ func _construir_aviso() -> void:
 	for par: Array in [["Sí", ControladorCombate.Respuesta.SI], ["No", ControladorCombate.Respuesta.NO], ["Siempre", ControladorCombate.Respuesta.SIEMPRE]]:
 		var boton: Button = Button.new()
 		boton.text = par[0]
-		boton.add_theme_font_size_override("font_size", TAMANO_FUENTE)
+		boton.focus_mode = Control.FOCUS_NONE
 		boton.pressed.connect(_responder.bind(par[1]))
 		botones.add_child(boton)
 	columna.add_child(botones)
 	_aviso.add_child(columna)
 	_aviso.visible = false
-	add_child(_aviso)
+	_raiz.add_child(_aviso)
 
 
 ## Ancla el panel al borde inferior (a la izquierda con x = 0, a la derecha con x = 1): crece hacia arriba
 ## y hacia adentro, así el contenido nunca queda fuera de la pantalla.
 func _anclar_abajo(panel: Control, x: float) -> void:
+	var margen: int = _estilo().margen
 	panel.anchor_left = x
 	panel.anchor_right = x
 	panel.anchor_top = 1.0
 	panel.anchor_bottom = 1.0
 	panel.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	panel.grow_horizontal = Control.GROW_DIRECTION_BEGIN if x > 0.5 else Control.GROW_DIRECTION_END
-	panel.offset_bottom = -MARGEN
-	panel.offset_top = -MARGEN
-	if x > 0.5:
-		panel.offset_right = -MARGEN
-		panel.offset_left = -MARGEN
-	else:
-		panel.offset_left = MARGEN
-		panel.offset_right = MARGEN
+	panel.offset_bottom = -margen
+	panel.offset_top = -margen
+	panel.offset_left = -margen if x > 0.5 else margen
+	panel.offset_right = panel.offset_left
 
 
 func _panel() -> PanelContainer:
 	var panel: PanelContainer = PanelContainer.new()
-	var estilo: StyleBoxFlat = StyleBoxFlat.new()
-	estilo.bg_color = COLOR_FONDO
-	estilo.content_margin_left = 4
-	estilo.content_margin_right = 4
-	estilo.content_margin_top = 2
-	estilo.content_margin_bottom = 2
-	panel.add_theme_stylebox_override("panel", estilo)
 	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return panel
 
@@ -228,6 +209,5 @@ func _panel() -> PanelContainer:
 func _etiqueta(texto: String) -> Label:
 	var etiqueta: Label = Label.new()
 	etiqueta.text = texto
-	etiqueta.add_theme_font_size_override("font_size", TAMANO_FUENTE)
 	etiqueta.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return etiqueta

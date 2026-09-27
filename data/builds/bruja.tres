@@ -16,7 +16,7 @@
 [resource]
 script = ExtResource("5_vhdqe")
 id = &"bruja"
-nombre = "TODO_LORE: bruja de prueba"
+nombre = "Vaisha"
 clase = ExtResource("4_dd1sy")
 ascendencia = ExtResource("3_0kkxt")
 subclase = ExtResource("6_1mm5y")

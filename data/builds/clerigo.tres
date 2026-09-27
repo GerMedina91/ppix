@@ -17,7 +17,7 @@
 [resource]
 script = ExtResource("6_ol2p1")
 id = &"clerigo"
-nombre = "TODO_LORE: clérigo de prueba"
+nombre = "Orven"
 clase = ExtResource("4_070h6")
 ascendencia = ExtResource("3_vxn8f")
 subclase = ExtResource("7_uqdfe")

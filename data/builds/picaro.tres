@@ -13,7 +13,7 @@
 [resource]
 script = ExtResource("6_rjj82")
 id = &"picaro"
-nombre = "TODO_LORE: pícaro de prueba"
+nombre = "Irsa"
 clase = ExtResource("5_paw0t")
 ascendencia = ExtResource("4_topi1")
 subclase = ExtResource("7_5dsqp")

@@ -13,6 +13,7 @@ var _panel: PanelPuntoEstable
 func before_test() -> void:
 	GameState.estado_party.clear()
 	GameState.id_ultimo_punto_estable = &""
+	GameState.suenos_vistos.clear()
 	_runner = scene_runner(ESCENA)
 	_party = _runner.find_child("Party")
 	_panel = _runner.find_child("PanelPuntoEstable")
@@ -20,6 +21,7 @@ func before_test() -> void:
 
 func after_test() -> void:
 	GameState.estado_party.clear()
+	GameState.suenos_vistos.clear()
 
 
 func _punto() -> PuntoEstable:
@@ -62,3 +64,18 @@ func test_otro_click_cancela_la_interaccion() -> void:
 	await _runner.await_func_on(_party, "celda_lider").wait_until(ESPERA_MS).is_equal(Vector2i(10, 2))
 	await _runner.simulate_frames(10)
 	assert_bool(_panel.abierto()).is_false()
+
+
+func test_al_descansar_suena_una_vez_cada_sueno() -> void:
+	var avisados: Array[StringName] = []
+	var al_sonar: Callable = func(id: StringName) -> void: avisados.append(id)
+	EventBus.sueno_en_descanso.connect(al_sonar)
+	await _ir_y_abrir()
+	_panel.descansar()
+	_panel.cerrar()
+	_party.ir_a_interactuar(_punto())
+	await _runner.await_func_on(_panel, "abierto").wait_until(ESPERA_MS).is_true()
+	_panel.descansar()
+	EventBus.sueno_en_descanso.disconnect(al_sonar)
+	assert_array(avisados).contains_exactly([&"sueno_placeholder_1", &"sueno_placeholder_2"])
+	assert_array(GameState.suenos_vistos).contains_exactly([&"sueno_placeholder_1", &"sueno_placeholder_2"])

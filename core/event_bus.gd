@@ -13,3 +13,6 @@ signal encuentro_terminado(id_encuentro: StringName, victoria: bool)
 
 ## Se emite cuando la party descansa en un punto estable (lo registra como reaparición; SaveSystem guarda).
 signal punto_estable_activado(id_punto: StringName)
+
+## Se emite cuando el Eco sueña al descansar en un punto estable (contenido TODO_LORE).
+signal sueno_en_descanso(id_sueno: StringName)

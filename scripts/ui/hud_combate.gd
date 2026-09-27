@@ -109,7 +109,7 @@ func _actualizar() -> void:
 		hijo.queue_free()
 	var actual: Combatiente = combate.turno_actual()
 	for c: Combatiente in combate.orden:
-		var etiqueta: Label = _etiqueta(String(c.id))
+		var etiqueta: Label = _etiqueta(c.nombre_visible)
 		var color: Color = estilo.color_party if c.bando == Combatiente.Bando.PARTY else estilo.color_enemigo
 		if c.condiciones.muerto:
 			color = estilo.color_muerto
@@ -121,7 +121,7 @@ func _actualizar() -> void:
 	if actual != null:
 		var condiciones: String = FormatoRegistro.condiciones_de(actual)
 		_activo.text = "%s   PG %d/%d   Acciones %s%s%s" % [
-			actual.id, actual.pg, actual.pg_maximos(),
+			FormatoRegistro.capitalizar(actual.nombre_visible), actual.pg, actual.pg_maximos(),
 			PIP_LLENO.repeat(actual.acciones_restantes), PIP_VACIO.repeat(Combatiente.ACCIONES_POR_TURNO - actual.acciones_restantes),
 			"" if condiciones.is_empty() else "   (%s)" % condiciones]
 	_ayuda.visible = controlador.esperando_decision()

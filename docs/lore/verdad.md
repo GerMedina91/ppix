@@ -16,6 +16,22 @@
   Eco para traerlo de vuelta: el mismo pecado por el mismo motivo.
 - Dilema final: cerrar la herida salva al mundo pero pierde a la persona amada para siempre.
 
+## La persona amada (decidido por Germán, 2026-09-27)
+- El Doliente se llamaba **Aldren**. Era padre. Tenía a su cargo las puertas y la defensa de su ciudad (nombre de
+  la ciudad: TODO_LORE).
+- Durante una catástrofe que venía de afuera (naturaleza: TODO_LORE), Aldren ordenó cerrar las puertas para salvar
+  a los de adentro. Su hija, **Nalia**, estaba afuera y murió. Eligió el mundo por sobre ella.
+- No pudo vivir con eso. Fue al borde a buscarla y eligió al revés: hirió al Umbral para recuperarla, y murió en el
+  intento.
+- Nalia quedó atrapada en la herida, ni viva ni muerta. Juntó los recuerdos de Aldren y lo rearmó como el Eco. Le
+  habla en sueños (mecánica: el sueño al descansar en un punto estable).
+- **Simetría:** un umbral cerrado mató a Nalia; Aldren abrió el último umbral para recuperarla. El dilema final
+  repite su elección: cerrar la herida es cerrarle la puerta a Nalia otra vez.
+- **Espejo:** Vaisha perdió a su familia por la herida que abrió Aldren, que a su vez la abrió por no aceptar la
+  pérdida de su hija (ver `companeros.md`).
+- **Regla de uso:** "Aldren" y "Nalia" nunca aparecen en la UI ni en textos, salvo dentro de fragmentos del
+  Doliente y sueños, cuando se escriban.
+
 ## Facciones (propuestas, sin confirmar para el slice)
 - **Los Tasadores:** mercaderes de recuerdos; creen que la Convergencia es natural; quieren la herida abierta; tienen
   recuerdos del Doliente.

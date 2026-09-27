@@ -12,6 +12,16 @@ extends ActorMapa
 
 var _armado: DefinicionPersonaje
 
+## Cómo se lo nombra en el HUD y el registro (docs/lore/companeros.md).
+const NOMBRE_ECO: String = "el Eco"
+
+
+## El Eco siempre es "el Eco"; los demás, el nombre de su build (sin build, el del nodo).
+func nombre_visible() -> String:
+	if es_eco:
+		return NOMBRE_ECO
+	return build.nombre if build != null else String(name)
+
 
 ## Números de reglas del miembro: el build armado o la definición directa. El Eco se arma cada vez con
 ## sus recuerdos integrados (cambian fuera de combate); los demás, una sola vez.

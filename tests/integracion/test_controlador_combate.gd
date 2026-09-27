@@ -124,7 +124,7 @@ func test_el_hud_aparece_con_el_combate_y_registra_eventos() -> void:
 	assert_array(Array(hud.lineas_registro())).is_not_empty()
 	assert_bool(_control.en_curso()).is_true()
 	var actor: Combatiente = _control.combate().turno_actual()
-	assert_str(hud.texto_activo()).starts_with("%s   PG %d/%d   Acciones " % [actor.id, actor.pg, actor.pg_maximos()])
+	assert_str(hud.texto_activo()).starts_with("%s   PG %d/%d   Acciones " % [FormatoRegistro.capitalizar(actor.nombre_visible), actor.pg, actor.pg_maximos()])
 	assert_str(hud.texto_activo()).not_contains("%")
 
 
@@ -187,7 +187,7 @@ func test_golpe_imposible_muestra_el_motivo_en_el_registro() -> void:
 	actor.acciones_restantes = 0
 	_control.click_en_celda(enemigo.celda)
 	assert_bool(await _esperar(func() -> bool: return not _control.animando())).is_true()
-	assert_str(hud.lineas_registro()[-1]).is_equal("%s: Golpe imposible (sin acciones)" % actor.id)
+	assert_str(hud.lineas_registro()[-1]).is_equal("%s: Golpe imposible (sin acciones)" % FormatoRegistro.capitalizar(actor.nombre_visible))
 
 
 func test_zancada_imposible_muestra_el_motivo_en_el_registro() -> void:
@@ -198,7 +198,7 @@ func test_zancada_imposible_muestra_el_motivo_en_el_registro() -> void:
 	var actor: Combatiente = _control.combate().turno_actual()
 	_control.click_en_celda(Vector2i(0, 0))  # pared del borde del mapa B
 	assert_bool(await _esperar(func() -> bool: return not _control.animando())).is_true()
-	assert_str(hud.lineas_registro()[-1]).is_equal("%s: Zancada imposible (fuera del alcance de la Zancada)" % actor.id)
+	assert_str(hud.lineas_registro()[-1]).is_equal("%s: Zancada imposible (fuera del alcance de la Zancada)" % FormatoRegistro.capitalizar(actor.nombre_visible))
 	assert_int(actor.acciones_restantes).is_equal(Combatiente.ACCIONES_POR_TURNO)
 
 
@@ -228,8 +228,8 @@ func test_click_lejano_hace_dos_zancadas_seguidas_como_acciones_separadas() -> v
 		func(e: EventoCombate) -> bool: return e.tipo == EventoCombate.Tipo.MOVIMIENTO)
 	assert_int(movimientos.size()).is_equal(2)
 	var lineas: PackedStringArray = hud.lineas_registro()
-	assert_str(lineas[-1]).starts_with("%s: Zancada" % actor.id)
-	assert_str(lineas[-2]).starts_with("%s: Zancada" % actor.id)
+	assert_str(lineas[-1]).starts_with("%s: Zancada" % FormatoRegistro.capitalizar(actor.nombre_visible))
+	assert_str(lineas[-2]).starts_with("%s: Zancada" % FormatoRegistro.capitalizar(actor.nombre_visible))
 	assert_that(_control.actor_de(actor.id).celda).is_equal(destino)
 	assert_array(violaciones).is_empty()
 
@@ -314,7 +314,7 @@ func test_aviso_de_golpe_reactivo_pausa_el_combate_y_siempre_dura_la_sesion() ->
 	assert_bool(await _esperar(func() -> bool: return not _control.animando())).is_true()
 	assert_bool(hud.aviso_visible()).is_false()
 	assert_int(guerrero.politica_reacciones).is_equal(Combatiente.PoliticaReaccion.SIEMPRE)
-	assert_bool(Array(hud.lineas_registro()).any(func(l: String) -> bool: return l.begins_with("Miembro1 usa Golpe reactivo")) \
+	assert_bool(Array(hud.lineas_registro()).any(func(l: String) -> bool: return l.begins_with("El Eco usa Golpe reactivo")) \
 		or _control.combate() == null or not guerrero.reaccion_disponible).is_true()
 	assert_array(violaciones).is_empty()
 
@@ -350,7 +350,7 @@ func test_la_bruja_lanza_mal_de_ojo_desde_el_mapa() -> void:
 	_control.click_en_celda(junto)
 	assert_bool(await _esperar(func() -> bool: return not _control.animando())).is_true()
 	assert_bool(Array(hud.lineas_registro()).any(func(l: String) -> bool:
-		return l == "Miembro4 lanza Mal de ojo sobre EnemigoCuerpoACuerpo")).is_true()
+		return l == "Vaisha lanza Mal de ojo sobre EnemigoCuerpoACuerpo")).is_true()
 	assert_int(bruja.acciones_restantes).is_equal(2)
 	# Ficha al pasar el cursor por el enemigo.
 	_control.mover_cursor(junto)

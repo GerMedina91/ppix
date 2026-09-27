@@ -68,3 +68,20 @@ func test_arcadas_en_el_registro() -> void:
 	combate.turno_actual().condiciones.aplicar(EfectoCondicion.new(Condiciones.Tipo.INDISPUESTO, 2, 15))
 	var evento: EventoCombate = combate.arcadas()[0]
 	assert_str(FormatoRegistro.texto(evento, combate)).is_equal("pj: Arcadas, Fortaleza 17 contra CD 15: éxito (indispuesto 1)")
+
+
+func test_los_nombres_de_la_party_se_muestran_con_articulo_y_contraccion() -> void:
+	var eco: Combatiente = Combatiente.desde_personaje(&"Miembro1", ArmadorPersonaje.armar(load("res://data/builds/guerrero.tres")), Vector2i(0, 0))
+	eco.nombre_visible = "el Eco"
+	var irsa: Combatiente = Combatiente.desde_personaje(&"Miembro2", ArmadorPersonaje.armar(load("res://data/builds/picaro.tres")), Vector2i(1, 0))
+	irsa.nombre_visible = "Irsa"
+	var participantes: Array[Combatiente] = [eco, irsa]
+	var grilla: GrillaMapa = GrillaMapa.new(Rect2i(0, 0, 3, 3))
+	var combate: Combate = Combate.new(participantes, grilla, Dados.new(1))
+	var muerte: EventoCombate = EventoCombate.new(EventoCombate.Tipo.MUERTE, &"Miembro1", {})
+	assert_str(FormatoRegistro.texto(muerte, combate)).is_equal("El Eco muere")
+	var especial: EventoCombate = EventoCombate.new(EventoCombate.Tipo.ACCION_ESPECIAL, &"Miembro2",
+		{"accion": "Medicina en batalla", "objetivo": &"Miembro1"})
+	assert_str(FormatoRegistro.texto(especial, combate)).is_equal("Irsa usa Medicina en batalla sobre el Eco")
+	var fin: EventoCombate = EventoCombate.new(EventoCombate.Tipo.FIN_CONJURO, &"Miembro1", {"conjuro": load("res://data/conjuros/miedo.tres")})
+	assert_str(FormatoRegistro.texto(fin, combate)).is_equal("Termina Miedo del Eco")

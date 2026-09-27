@@ -1,7 +1,7 @@
 class_name PanelPuntoEstable
 extends CanvasLayer
-## Panel de un punto estable (M4c, funcional y placeholder): Descansar o Seguir. Solo presenta y avisa; el
-## descanso lo aplica el Mundo. Aspecto del EstiloHud. Esc o click derecho (`cancelar_accion`) cierra.
+## Panel de un punto estable (M4c, funcional y placeholder): Descansar o Seguir; al descansar, el sueño (si
+## hay). Solo presenta y avisa; el descanso lo aplica el Mundo. Aspecto del EstiloHud. Esc o click derecho (`cancelar_accion`) cierra.
 
 signal descanso_pedido(punto: PuntoEstable)
 signal cerrado
@@ -34,9 +34,9 @@ func abrir(punto: PuntoEstable) -> void:
 	visible = true
 
 
-## Tras descansar: lo confirma y deja solo Seguir.
-func mostrar_descansado() -> void:
-	_texto.text = DESCANSADO
+## Tras descansar: lo confirma (con el sueño, si hubo) y deja solo Seguir.
+func mostrar_descansado(sueno: DefinicionSueno = null) -> void:
+	_texto.text = DESCANSADO if sueno == null else "%s\n\n%s" % [DESCANSADO, sueno.texto]
 	_descansar.visible = false
 
 

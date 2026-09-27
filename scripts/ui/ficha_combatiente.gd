@@ -35,7 +35,7 @@ func texto_para(celda: Vector2i) -> String:
 
 
 static func ficha(c: Combatiente) -> String:
-	var lineas: PackedStringArray = PackedStringArray([String(c.id)])
+	var lineas: PackedStringArray = PackedStringArray([FormatoRegistro.capitalizar(c.nombre_visible)])
 	if c.bando == Combatiente.Bando.PARTY:
 		lineas.append("PG %d/%d" % [c.pg, c.pg_maximos()])
 	var condiciones: String = FormatoRegistro.condiciones_de(c)

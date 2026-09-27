@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="DefinicionSueno" format=3]
+
+[ext_resource type="Script" path="res://rules/suenos/definicion_sueno.gd" id="1_sueno"]
+
+[resource]
+script = ExtResource("1_sueno")
+id = &"sueno_placeholder_2"
+texto = "TODO_LORE: sueño 2."

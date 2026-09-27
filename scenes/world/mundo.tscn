@@ -19,12 +19,14 @@
 [ext_resource type="Script" path="res://scripts/debug/atajos_depuracion.gd" id="15_52jc1"]
 [ext_resource type="Script" path="res://scripts/ui/panel_punto_estable.gd" id="16_pnlpe"]
 [ext_resource type="Resource" path="res://data/config/estilo_hud.tres" id="17_estil"]
+[ext_resource type="Resource" path="res://data/suenos/catalogo_suenos.tres" id="18_suen"]
 
 [node name="Mundo" type="Node2D" unique_id=459014428]
 y_sort_enabled = true
 script = ExtResource("1_8cwwk")
 catalogo = ExtResource("2_kn5no")
 config = ExtResource("4_h2l7i")
+suenos = ExtResource("18_suen")
 id_mapa_inicial = &"mapa_prueba_a"
 id_entrada_inicial = &"inicio"
 

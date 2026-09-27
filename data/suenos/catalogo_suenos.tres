@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="CatalogoSuenos" format=3]
+
+[ext_resource type="Script" path="res://rules/suenos/catalogo_suenos.gd" id="1_cat"]
+[ext_resource type="Script" path="res://rules/suenos/definicion_sueno.gd" id="2_def"]
+[ext_resource type="Resource" path="res://data/suenos/sueno_placeholder_1.tres" id="3_s1"]
+[ext_resource type="Resource" path="res://data/suenos/sueno_placeholder_2.tres" id="4_s2"]
+
+[resource]
+script = ExtResource("1_cat")
+suenos = Array[ExtResource("2_def")]([ExtResource("3_s1"), ExtResource("4_s2")])

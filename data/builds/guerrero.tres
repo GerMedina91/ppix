@@ -13,7 +13,7 @@
 [resource]
 script = ExtResource("6_qvkld")
 id = &"guerrero"
-nombre = "TODO_LORE: guerrero de prueba"
+nombre = "el Eco"
 clase = ExtResource("5_vx711")
 ascendencia = ExtResource("4_31oeh")
 mejoras_ascendencia = Array[int]([0, 2])

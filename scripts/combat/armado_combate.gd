@@ -11,6 +11,7 @@ static func participantes(party: ControlParty, encuentro: Encuentro, siempre: Ca
 	var actores: Dictionary[StringName, ActorMapa] = {}
 	for miembro: MiembroParty in party.miembros():
 		var c: Combatiente = Combatiente.desde_personaje(StringName(miembro.name), miembro.definicion_de_reglas(), miembro.celda)
+		c.nombre_visible = miembro.nombre_visible()
 		EstadoPartyCombate.aplicar(c)
 		if siempre.call(c.id):
 			c.politica_reacciones = Combatiente.PoliticaReaccion.SIEMPRE

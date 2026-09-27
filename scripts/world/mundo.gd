@@ -8,6 +8,8 @@ extends Node2D
 
 @export var catalogo: CatalogoMapas
 @export var config: ConfigExploracion
+## Sueños al descansar en un punto estable.
+@export var suenos: CatalogoSuenos
 @export var id_mapa_inicial: StringName = &""
 @export var id_entrada_inicial: StringName = &""
 
@@ -84,7 +86,16 @@ func _descansar(punto: PuntoEstable) -> void:
 	GameState.id_ultimo_punto_estable = punto.id
 	GameState.id_mapa_ultimo_punto_estable = GameState.id_mapa_actual
 	EventBus.punto_estable_activado.emit(punto.id)
-	_panel_punto.mostrar_descansado()
+	_panel_punto.mostrar_descansado(_sonar())
+
+
+## El próximo sueño sin ver (o ninguno): queda visto y se avisa por EventBus.
+func _sonar() -> DefinicionSueno:
+	var sueno: DefinicionSueno = suenos.proximo(GameState.suenos_vistos) if suenos != null else null
+	if sueno != null:
+		GameState.suenos_vistos.append(sueno.id)
+		EventBus.sueno_en_descanso.emit(sueno.id)
+	return sueno
 
 
 ## Si la formación no alcanza para todos, los que faltan van a la última casilla.

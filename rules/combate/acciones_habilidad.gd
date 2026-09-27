@@ -137,7 +137,7 @@ func recordar_conocimiento(id_objetivo: StringName) -> Array[EventoCombate]:
 		GradoExito.Grado.FALLO_CRITICO:
 			revelada = _otra_salvacion(objetivo)
 	if revelada != null:
-		objetivo.conocimiento = {"salvacion_debil": revelada, "segun": actor.id}
+		objetivo.conocimiento = {"salvacion_debil": revelada, "segun": actor.nombre_visible}
 	# Rasgo secreto: el evento no lleva la tirada, solo si recordó algo (verdadero o no).
 	return [combate.emitir(EventoCombate.new(EventoCombate.Tipo.RESULTADO_ESPECIAL, actor.id,
 		{"accion": ACCION_RECORDAR, "objetivo": objetivo.id, "secreto": true, "recordo": revelada != null,

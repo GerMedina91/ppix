@@ -20,6 +20,8 @@ const _CAMBIO_MORIBUNDO_POR_GRADO: Dictionary[GradoExito.Grado, int] = {
 }
 
 var id: StringName = &""
+## Nombre que se muestra (HUD, registro). Por defecto, el id; la presentación pone el de la party (Irsa, el Eco...).
+var nombre_visible: String = ""
 var bando: Bando = Bando.PARTY
 var celda: Vector2i = Vector2i.ZERO
 var pg: int = 0
@@ -40,7 +42,7 @@ var floritura_en_turno: bool = false
 ## Sanadores cuya Medicina en batalla ya recibió (inmune hasta descansar en un punto estable).
 var inmune_medicina_de: Dictionary[StringName, bool] = {}
 ## Lo que la party cree saber de este combatiente por Recordar conocimiento:
-## {"salvacion_debil": Estadisticas.Salvacion, "segun": id de quien lo recordó} (puede ser falso).
+## {"salvacion_debil": Estadisticas.Salvacion, "segun": nombre de quien lo recordó} (puede ser falso).
 var conocimiento: Dictionary = {}
 ## Bonificador de estatus a la Velocidad hasta el final del turno (Pies ágiles).
 var bonificador_velocidad: int = 0
@@ -48,6 +50,7 @@ var bonificador_velocidad: int = 0
 
 func _init(id_combatiente: StringName, fuente_estadisticas: FuenteEstadisticas, bando_combatiente: Bando, celda_inicial: Vector2i) -> void:
 	id = id_combatiente
+	nombre_visible = String(id_combatiente)
 	fuente = fuente_estadisticas
 	bando = bando_combatiente
 	celda = celda_inicial

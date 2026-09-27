@@ -16,10 +16,16 @@ static func aplicar(c: Combatiente) -> void:
 	c.conjuros.aplicar_estado(guardado.get("conjuros", {}))
 
 
-## Guarda el estado de los miembros al ganar. Los moribundos se estabilizan antes.
+## Puntos de foco que se recuperan al terminar cada combate (GDD, M3c: versión simplificada de Reenfocar).
+const FOCO_POR_COMBATE: int = 1
+
+
+## Guarda el estado de los miembros al ganar. Los moribundos se estabilizan antes y cada uno recupera
+## FOCO_POR_COMBATE punto de foco.
 static func guardar(party: ControlParty, combate: Combate) -> void:
 	for miembro: MiembroParty in party.miembros():
 		var c: Combatiente = combate.combatiente(StringName(miembro.name))
 		c.estabilizar()
+		c.conjuros.recuperar_foco(FOCO_POR_COMBATE)
 		GameState.estado_party[c.id] = {"pg": c.pg, "herido": c.condiciones.herido, "muerto": c.condiciones.muerto,
 			"conjuros": c.conjuros.estado()}

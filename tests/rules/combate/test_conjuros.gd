@@ -257,3 +257,13 @@ func test_lo_gastado_se_guarda_y_se_restaura() -> void:
 	assert_int(otra.conjuros.restantes(load(DEBILITAR))).is_equal(0)
 	otra.restaurar_por_completo()
 	assert_int(otra.conjuros.restantes(load(DEBILITAR))).is_equal(1)
+
+
+func test_recuperar_foco_no_pasa_del_maximo() -> void:
+	var clerigo: Combatiente = _personaje(&"c", CLERIGO, Vector2i.ZERO)
+	assert_int(clerigo.conjuros.foco_maximo()).is_equal(1)
+	clerigo.conjuros.gastar(load(PIES))
+	clerigo.conjuros.recuperar_foco(1)
+	assert_int(clerigo.conjuros.foco).is_equal(1)
+	clerigo.conjuros.recuperar_foco(1)
+	assert_int(clerigo.conjuros.foco).is_equal(1)

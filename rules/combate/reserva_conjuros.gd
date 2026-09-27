@@ -27,6 +27,11 @@ func foco_maximo() -> int:
 	return mini(conjuros_foco.size(), FOCO_MAXIMO)
 
 
+## Recupera `puntos` de foco sin pasar del máximo (decisión de diseño: 1 al terminar cada combate).
+func recuperar_foco(puntos: int) -> void:
+	foco = mini(foco + puntos, foco_maximo())
+
+
 func restaurar() -> void:
 	usados.resize(espacios.size())
 	usados.fill(false)

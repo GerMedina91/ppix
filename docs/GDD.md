@@ -149,6 +149,27 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
   - Curar (C5): 1 acción toque, 2 acciones 30 pies y +8, 3 acciones emanación de 30 pies. El clérigo tiene 4 espacios de fuente divina solo para Curar. Los enemigos no aceptan curación de objetivo único, pero la emanación cura a todos los seres vivos que estén dentro (incluidos enemigos), como dicen las reglas. Selección: tecla del conjuro y después 1-3 para las acciones (placeholder hasta la barra de C6).
   - Huyendo simplificado: en su turno solo puede hacer Zancadas o Pasos que terminen más lejos de la fuente del miedo (party e IA).
   - Pasos: C4a condiciones y estadísticas de conjuro → C4b motor de lanzamiento (Mal de ojo, Debilitar, Pies ágiles, Sostener, un maleficio por turno, manipular dispara el Golpe reactivo) → C4c el resto de la lista.
+  - **M3c cerrado (2026-09-27).** Resumen:
+    - **Clases y builds (C1):** competencias por categoría, 16 habilidades, ascendencia humana, guerrero, pícaro (Ladrón), clérigo (Enclaustrado, El Umbral: viaje, sueños, muerte) y bruja (El Rencor), armados y validados por `ArmadorPersonaje`. La party del mundo usa los 4 builds.
+    - **Capacidades (C2):** ataque furtivo y Destreza al daño del Ladrón.
+    - **Reacciones (C3):** Golpe reactivo (también ante manipular, con interrupción por crítico) y Esquiva ágil (también ante ataques de conjuro); aviso [Sí] [No] [Siempre] con el combate en pausa; reacciones desde el primer turno.
+    - **Condiciones y conjuros (C4):** asustado, indispuesto, debilitado, aturdido y huyendo con duraciones y pisos; Arcadas; ataque y CD de conjuro; trucos, espacios, reserva de foco y fuente divina; Sostener; un maleficio por turno; salvación básica, ataques de conjuro, no letal y Estabilizar. Lista completa del slice: Mal de ojo, Debilitar, Miedo, Proyectil telequinético, Aturdir, Lanza divina, Estabilizar, Pies ágiles y Curar.
+    - **Costo variable y áreas (C5):** Curar de 1 a 3 acciones con emanación de 30 pies.
+    - **Presentación (C6):** barra de acciones con selector de costo e interruptor para incluirse en la emanación, ficha del combatiente bajo el cursor, atajos en el InputMap (1-9, Esc/click derecho, E, Espacio), estilo del HUD centralizado en `EstiloHud` (`data/config/estilo_hud.tres`).
+    - **Recuperación (C7, parcial):** 1 punto de foco al terminar cada combate. PG y espacios en puntos estables llegan con los puntos estables (M4); hasta entonces, F4 (depuración) restaura todo.
+    - **Rendimiento y estructura:** previsión de movimiento por punto de decisión; `Combate` delega en `AccionesMovimiento`, `AccionesGolpe`, `AccionesConjuro` (+ `ObjetivosConjuro`, `EfectosConjuro`), `CicloTurno` y `ReglasCondiciones`; tests rápidos (`-Rapidos`) y de integración separados.
+    - Verificación de reglas en `docs/verificacion/` (c1, c3, c4, c5); capturas en `docs/capturas/c4`, `c5` y `c6`.
+  - **Pendientes que deja M3c:**
+    - Recuperación de PG y espacios en puntos estables (con M4). "Siempre" del aviso de reacción reversible desde un menú futuro.
+    - Guerrero: Carga repentina (verificada, sin implementar; rasgo floritura).
+    - Duraciones de un lanzador muerto (hoy quedan congeladas; los sostenidos sí terminan).
+    - Esquiva ágil: requisito de no estar impedido (no hay carga todavía).
+    - Pies ágiles: la opción de Pasar haciendo acrobacias como parte del lanzamiento, e ignorar terreno difícil (no hay terreno difícil).
+    - Inmunidades a daño mental y de espíritu, y muertos vivientes reales (el soporte existe; ninguna criatura lo usa).
+    - IA: no lanza conjuros; cuando lo haga, nunca elige aliados para conjuros dañinos.
+    - Familiar de la bruja y sus maleficios de foco; santificación, edictos y anatemas con efecto mecánico; Saber (*Lore*); dote de habilidad del trasfondo; ascendencias reales (hoy humano placeholder).
+    - Aproximaciones: línea de efecto = línea de visión; en criaturas, el ataque cuerpo a cuerpo sin sutil se toma como de Fuerza (para debilitado); huyendo simplificado.
+  - **A verificar (terminología):** todos los términos del glosario marcados **Provisorio** están pendientes de confirmar contra la edición oficial en castellano (condiciones, conjuros, rasgos, acciones, clases, armas). Marcados **A verificar** (no van a UI ni textos): grado de éxito, competencia / rango de competencia, bonificador por competencia, modificador de atributo, bonificador / penalizador, sin tipo, CD de clase, atributo clave, tope de Destreza, 20 natural / 1 natural.
 - **Después de M3:** cobertura (menor / normal / mayor) calculada con la línea de visión; posicionamiento previo de la party antes del combate.
 - **M4 — Recuerdos:** inventario de recuerdos, compra/venta, diario, pérdida al morir.
   - **Idea de diseño (no implementar):** los enemigos que quedan inconscientes podrían quedarse en el mapa después de la victoria para que el jugador decida qué hacer con ellos (interrogar, perdonar, rematar, extraerles recuerdos). Por ahora se sacan del mapa.
@@ -209,6 +230,8 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
 | 2026-09-25 | **M3 cerrado.** |
 | 2026-09-25 | Conjuros del slice (decisión del director, Germán puede vetar): clérigo Lanza divina, Estabilizar, Miedo, Curar; bruja Mal de ojo, Proyectil telequinético (sin objeto suelto), Aturdir, Debilitar, Miedo. Huyendo simplificado: solo movimientos que alejan de la fuente. |
 | 2026-09-25 | Reacciones antes del primer turno habilitadas para ambos bandos (opción de ConfigCombate, true por defecto). Conjuros sobre aliados permitidos con otro color; la IA no elige aliados para conjuros dañinos. |
+| 2026-09-27 | 1 punto de foco al terminar cada combate (implementado al cerrar M3c). |
+| 2026-09-27 | **M3c cerrado.** |
 | 2026-09-25 | Dominios de El Umbral: viaje, sueños y **muerte** (Player Core p. 39, verificado en AoN). Muerte reemplaza a vigilia; vigilia y reposo solo están en *Divine Mysteries*. |
 | 2026-09-25 | Clases del slice: guerrero, pícaro, clérigo y bruja (Player Core, Remaster), nivel 1. |
 | 2026-09-25 | `remata_caidos`: **decidido**, depende de cada criatura (perfil de IA en `DefinicionCriatura`). |

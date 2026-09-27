@@ -108,6 +108,8 @@ func test_combate_completo_vuelve_a_exploracion() -> void:
 		assert_bool(_party.bloqueado).is_false()
 		assert_int(encuentro.enemigos().size()).is_equal(0)
 		assert_int(GameState.estado_party.size()).is_equal(4)
+		# El clérigo (Miembro3) conserva su punto de foco: se recupera 1 al terminar cada combate.
+		assert_int(GameState.estado_party[&"Miembro3"].conjuros.foco).is_equal(1)
 	else:
 		# Derrota (placeholder hasta M4): la party vuelve a la entrada con los PG completos.
 		assert_bool(GameState.estado_party.is_empty()).is_true()

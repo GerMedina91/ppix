@@ -62,6 +62,8 @@ static func texto(evento: EventoCombate, combate: Combate) -> String:
 			return "%s sostiene %s" % [actor, (evento.datos.conjuro as DefinicionConjuro).nombre]
 		EventoCombate.Tipo.FIN_CONJURO:
 			return "Termina %s de %s" % [(evento.datos.conjuro as DefinicionConjuro).nombre, actor]
+		EventoCombate.Tipo.RESULTADO_ESPECIAL:
+			return _resultado_especial(evento)
 		EventoCombate.Tipo.ACCION_ESPECIAL:
 			return "%s usa %s contra %s" % [actor, evento.datos.accion, evento.datos.objetivo]
 		EventoCombate.Tipo.ARCADAS:
@@ -108,6 +110,21 @@ static func _tirada_con_desglose(r: ResultadoPrueba) -> String:
 	for parte: Dictionary in r.desglose:
 		partes.append("%+d %s" % [parte.valor, parte.fuente])
 	return "%d (%s)" % [r.natural, ", ".join(partes)]
+
+
+## "g: Medicina 17 contra CD 15: éxito, p recupera 9 PG"; Recordar conocimiento (secreto): sin la tirada.
+static func _resultado_especial(evento: EventoCombate) -> String:
+	if evento.datos.get("secreto", false):
+		if evento.datos.recordo:
+			return "%s recuerda algo sobre %s (%s)" % [evento.actor, evento.datos.objetivo, Habilidad.nombre(evento.datos.habilidad)]
+		return "%s no recuerda nada sobre %s" % [evento.actor, evento.datos.objetivo]
+	var r: ResultadoPrueba = evento.datos.resultado
+	var texto: String = "%s: %s %d contra CD %d: %s" % [evento.actor, evento.datos.accion, r.total, r.cd, GradoExito.nombre(r.grado)]
+	if evento.datos.curacion > 0:
+		texto += ", %s recupera %d PG" % [evento.datos.objetivo, evento.datos.curacion]
+	elif evento.datos.danio > 0:
+		texto += ", %s recibe %d de daño" % [evento.datos.objetivo, evento.datos.danio]
+	return texto
 
 
 ## Texto del aviso de reacción: "Miembro1: ¿usar Golpe reactivo contra X?".

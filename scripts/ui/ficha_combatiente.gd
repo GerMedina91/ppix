@@ -40,4 +40,7 @@ static func ficha(c: Combatiente) -> String:
 		lineas.append("PG %d/%d" % [c.pg, c.pg_maximos()])
 	var condiciones: String = FormatoRegistro.condiciones_de(c)
 	lineas.append(condiciones if not condiciones.is_empty() else "sin condiciones")
+	if c.conocimiento.has("salvacion_debil"):
+		lineas.append("Salvación más débil: %s (según %s)" % [
+			Estadisticas.nombre_salvacion(c.conocimiento.salvacion_debil), c.conocimiento.segun])
 	return "\n".join(lineas)

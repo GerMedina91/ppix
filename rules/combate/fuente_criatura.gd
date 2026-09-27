@@ -57,7 +57,16 @@ func prueba_habilidad(habilidad: Habilidad.Tipo) -> Prueba:
 
 
 func es_muerto_viviente() -> bool:
-	return _criatura.muerto_viviente
+	return _criatura.rasgo == RasgoCriatura.Tipo.MUERTO_VIVIENTE
+
+
+func rasgo() -> RasgoCriatura.Tipo:
+	return _criatura.rasgo
+
+
+## CD de Recordar conocimiento sobre esta criatura (por nivel y rareza).
+func cd_recordar() -> int:
+	return RasgoCriatura.cd_recordar(_criatura.nivel, _criatura.rareza)
 
 
 func remata_caidos() -> bool:

@@ -39,6 +39,7 @@ var conjuros: AccionesConjuro = AccionesConjuro.new(self)
 var golpes: AccionesGolpe = AccionesGolpe.new(self)
 ## Acciones de dotes y habilidades (Carga repentina, Medicina en batalla, Recordar conocimiento).
 var especiales: AccionesEspeciales = AccionesEspeciales.new(self)
+var habilidades: AccionesHabilidad = AccionesHabilidad.new(self)
 ## La presentación lo activa: después de usar una reacción, la acción interrumpida no sigue sola; espera
 ## continuar(), así se puede animar la reacción con el estado del combate en ese punto.
 var pausar_tras_reacciones: bool = false

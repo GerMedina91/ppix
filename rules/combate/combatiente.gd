@@ -37,6 +37,11 @@ var conjuros: ReservaConjuros
 var maleficio_en_turno: bool = false
 ## Ya usó una acción con el rasgo floritura en este turno (Player Core p. 139: una por ronda).
 var floritura_en_turno: bool = false
+## Sanadores cuya Medicina en batalla ya recibió (inmune hasta descansar en un punto estable).
+var inmune_medicina_de: Dictionary[StringName, bool] = {}
+## Lo que la party cree saber de este combatiente por Recordar conocimiento:
+## {"salvacion_debil": Estadisticas.Salvacion, "segun": id de quien lo recordó} (puede ser falso).
+var conocimiento: Dictionary = {}
 ## Bonificador de estatus a la Velocidad hasta el final del turno (Pies ágiles).
 var bonificador_velocidad: int = 0
 

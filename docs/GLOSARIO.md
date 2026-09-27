@@ -106,3 +106,10 @@ Términos de reglas en castellano, según la edición oficial en castellano de l
 | willing | que acepte | — | Provisorio |
 | undead / vitality (daño) | muerto viviente / de vitalidad | `muerto_viviente`, `VITALIDAD` | Provisorio |
 | variable-cost spell | conjuro de costo variable | `VarianteConjuro`, `variantes` | Provisorio |
+| creature trait (aberration, undead, humanoid...) | rasgo de criatura (aberración, muerto viviente, humanoide...) | `RasgoCriatura` | Provisorio |
+| rarity (common / uncommon / rare / unique) | rareza (común / poco común / rara / única) | `Rareza` | Provisorio |
+| Recall Knowledge / secret (trait) | Recordar conocimiento / secreto | `recordar_conocimiento()` | Provisorio |
+| Battle Medicine / Treat Wounds | Medicina en batalla / Tratar heridas | `medicina_en_batalla()` | Provisorio |
+| Diehard / Sudden Charge / flourish | Duro de matar / Carga repentina / floritura | `duro_de_matar`, `carga_repentina`, `floritura_en_turno` | Provisorio |
+| nonlethal attack | ataque no letal | `no_letal` | Provisorio |
+| memory (skill / experience / of the Mourner) | recuerdo (de destreza / vivencia / del Doliente) | `DefinicionRecuerdo` | Provisorio |

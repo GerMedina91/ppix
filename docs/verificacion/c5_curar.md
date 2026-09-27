@@ -23,4 +23,4 @@ resumidas y referencias.
 - Enemigos: no aceptan una curación con objetivo único; la emanación de 3 acciones sí los cura si están dentro,
   porque afecta a todos los seres vivos.
 - La línea de efecto se aproxima con la línea de visión (`LineaVision`).
-- Muertos vivientes: `DefinicionCriatura.muerto_viviente` (ninguna criatura del slice lo es todavía).
+- Muertos vivientes: rasgo `MUERTO_VIVIENTE` de la criatura (`DefinicionCriatura.rasgo`).

@@ -87,6 +87,16 @@ func remata_caidos() -> bool:
 	return false
 
 
+## Rasgo de tipo (los personajes son humanoides).
+func rasgo() -> RasgoCriatura.Tipo:
+	return RasgoCriatura.Tipo.HUMANOIDE
+
+
+## CD de Recordar conocimiento sobre este combatiente.
+func cd_recordar() -> int:
+	return RasgoCriatura.cd_recordar(nivel(), RasgoCriatura.Rareza.COMUN)
+
+
 ## Muerto viviente (Curar lo daña en vez de curarlo).
 func es_muerto_viviente() -> bool:
 	return false

@@ -14,6 +14,8 @@ static func aplicar(c: Combatiente) -> void:
 	c.condiciones.muerto = guardado.get("muerto", false)
 	c.condiciones.inconsciente = c.pg == 0 and not c.condiciones.muerto
 	c.conjuros.aplicar_estado(guardado.get("conjuros", {}))
+	for sanador: Variant in guardado.get("inmune_medicina", []):
+		c.inmune_medicina_de[StringName(sanador)] = true
 
 
 ## Puntos de foco que se recuperan al terminar cada combate (GDD, M3c: versión simplificada de Reenfocar).
@@ -28,4 +30,4 @@ static func guardar(party: ControlParty, combate: Combate) -> void:
 		c.estabilizar()
 		c.conjuros.recuperar_foco(FOCO_POR_COMBATE)
 		GameState.estado_party[c.id] = {"pg": c.pg, "herido": c.condiciones.herido, "muerto": c.condiciones.muerto,
-			"conjuros": c.conjuros.estado()}
+			"conjuros": c.conjuros.estado(), "inmune_medicina": c.inmune_medicina_de.keys()}

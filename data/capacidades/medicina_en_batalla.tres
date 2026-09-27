@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="Capacidad" format=3]
+
+[ext_resource type="Script" path="res://rules/capacidades/capacidad.gd" id="1_74jgb"]
+
+[resource]
+script = ExtResource("1_74jgb")
+id = &"medicina_en_batalla"
+nombre = "Medicina en batalla"

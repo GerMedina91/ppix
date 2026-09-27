@@ -24,6 +24,9 @@ enum Tipo {
 	FIN_CONJURO,
 	## Acción de una dote o habilidad (ya pagada): {"accion": nombre, "objetivo"}.
 	ACCION_ESPECIAL,
+	## Resultado de una acción de habilidad: {"accion", "objetivo", "resultado" (salvo si es secreta),
+	## "curacion", "danio", "levanta"; secreta: "secreto": true, "recordo": bool, "habilidad"}.
+	RESULTADO_ESPECIAL,
 }
 
 var tipo: Tipo

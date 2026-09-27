@@ -121,7 +121,7 @@ func test_curar_a_un_moribundo_lo_levanta() -> void:
 func test_a_un_muerto_viviente_le_hace_dano_de_vitalidad_con_fortaleza_basica() -> void:
 	# Fortaleza +8 contra CD 17: 2 = 10 fallo, daño completo (1d8 = 6; sin el +8, que es solo para curar).
 	var muerto: DefinicionCriatura = (load(ENEMIGO) as DefinicionCriatura).duplicate()
-	muerto.muerto_viviente = true
+	muerto.rasgo = RasgoCriatura.Tipo.MUERTO_VIVIENTE
 	var combate: Combate = _combate([6, 2], Vector2i(3, 2), Vector2i(6, 2), muerto)
 	var efecto: EventoCombate = _efectos(combate.lanzar_conjuro(load(CURAR), &"e", AccionesConjuro.SIN_CELDA, [], false, 2))[0]
 	assert_int(efecto.datos.danio).is_equal(6)

@@ -150,6 +150,7 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
   - Pasos: C4a condiciones y estadísticas de conjuro → C4b motor de lanzamiento (Mal de ojo, Debilitar, Pies ágiles, Sostener, un maleficio por turno, manipular dispara el Golpe reactivo) → C4c el resto de la lista.
 - **Después de M3:** cobertura (menor / normal / mayor) calculada con la línea de visión; posicionamiento previo de la party antes del combate.
 - **M4 — Recuerdos:** inventario de recuerdos, compra/venta, diario, pérdida al morir.
+  - **Idea de diseño (no implementar):** los enemigos que quedan inconscientes podrían quedarse en el mapa después de la victoria para que el jugador decida qué hacer con ellos (interrogar, perdonar, rematar, extraerles recuerdos). Por ahora se sacan del mapa.
 - **M5 — Contenido del slice:** mapas, NPCs, diálogos, arte final.
 
 ## 9. Preguntas abiertas

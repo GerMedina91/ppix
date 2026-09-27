@@ -1,0 +1,8 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/pantalla_inicio.gd" id="1_ini"]
+[ext_resource type="Resource" path="res://data/config/estilo_hud.tres" id="2_est"]
+
+[node name="Inicio" type="CanvasLayer"]
+script = ExtResource("1_ini")
+estilo = ExtResource("2_est")

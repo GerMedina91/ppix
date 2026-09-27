@@ -16,3 +16,10 @@ signal punto_estable_activado(id_punto: StringName)
 
 ## Se emite cuando el Eco sueña al descansar en un punto estable (contenido TODO_LORE).
 signal sueno_en_descanso(id_sueno: StringName)
+
+## Se emite enseguida después de un cambio que no se deshace (SaveSystem autoguarda): compra o venta,
+## integrar / soltar / ver, tomar o extraer un recuerdo, destino de un enemigo, rearmado del Eco, fin de combate.
+signal cambio_irreversible(motivo: String)
+
+## Lo emite SaveSystem justo antes de escribir: el mundo anota en GameState dónde está la party.
+signal antes_de_guardar

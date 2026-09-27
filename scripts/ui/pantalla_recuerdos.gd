@@ -72,6 +72,7 @@ func integrar(recuerdo: DefinicionRecuerdo) -> void:
 		_mensaje.text = motivo
 		return
 	_inventario().integrar(recuerdo)
+	EventBus.cambio_irreversible.emit("recuerdo visto" if recuerdo.se_ve() else "recuerdo integrado")
 	if recuerdo.se_ve():
 		_mensaje.text = "Visto: %s (quedó en el diario)" % recuerdo.nombre
 		_pestana = Pestana.DIARIO
@@ -88,6 +89,7 @@ func soltar(recuerdo: DefinicionRecuerdo, confirmado: bool = false) -> void:
 		_por_soltar = recuerdo
 	else:
 		_inventario().soltar_integrado(recuerdo)
+		EventBus.cambio_irreversible.emit("recuerdo soltado")
 		_por_soltar = null
 		_mensaje.text = "Soltaste %s: se perdió para siempre" % recuerdo.nombre
 	actualizar()

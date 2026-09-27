@@ -21,6 +21,7 @@ func tomar_objeto(objeto: ObjetoRecuerdo, mapa: Mapa) -> void:
 	GameState.mundo.tomar_objeto(GameState.id_mapa_actual, StringName(objeto.name))
 	mapa.quitar_interactuable(objeto)
 	aviso.mostrar("El Eco toma un recuerdo: %s" % objeto.recuerdo.nombre)
+	EventBus.cambio_irreversible.emit("recuerdo tomado")
 
 
 ## Tras una victoria: el jugador decide qué hacer con cada enemigo inconsciente (vuelve cuando terminó).
@@ -39,6 +40,7 @@ func resolver_inconscientes(resultado: ResultadoCombate, encuentro: Encuentro) -
 		_aplicar_destino(id, elegida, recuerdo)
 		GameState.mundo.retirar_enemigo(GameState.id_mapa_actual, id)
 		enemigo.queue_free()
+		EventBus.cambio_irreversible.emit("destino de un enemigo")
 
 
 func _aplicar_destino(id: StringName, elegida: String, recuerdo: DefinicionRecuerdo) -> void:
@@ -67,6 +69,7 @@ func extraer_de_cuerpo(cuerpo: CuerpoCompanero) -> void:
 	for recuerdo: DefinicionRecuerdo in miembro.recuerdos_del_cuerpo:
 		GameState.recuerdos.inventario.agregar_suelto(recuerdo)
 	GameState.mundo.extraer_cuerpo(cuerpo.id_miembro)
+	EventBus.cambio_irreversible.emit("recuerdos de un compañero")
 	aviso.mostrar("El Eco extrae %d recuerdos de %s" % [miembro.recuerdos_del_cuerpo.size(), miembro.nombre_visible()])
 
 

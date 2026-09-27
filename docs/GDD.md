@@ -94,6 +94,10 @@ Con la Convergencia, los recuerdos se volvieron extraíbles y tangibles.
 - Sin guardado libre y sin guardado durante el combate.
 - Al morir, el Eco vuelve al **último punto estable** con recuerdos perdidos. El estado del mundo no se revierte: el punto estable define dónde reaparece, no a qué momento se vuelve.
 - Implicancia técnica: SaveSystem guarda un estado continuo del mundo (sin "volver atrás") más la referencia al último punto estable visitado. El autoguardado al cambiar de mapa persiste el progreso; no es un punto de reaparición.
+- **Anti-savescum (decidido 2026-09-27, M4g):** una sola ranura y un mundo que no retrocede.
+  - Además de descansar y cambiar de mapa, se autoguarda enseguida después de cada evento irreversible: muerte y rearmado del Eco (con el residuo y la elección del recuerdo perdido), compra y venta en el Tasador, integrar / soltar / ver, tomar o extraer un recuerdo, destino de un enemigo inconsciente, fin de combate (incluida la muerte de compañeros).
+  - Al iniciar un combate se guarda el estado previo al primer turno: si el jugador cierra en medio, al cargar ese combate vuelve a empezar desde su comienzo (mismo RNG), no desde antes del encuentro.
+  - Escritura atómica (temporal + renombrado), campo de versión con punto de entrada para migraciones, pantalla de inicio con Continuar / Nueva partida (confirmación si pisa la existente).
 
 ### 4.4 Exploración
 Mundo no lineal, muchos mapas conectados, mínimos o nulos marcadores de misión.
@@ -252,6 +256,26 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
     - Barra de combate: las opciones sin objetivos válidos se muestran en gris con el motivo más repetido como tooltip (`SinObjetivos`) y su atajo no las elige.
     - **[propuesta]** Atajo de teclado para abrir los recuerdos (p. ej. R): requiere sumar una acción al InputMap.
     - Capturas `m4/23` a `27` (el tooltip no sale en las capturas automáticas; se ve pasando el mouse en el editor).
+  - **M4g hecho — guardado a disco:** `SaveSystem` escribe `user://partida.json` (una ranura; otra para los tests) con `GameState.a_diccionario()` completo: mapa, casillas de la party, combate y pérdida pendientes, punto estable, party (PG, herido, muerte, conjuros, inmunidades), recuerdos (inventario, Tasador, residuo, destinos), mundo (encuentros, enemigos, cuerpos, objetos), sueños y RNG (semilla y estado como texto: son enteros de 64 bits). Autoguardado por `EventBus.cambio_irreversible`; `EventBus.antes_de_guardar` para que el mundo anote dónde está la party. Pantalla de inicio (`scenes/ui/inicio.tscn`, escena principal). Tests de ida y vuelta (el RNG sigue igual), escritura atómica, guardado dañado, versión futura, combate cortado que vuelve a empezar igual y pérdida pendiente. Capturas `m4/28` a `30`.
+  - **M4 cerrado (2026-09-27).** Resumen:
+    - **Recuerdos (M4a-b):** modelo de recuerdos (destreza, vivencia, del Doliente), inventario, capacidad (2 + nivel), Tasador con crédito (compra al 50 %, vende al 100 %, recargo a lo que viene de residuos perdidos) y estado persistente. El Eco (el guerrero) se arma con sus integrados. Beneficios: entrenado en habilidades, Medicina en batalla, Duro de matar; además Carga repentina, ataque no letal y Recordar conocimiento (salvación más débil, fallo crítico falso y secreto).
+    - **Puntos estables (M4c):** interacción por click con objetos del mapa; descanso completo, punto de reaparición y el gancho de sueños (TODO_LORE).
+    - **Muerte (M4d):** muerte del Eco (moribundo 4 o 5, o toda la party caída) = derrota; rearmado en el último punto estable, residuo único recuperable, pérdida elegida de un integrado; muerte permanente de compañeros con el cuerpo en el mapa. Estado persistente de los mapas (encuentros, enemigos, cuerpos, objetos).
+    - **Fuentes (M4e):** objetos con recuerdos, enemigos inconscientes (extraer / perdonar / rematar, destino registrado), extracción del cuerpo de un compañero, muerto viviente de prueba (debilidades, inmunidad mental, lento), contenido placeholder y tabla de balance. Compañeros inconscientes estables despiertan con 1 PG al ganar.
+    - **Interfaces (M4f):** Tasador, recuerdos del Eco con diario (tecla R), acciones sin objetivo en gris con motivo; `ConstruccionUi` y `EstiloHud` para todo.
+    - **Guardado (M4g):** una ranura, autoguardado en cada cambio irreversible y al iniciar combate, escritura atómica, versión y pantalla de inicio.
+    - **Lore registrado:** `docs/lore/companeros.md` y la persona amada en `verdad.md` (spoilers), `docs/lore/estilo.md` (nombres). Nombres de la party en el HUD: el Eco, Irsa, Orven, Vaisha.
+    - Verificación en `docs/verificacion/m4_recuerdos.md`; capturas en `docs/capturas/m4/` (01 a 30).
+  - **Pendientes que deja M4:**
+    - Costo de descansar (pregunta abierta: dormir, la Marea del Sueño, los sueños y los Insomnes); sin límite de un descanso por día mientras no haya tiempo de juego.
+    - Botiquín de sanador para Medicina en batalla (no hay objetos).
+    - Sigilo en exploración (el recuerdo existe; todavía no tiene uso).
+    - Muerto viviente: Agarrar y Mordisco sin implementar.
+    - Contenido real: nombres y textos de recuerdos, vivencias, fragmentos, sueños, Tasador y punto estable (todo `TODO_LORE`); título del juego.
+    - IA: no lanza conjuros.
+    - Tooltips de la UI: no salen en las capturas automáticas (sí en el juego).
+    - Arte: todo placeholder.
+  - **A verificar (terminología):** se suman como **Provisorio** descanso / preparativos diarios, debilidad / inmunidad / resistencia, lento, sin mente, Recordar conocimiento, Medicina en batalla, Duro de matar, Carga repentina, floritura, ataque no letal, rasgo de criatura y rareza; siguen **A verificar** los de M3c.
 - **M5 — Contenido del slice:** mapas, NPCs, diálogos, arte final.
 
 ## 9. Preguntas abiertas
@@ -263,7 +287,7 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
 - Justificación en el lore de la party de 4 (¿otros Ecos? ¿mercenarios?).
 - Muerte en party: qué pasa si cae el Eco pero sobreviven los demás, y qué pierden (si algo) los otros miembros al morir.
 - Paleta definitiva.
-- Guardado (decidido, ver 4.3). Pendiente: ¿un único slot por partida (evita cargar partidas viejas para deshacer pérdidas) o varios? ¿Hay puntos estables que se pierden o aparecen con la Convergencia?
+- Guardado (decidido, ver 4.3: una sola ranura). Pendiente: ¿hay puntos estables que se pierden o aparecen con la Convergencia?
 
 ## 10. Registro de decisiones
 | Fecha | Decisión |
@@ -320,3 +344,4 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
 | 2026-09-25 | Patrón de la bruja: El Rencor (`docs/lore/patrones.md`). Verificación de reglas contra Archives of Nethys antes de implementar cada clase. |
 | 2026-09-25 | La party del mundo usa los 4 builds reales (guerrero, pícaro, clérigo, bruja) desde C3 (adelantado de C6 para probar reacciones en el mapa). |
 | 2026-09-25 | Reacciones: el Combate pausa tras usar una reacción (`pausar_tras_reacciones`) y la presentación llama a `continuar()` después de animarla (invariante de sincronía). |
+| 2026-09-27 | M4: puntos estables, muerte del Eco y de compañeros, fuentes de recuerdos, Tasador, diario y guardado anti-savescum (una ranura, autoguardado en cada cambio irreversible, combate cortado vuelve a empezar). Decisiones en 4.2, 4.3 y 8 (M4). |

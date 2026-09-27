@@ -59,6 +59,8 @@ func comprar(indice: int) -> void:
 	var nombre: String = _tasador().stock[indice].recuerdo.nombre
 	var motivo: String = _tasador().comprar(indice, GameState.recuerdos.inventario, config)
 	_mensaje.text = "Compraste: %s" % nombre if motivo == "" else motivo
+	if motivo == "":
+		EventBus.cambio_irreversible.emit("compra al Tasador")
 	actualizar()
 
 
@@ -66,6 +68,8 @@ func vender(recuerdo: DefinicionRecuerdo) -> void:
 	var credito: int = _tasador().precio_compra(recuerdo, config)
 	var motivo: String = _tasador().vender(recuerdo, GameState.recuerdos.inventario, config)
 	_mensaje.text = "Vendiste %s (+%d de crédito)" % [recuerdo.nombre, credito] if motivo == "" else motivo
+	if motivo == "":
+		EventBus.cambio_irreversible.emit("venta al Tasador")
 	actualizar()
 
 

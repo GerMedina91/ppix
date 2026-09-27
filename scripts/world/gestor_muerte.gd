@@ -82,6 +82,7 @@ func al_pasar_eco(celda: Vector2i) -> void:
 	var recuperados: Array[DefinicionRecuerdo] = GameState.recuerdos.recuperar_residuo()
 	_marca.queue_free()
 	_marca = null
+	EventBus.cambio_irreversible.emit("residuo recuperado")
 	aviso.mostrar("El Eco recupera %d %s" % [recuperados.size(), "recuerdo" if recuperados.size() == 1 else "recuerdos"])
 
 

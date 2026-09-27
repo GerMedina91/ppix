@@ -246,6 +246,12 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
     - **Camino normal** (todos los objetos y extraer a los dos enemigos): 110 de valor vendible → vendiendo todo, 55 de crédito. El fragmento del Tasador cuesta 50: comprarlo obliga a vender casi todo (incluidas las vivencias sin verlas) y renunciar a integrar Medicina, Sigilo y Duro de matar. Sin comprarlo, sobran recuerdos para llenar los 3 espacios y todavía cambiar algo en el Tasador.
     - Rematar o perdonar a un enemigo baja el total: sin Duro de matar quedan 80 (40 de crédito, no alcanza para el fragmento); sin la vivencia 4 quedan 100 (50, justo).
     - Extraer de compañeros muertos no es el camino normal: suma hasta 90 vendibles más.
+  - **M4f hecho — interfaces** (funcionales, placeholder, con el tema del `EstiloHud` y piezas comunes en `ConstruccionUi`):
+    - `PantallaTasador`: se abre al interactuar con el Tasador (mapa A, TODO_LORE). Crédito, stock con precio y Comprar, sueltos con lo que acreditan y Vender; lo imposible en gris con el motivo como tooltip (`Tasador.motivo_compra` / `motivo_venta`).
+    - `PantallaRecuerdos`: botón "Recuerdos" en exploración (`HudExploracion`; oculto en combate). Capacidad de integrados, Integrar / Ver (vivencias y fragmentos pasan al diario y se lee su texto), Soltar con confirmación ("se pierde para siempre"), pestaña Diario.
+    - Barra de combate: las opciones sin objetivos válidos se muestran en gris con el motivo más repetido como tooltip (`SinObjetivos`) y su atajo no las elige.
+    - **[propuesta]** Atajo de teclado para abrir los recuerdos (p. ej. R): requiere sumar una acción al InputMap.
+    - Capturas `m4/23` a `27` (el tooltip no sale en las capturas automáticas; se ve pasando el mouse en el editor).
 - **M5 — Contenido del slice:** mapas, NPCs, diálogos, arte final.
 
 ## 9. Preguntas abiertas

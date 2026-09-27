@@ -210,3 +210,18 @@ func test_todo_el_estado_va_y_vuelve_de_un_diccionario() -> void:
 	assert_int(cargado.tasador.credito).is_equal(12)
 	assert_int(cargado.tasador.stock[1].recargo).is_equal(50)
 	assert_int(cargado.destinos[&"mapa_b/Enemigo1"]).is_equal(EstadoRecuerdos.Destino.PERDONADO)
+
+
+func test_motivos_del_tasador_para_la_barra_de_la_pantalla() -> void:
+	var config: ConfigRecuerdos = ConfigRecuerdos.new()
+	var tasador: Tasador = Tasador.new()
+	var inventario: InventarioRecuerdos = InventarioRecuerdos.new()
+	var fragmento: DefinicionRecuerdo = load("res://data/recuerdos/doliente_2.tres")
+	var sigilo: DefinicionRecuerdo = load("res://data/recuerdos/destreza_sigilo.tres")
+	inventario.agregar_suelto(fragmento)
+	tasador.agregar_al_stock(sigilo)
+	assert_str(tasador.motivo_venta(fragmento, inventario)).is_equal("ese recuerdo no se vende")
+	assert_str(tasador.motivo_venta(sigilo, inventario)).is_equal("no lo tenés suelto")
+	assert_str(tasador.motivo_compra(0, config)).is_equal("crédito insuficiente (0 de 30)")
+	tasador.credito = 30
+	assert_str(tasador.motivo_compra(0, config)).is_empty()

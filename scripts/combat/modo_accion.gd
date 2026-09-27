@@ -31,9 +31,11 @@ static func opciones(combate: Combate, actor: Combatiente) -> Array[Dictionary]:
 	for conjuro: DefinicionConjuro in actor.conjuros.conocidos():
 		if actor.conjuros.puede_lanzar(conjuro) and not combate.conjuros.falla_por_maleficio(actor, conjuro) \
 				and actor.acciones_restantes >= conjuro.acciones_posibles().min():
-			lista.append({"tipo": Tipo.CONJURO, "conjuro": conjuro, "texto": _texto_conjuro(actor, conjuro)})
+			lista.append({"tipo": Tipo.CONJURO, "conjuro": conjuro, "texto": _texto_conjuro(actor, conjuro),
+				"motivo": SinObjetivos.de_conjuro(combate, actor, conjuro)})
 	for id: StringName in AccionesConObjetivo.disponibles(actor):
-		lista.append({"tipo": Tipo.ACCION, "accion": id, "texto": AccionesConObjetivo.texto(id)})
+		lista.append({"tipo": Tipo.ACCION, "accion": id, "texto": AccionesConObjetivo.texto(id),
+			"motivo": SinObjetivos.de_accion(combate, actor, id)})
 	if not combate.conjuros.por_sostener(actor).is_empty() and actor.acciones_restantes >= AccionesConjuro.COSTO_SOSTENER:
 		var sostenido: EfectoSostenido = combate.conjuros.por_sostener(actor)[0]
 		lista.append({"tipo": Tipo.SOSTENER, "texto": "Sostener %s ◆" % sostenido.conjuro.nombre})
@@ -123,8 +125,8 @@ func elegir(combate: Combate, actor: Combatiente, indice: int) -> Callable:
 			acciones = forma.acciones
 		return Callable()
 	var lista: Array[Dictionary] = opciones(combate, actor)
-	if indice < 0 or indice >= lista.size():
-		return Callable()
+	if indice < 0 or indice >= lista.size() or lista[indice].get("motivo", "") != "":
+		return Callable()  # sin objetivos válidos: la barra la muestra deshabilitada
 	match lista[indice].tipo:
 		Tipo.SOSTENER:
 			return combate.sostener

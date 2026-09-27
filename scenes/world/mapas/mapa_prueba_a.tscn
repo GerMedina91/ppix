@@ -9,6 +9,7 @@
 [ext_resource type="Script" path="res://scripts/world/objeto_recuerdo.gd" id="7_objr"]
 [ext_resource type="Resource" path="res://data/recuerdos/destreza_medicina.tres" id="8_rmed"]
 [ext_resource type="Resource" path="res://data/recuerdos/vivencia_2.tres" id="9_viv2"]
+[ext_resource type="Script" path="res://scripts/world/puesto_tasador.gd" id="10_ptas"]
 
 [node name="MapaPruebaA" type="Node2D" unique_id=601651974]
 y_sort_enabled = true
@@ -65,3 +66,8 @@ position = Vector2(64, 64)
 script = ExtResource("7_objr")
 recuerdo = ExtResource("9_viv2")
 color_placeholder = Color(0.95, 0.85, 0.5, 1)
+
+[node name="Tasador" type="Node2D" parent="Interactuables"]
+position = Vector2(480, 304)
+script = ExtResource("10_ptas")
+color_placeholder = Color(0.75, 0.55, 0.9, 1)

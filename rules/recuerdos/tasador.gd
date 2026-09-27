@@ -35,12 +35,31 @@ static func con_recargo(precio: int, recargo: int) -> int:
 	return precio + precio * recargo / 100
 
 
-## Le vende al Tasador un recuerdo suelto del inventario ("" si pudo; si no, el motivo).
-func vender(recuerdo: DefinicionRecuerdo, inventario: InventarioRecuerdos, config: ConfigRecuerdos) -> String:
+## Por qué no se le puede vender `recuerdo` ("" si se puede).
+func motivo_venta(recuerdo: DefinicionRecuerdo, inventario: InventarioRecuerdos) -> String:
 	if not recuerdo.vendible():
 		return "ese recuerdo no se vende"
-	if not inventario.quitar_suelto(recuerdo):
+	if not inventario.sueltos.has(recuerdo):
 		return "no lo tenés suelto"
+	return ""
+
+
+## Por qué no se le puede comprar la entrada `indice` ("" si se puede).
+func motivo_compra(indice: int, config: ConfigRecuerdos) -> String:
+	if indice < 0 or indice >= stock.size():
+		return "no está en el stock"
+	var precio: int = precio_venta(stock[indice], config)
+	if precio > credito:
+		return "crédito insuficiente (%d de %d)" % [credito, precio]
+	return ""
+
+
+## Le vende al Tasador un recuerdo suelto del inventario ("" si pudo; si no, el motivo).
+func vender(recuerdo: DefinicionRecuerdo, inventario: InventarioRecuerdos, config: ConfigRecuerdos) -> String:
+	var motivo: String = motivo_venta(recuerdo, inventario)
+	if motivo != "":
+		return motivo
+	inventario.quitar_suelto(recuerdo)
 	credito += precio_compra(recuerdo, config)
 	agregar_al_stock(recuerdo)
 	return ""
@@ -48,12 +67,10 @@ func vender(recuerdo: DefinicionRecuerdo, inventario: InventarioRecuerdos, confi
 
 ## Le compra al Tasador la entrada `indice` del stock con el crédito ("" si pudo; si no, el motivo).
 func comprar(indice: int, inventario: InventarioRecuerdos, config: ConfigRecuerdos) -> String:
-	if indice < 0 or indice >= stock.size():
-		return "no está en el stock"
-	var precio: int = precio_venta(stock[indice], config)
-	if precio > credito:
-		return "crédito insuficiente (%d de %d)" % [credito, precio]
-	credito -= precio
+	var motivo: String = motivo_compra(indice, config)
+	if motivo != "":
+		return motivo
+	credito -= precio_venta(stock[indice], config)
 	inventario.agregar_suelto(stock[indice].recuerdo)
 	stock.remove_at(indice)
 	return ""

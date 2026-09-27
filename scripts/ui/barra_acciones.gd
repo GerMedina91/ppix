@@ -1,7 +1,7 @@
 class_name BarraAcciones
 extends HFlowContainer
 ## Barra de acciones del HUD (funcional, placeholder): botones con las opciones del actor (conjuros,
-## Sostener, Arcadas) y su atajo; con un conjuro elegido, su instrucción y, según el caso, el selector de
+## Sostener, Arcadas) y su atajo (deshabilitados, con el motivo como tooltip, si no tienen objetivos válidos); con un conjuro elegido, su instrucción y, según el caso, el selector de
 ## costo (acciones de Curar) o el interruptor para incluirse en la emanación; siempre, Cancelar.
 ## Salta de línea si no entra en el ancho del panel. Los botones no toman el foco (Espacio sigue terminando el turno) y frenan el click (no llega al mapa).
 ## Solo llama al controlador; el aspecto sale del Theme del HUD.
@@ -30,7 +30,12 @@ func actualizar() -> void:
 	if not modo.hay_eleccion():
 		var opciones: Array[Dictionary] = ModoAccion.opciones(combate, actor)
 		for i in opciones.size():
-			_boton("%d %s" % [i + 1, opciones[i].texto], controlador.elegir_accion.bind(i))
+			var boton: Button = _boton("%d %s" % [i + 1, opciones[i].texto], controlador.elegir_accion.bind(i))
+			var motivo: String = opciones[i].get("motivo", "")
+			if motivo != "":
+				# Sin objetivos válidos: en gris, con el motivo al pasar el cursor (GDD, M4f).
+				boton.disabled = true
+				boton.tooltip_text = motivo
 		return
 	_instruccion = Label.new()
 	var nombre: String = AccionesConObjetivo.NOMBRES[modo.accion] if modo.accion != &"" else modo.elegido.nombre
@@ -74,4 +79,13 @@ func textos() -> PackedStringArray:
 			lista.append((hijo as Button).text)
 		elif hijo is Label:
 			lista.append((hijo as Label).text)
+	return lista
+
+
+## Botones deshabilitados y su motivo: texto -> tooltip (para tests y el arnés de capturas).
+func deshabilitados() -> Dictionary[String, String]:
+	var lista: Dictionary[String, String] = {}
+	for hijo: Node in get_children():
+		if hijo is Button and (hijo as Button).disabled:
+			lista[(hijo as Button).text] = (hijo as Button).tooltip_text
 	return lista

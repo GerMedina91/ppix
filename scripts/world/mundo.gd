@@ -29,6 +29,8 @@ var _encuentro_actual: Encuentro
 @onready var _panel_punto: PanelPuntoEstable = $PanelPuntoEstable
 @onready var _muerte: GestorMuerte = $GestorMuerte
 @onready var _fuentes: FuentesRecuerdos = $FuentesRecuerdos
+@onready var _tasador: PantallaTasador = $PantallaTasador
+@onready var _recuerdos: PantallaRecuerdos = $PantallaRecuerdos
 
 
 func _ready() -> void:
@@ -40,6 +42,9 @@ func _ready() -> void:
 	_panel_punto.cerrado.connect(func() -> void: _party.bloqueado = false)
 	if _party.eco() != null:
 		_party.eco().paso_terminado.connect(_al_pasar_eco)
+	_tasador.cerrada.connect(_liberar_party)
+	_recuerdos.cerrada.connect(_liberar_party)
+	($HudExploracion as HudExploracion).recuerdos_pedidos.connect(_abrir_recuerdos)
 	_cargar_mapa(id_mapa_inicial, id_entrada_inicial)
 
 
@@ -94,6 +99,15 @@ func _al_pasar_eco(celda: Vector2i) -> void:
 		_muerte.al_pasar_eco(celda)
 
 
+func _abrir_recuerdos() -> void:
+	_party.bloqueado = true
+	_recuerdos.abrir(_party.eco())
+
+
+func _liberar_party() -> void:
+	_party.bloqueado = false
+
+
 ## Aspecto de cada miembro según su estado persistente (muerto, caído a 0 PG o normal).
 func _mostrar_estado_party() -> void:
 	for miembro: MiembroParty in _party.miembros():
@@ -115,6 +129,9 @@ func _al_interactuar(objeto: Interactuable) -> void:
 		_party.bloqueado = true
 		await _fuentes.extraer_de_cuerpo(objeto)
 		_party.bloqueado = false
+	elif objeto is PuestoTasador:
+		_party.bloqueado = true
+		_tasador.abrir()
 	elif objeto is PuntoEstable:
 		_party.bloqueado = true
 		_panel_punto.abrir(objeto)

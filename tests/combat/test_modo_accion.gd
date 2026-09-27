@@ -81,3 +81,18 @@ func test_una_accion_con_objetivo_se_elige_y_va_al_click() -> void:
 	var eventos: Array[EventoCombate] = modo.al_click(combate, actor, Vector2i(5, 2), false).call()
 	assert_int(eventos[0].tipo).is_equal(EventoCombate.Tipo.RESULTADO_ESPECIAL)
 	assert_bool(modo.hay_eleccion()).is_false()
+
+
+func test_las_opciones_sin_objetivos_validos_traen_el_motivo_y_no_se_eligen() -> void:
+	# Bruja en (2,2), enemigo a 15 pies: el Golpe no letal no llega; Mal de ojo (30 pies) sí.
+	var combate: Combate = _combate("res://data/builds/bruja.tres")
+	var opciones: Array[Dictionary] = ModoAccion.opciones(combate, combate.turno_actual())
+	var golpe: int = opciones.find_custom(func(o: Dictionary) -> bool: return o.texto == "Golpe no letal ◆")
+	var mal_de_ojo: int = opciones.find_custom(func(o: Dictionary) -> bool: return o.texto == "Mal de ojo ◆")
+	assert_str(opciones[golpe].motivo).is_equal("fuera de alcance")
+	assert_str(opciones[mal_de_ojo].motivo).is_empty()
+	var modo: ModoAccion = ModoAccion.new()
+	modo.elegir(combate, combate.turno_actual(), golpe)
+	assert_bool(modo.hay_eleccion()).is_false()
+	modo.elegir(combate, combate.turno_actual(), mal_de_ojo)
+	assert_bool(modo.hay_eleccion()).is_true()

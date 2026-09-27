@@ -12,6 +12,9 @@ var id_ultimo_punto_estable: StringName = &""
 ## Sin entrada = PG completos y sin herido.
 var estado_party: Dictionary[StringName, Dictionary] = {}
 
+## Recuerdos del Eco, el Tasador, el residuo y el destino de los enemigos inconscientes (GDD 4.2 y 4.3).
+var recuerdos: EstadoRecuerdos = EstadoRecuerdos.new()
+
 ## RNG centralizado de las reglas. `reiniciar_dados()` fija la semilla (reproducible en tests).
 var semilla: int = 0
 var dados: Dados = Dados.new(0)

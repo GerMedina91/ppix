@@ -1,0 +1,6 @@
+[gd_resource type="Resource" script_class="ConfigRecuerdos" format=3]
+
+[ext_resource type="Script" path="res://rules/recuerdos/config_recuerdos.gd" id="1_s3nx8"]
+
+[resource]
+script = ExtResource("1_s3nx8")

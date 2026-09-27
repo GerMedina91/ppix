@@ -64,6 +64,17 @@ Con la Convergencia, los recuerdos se volvieron extraíbles y tangibles.
 - **Economía:** los recuerdos se pagan con otros recuerdos sueltos; cada uno tiene un valor entero (en `data/`). La moneda común existe aparte para lo mundano (no hace falta en el slice). El **Tasador** compra al 50 % del valor y vende al 100 % (en la config).
 - **Fuentes:** comprar al Tasador; encontrar en el mundo (objetos interactuables en el mapa); extraer a enemigos inconscientes; extraer a compañeros muertos.
 - **Enemigos inconscientes:** tras la victoria **quedan en el mapa** (reemplaza el "sacarlos del mapa" de M3c) y el jugador elige por cada uno: **extraer** (obtiene su recuerdo; el enemigo queda vacío), **perdonar** o **rematar**.
+- **Decisiones del plan (2026-09-27):**
+  - Recuerdos de destreza del slice: entrenado en Medicina, Medicina en batalla, Duro de matar, entrenado en Sigilo, en Religión y en Ocultismo. **Recordar conocimiento** acotado (1 acción; la habilidad depende del tipo de criatura, como en PF2e) revela en la ficha la salvación más débil, así Religión y Ocultismo sirven con distintos enemigos. **Sigilo** se usará en exploración más adelante.
+  - **[pendiente]** Medicina en batalla ignora el requisito del botiquín de sanador hasta que haya objetos.
+  - Ataque no letal: opción del Golpe con -2 (Player Core p. 407).
+  - Los fragmentos del Doliente **no se venden**. El Tasador vende uno (valor 50): el jugador paga con recuerdos para conocer su pasado. Un fragmento suelto del Doliente no cae en el residuo (nunca se pierde).
+  - Valores: destreza 20-40, vivencia 10, Doliente 50. Stock inicial del Tasador: 3 de destreza y 1 vivencia (más el fragmento del Doliente). El camino normal del slice tiene que dar recuerdos sueltos suficientes para que comprar el fragmento sea posible, pero obligue a vender o a no integrar algo que el jugador quiera (el detalle de fuentes y totales se documenta con el contenido).
+  - **Trueque con el Tasador (implementación):** venderle un recuerdo acredita el 50 % de su valor en un **crédito con el Tasador**; comprarle cuesta el 100 % de ese crédito. Lo vendido entra a su stock.
+  - Se registra en GameState qué se hizo con cada enemigo inconsciente (extraído, perdonado o rematado) para consecuencias futuras.
+  - Encuentro donde murió el Eco: los muertos siguen muertos; los vivos y los inconscientes recuperan PG y vuelven a su posición.
+  - Interacción en exploración: solo click por ahora.
+  - Guardado a disco (M4g): una sola ranura por partida; incluye el estado del RNG (recargar no cambia las tiradas).
 - **Lore (se mantiene):** los recuerdos muestran escenas desde el punto de vista de otros; algunos pueden ser falsos o manipulados.
 
 ### 4.3 Muerte del Eco

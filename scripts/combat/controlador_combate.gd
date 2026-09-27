@@ -190,7 +190,9 @@ func click_en_celda(celda: Vector2i, es_paso: bool = false) -> void:
 	if not esperando_decision():
 		return
 	if _modo.elegido != null:
-		_encolar(_modo.al_click(_combate, _combate.turno_actual(), celda, es_paso).call())
+		var accion: Callable = _modo.al_click(_combate, _combate.turno_actual(), celda, es_paso)
+		if accion.is_valid():
+			_encolar(accion.call())
 		return
 	var objetivo: Combatiente = _combatiente_vivo_en(celda)
 	if objetivo != null and not objetivo.es_aliado_de(_combate.turno_actual()):

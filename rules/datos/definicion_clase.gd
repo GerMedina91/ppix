@@ -25,6 +25,9 @@ extends Resource
 ## A nivel 1: espacios de rango 1 y trucos preparados.
 @export var espacios_rango_1: int = 0
 @export var trucos_maximos: int = 0
+## Fuente divina (clérigo): espacios extra del rango más alto, solo para el conjuro de la fuente de su entidad.
+@export var espacios_fuente_divina: int = 0
+@export var conjuro_fuente_curar: DefinicionConjuro
 
 @export_group("Capacidades")
 ## Capacidades de la clase a nivel 1 (p. ej. ataque furtivo del pícaro).

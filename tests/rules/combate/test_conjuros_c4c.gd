@@ -165,6 +165,7 @@ func test_listas_de_conjuros_del_slice() -> void:
 		.is_equal([&"proyectil_telequinetico", &"aturdir", &"mal_de_ojo"])
 	assert_array(bruja.conjuros_preparados.map(func(c: DefinicionConjuro) -> StringName: return c.id)).is_equal([&"debilitar", &"miedo"])
 	assert_array(clerigo.trucos.map(func(c: DefinicionConjuro) -> StringName: return c.id)).is_equal([&"lanza_divina", &"estabilizar"])
-	assert_array(clerigo.conjuros_preparados.map(func(c: DefinicionConjuro) -> StringName: return c.id)).is_equal([&"miedo", &"miedo"])
+	assert_array(clerigo.conjuros_preparados.slice(0, 2).map(func(c: DefinicionConjuro) -> StringName: return c.id)) \
+		.is_equal([&"miedo", &"miedo"])  # después, los de la fuente divina
 	assert_array(ArmadorPersonaje.validar(load(BRUJA))).is_empty()
 	assert_array(ArmadorPersonaje.validar(load(CLERIGO))).is_empty()

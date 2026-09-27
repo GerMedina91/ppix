@@ -9,6 +9,7 @@ const COLOR_FALLO: Color = Color(0.8, 0.8, 0.8)
 const COLOR_INFO: Color = Color(0.7, 0.85, 1.0)
 const COLOR_INVALIDA: Color = Color(1.0, 0.8, 0.4)
 const COLOR_CONJURO: Color = Color(0.85, 0.6, 1.0)
+const COLOR_CURACION: Color = Color(0.5, 1.0, 0.6)
 ## Fracción del camino hacia el objetivo que recorre la embestida de un Golpe.
 const FRACCION_EMBESTIDA: float = 0.3
 
@@ -62,7 +63,11 @@ func animar(evento: EventoCombate, actores: Dictionary[StringName, ActorMapa]) -
 		EventoCombate.Tipo.EFECTO_CONJURO:
 			var r: ResultadoPrueba = evento.datos.resultado
 			var objetivo: ActorMapa = actores[evento.datos.objetivo]
-			if evento.datos.get("danio", 0) > 0:
+			if evento.datos.get("curacion", 0) > 0:
+				if evento.datos.get("levanta", false):
+					objetivo.mostrar_estado(ActorMapa.EstadoVisual.NORMAL)
+				await _texto(objetivo, "+%d" % evento.datos.curacion, COLOR_CURACION)
+			elif evento.datos.get("danio", 0) > 0:
 				await _texto(objetivo, str(evento.datos.danio), COLOR_DANIO)
 			elif r != null:
 				await _texto(objetivo, GradoExito.nombre(r.grado), COLOR_CONJURO)

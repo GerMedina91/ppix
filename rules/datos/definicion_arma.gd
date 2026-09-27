@@ -4,7 +4,7 @@ extends Resource
 ## docs/verificacion/c1_clases.md). Nombres de las armas de prueba: TODO_LORE.
 
 ## Tipos de daño (Player Core p. 407). Espíritu y mental: solo de conjuros por ahora.
-enum TipoDanio { CORTANTE, PERFORANTE, CONTUNDENTE, ESPIRITU, MENTAL }
+enum TipoDanio { CORTANTE, PERFORANTE, CONTUNDENTE, ESPIRITU, MENTAL, VITALIDAD }
 enum Categoria { SIMPLE, MARCIAL, AVANZADA, SIN_ARMAS }
 
 const CARAS_VALIDAS: Array[int] = [4, 6, 8, 10, 12]

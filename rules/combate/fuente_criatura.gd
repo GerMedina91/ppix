@@ -56,6 +56,10 @@ func prueba_habilidad(habilidad: Habilidad.Tipo) -> Prueba:
 	return Prueba.fija(Habilidad.nombre(habilidad), Habilidad.nombre(habilidad), _criatura.habilidades.get(habilidad, 0))
 
 
+func es_muerto_viviente() -> bool:
+	return _criatura.muerto_viviente
+
+
 func remata_caidos() -> bool:
 	return _criatura.remata_caidos
 

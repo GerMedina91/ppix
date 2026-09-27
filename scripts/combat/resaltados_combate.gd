@@ -20,6 +20,8 @@ const COLOR_OBJETIVO: Color = Color(1.0, 0.25, 0.25, 0.45)
 const COLOR_CONJURO_OPONENTE: Color = Color(0.75, 0.4, 1.0, 0.5)
 const COLOR_CONJURO_ALIADO: Color = Color(0.3, 0.9, 0.6, 0.45)
 const COLOR_CONJURO_MOVIMIENTO: Color = Color(0.55, 0.45, 1.0, 0.25)
+## Emanación del conjuro elegido (Curar de 3 acciones).
+const COLOR_CONJURO_AREA: Color = Color(1.0, 0.95, 0.6, 0.18)
 const COLOR_COSTO: Color = Color(1.0, 0.95, 0.6)
 const PIP_ACCION: String = "◆"
 const TAMANO_FUENTE_COSTO: int = 12
@@ -49,6 +51,8 @@ func _draw() -> void:
 		var actor: Combatiente = controlador.combate().turno_actual()
 		for casilla: Vector2i in modo.casillas_movimiento:
 			_rombo(casilla, COLOR_CONJURO_MOVIMIENTO)
+		for casilla: Vector2i in modo.casillas_area(controlador.combate(), actor):
+			_rombo(casilla, COLOR_CONJURO_AREA)
 		for c: Combatiente in modo.objetivos(controlador.combate(), actor):
 			_rombo(c.celda, COLOR_CONJURO_ALIADO if c.es_aliado_de(actor) else COLOR_CONJURO_OPONENTE)
 		return

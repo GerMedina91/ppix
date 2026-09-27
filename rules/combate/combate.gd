@@ -151,9 +151,14 @@ func paso(destino: Vector2i) -> Array[EventoCombate]:
 
 
 ## Lanza `conjuro`: sobre `id_objetivo`, o sobre sí mismo (con `destino` si incluye un Paso o una Zancada).
+## `acciones`: la forma elegida de un conjuro de costo variable (Curar).
 func lanzar_conjuro(conjuro: DefinicionConjuro, id_objetivo: StringName = &"", destino: Vector2i = AccionesConjuro.SIN_CELDA,
-		recorrido: Array[Vector2i] = [], es_paso: bool = false) -> Array[EventoCombate]:
-	return conjuros.lanzar(conjuro, id_objetivo, destino, recorrido, es_paso)
+		recorrido: Array[Vector2i] = [], es_paso: bool = false, acciones: int = 0) -> Array[EventoCombate]:
+	var pedido: PedidoConjuro = PedidoConjuro.new(conjuro, id_objetivo, acciones)
+	pedido.destino = destino
+	pedido.recorrido = recorrido
+	pedido.es_paso = es_paso
+	return conjuros.lanzar(pedido)
 
 
 func sostener() -> Array[EventoCombate]:

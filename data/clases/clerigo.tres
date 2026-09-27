@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://rules/capacidades/capacidad.gd" id="1_ok6gn"]
 [ext_resource type="Script" path="res://rules/datos/definicion_clase.gd" id="1_vmobp"]
+[ext_resource type="Resource" path="res://data/conjuros/curar.tres" id="2_gbei0"]
 
 [resource]
 script = ExtResource("1_vmobp")
@@ -19,5 +20,7 @@ defensas = Dictionary[int, int]({
 conjuros = 1
 espacios_rango_1 = 2
 trucos_maximos = 5
+espacios_fuente_divina = 4
+conjuro_fuente_curar = ExtResource("2_gbei0")
 habilidades_fijas = Array[int]([11])
 habilidades_libres_base = 2

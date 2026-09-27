@@ -7,6 +7,8 @@ extends RefCounted
 ## - Salvación contra la CD de conjuro: condiciones según el grado; con salvación básica, el daño es
 ##   0 / mitad (redondeando hacia abajo, mínimo 1) / completo / doble (Player Core p. 404 y 407).
 ## - Estabilizar: pierde moribundo (herido +1) y sigue inconsciente a 0 PG.
+## - Curación: se tira una vez para todos los afectados. Seres vivos: recuperan eso (+ el extra de la forma
+##   elegida). Muertos vivientes: ese daño de vitalidad con salvación básica de Fortaleza.
 ## El daño no letal deja inconsciente en vez de matar (Player Core p. 407).
 
 const _MULTIPLICADOR_BASICA: Dictionary[GradoExito.Grado, float] = {
@@ -37,6 +39,34 @@ static func sobre_criatura(combate: Combate, actor: Combatiente, conjuro: Defini
 	return {"eventos": eventos, "aplicadas": aplicadas}
 
 
+## Curar (u otro conjuro de curación) sobre `objetivos`.
+static func curar(combate: Combate, actor: Combatiente, pedido: PedidoConjuro, objetivos: Array[Combatiente]) -> Array[EventoCombate]:
+	var conjuro: DefinicionConjuro = pedido.conjuro
+	var antes: Dictionary = ReglasCondiciones.valores(combate)
+	var tirada: ResultadoTirada = Tirada.new(conjuro.curacion_dados, conjuro.curacion_caras).tirar(combate.dados())
+	var extra: int = pedido.variante().curacion_extra if pedido.variante() != null else 0
+	var eventos: Array[EventoCombate] = []
+	for c: Combatiente in objetivos:
+		var estaba_en_pie: bool = c.condiciones.en_pie()
+		var datos: Dictionary = {"conjuro": conjuro, "objetivo": c.id, "resultado": null, "danio": 0, "tirada": tirada, "curacion": 0}
+		if c.fuente.es_muerto_viviente():
+			var resultado: ResultadoPrueba = c.prueba_salvacion(Estadisticas.Salvacion.FORTALEZA).resolver(combate.dados(), actor.prueba_conjuro().cd())
+			datos.resultado = resultado
+			datos["salvacion"] = Estadisticas.Salvacion.FORTALEZA
+			_aplicar_danio(conjuro, c, tirada.total(), _MULTIPLICADOR_BASICA[resultado.grado],
+				resultado.grado == GradoExito.Grado.FALLO_CRITICO, datos)
+		else:
+			var pg_antes: int = c.pg
+			c.curar(tirada.total() + extra)
+			datos.curacion = c.pg - pg_antes
+			datos["levanta"] = not estaba_en_pie and c.condiciones.en_pie()
+		eventos.append(combate.emitir(EventoCombate.new(EventoCombate.Tipo.EFECTO_CONJURO, actor.id, datos)))
+		eventos.append_array(combate.eventos_de_estado(c, estaba_en_pie))
+	eventos.append_array(ReglasCondiciones.cambios_desde(combate, antes))
+	eventos.append_array(combate.verificar_fin())
+	return eventos
+
+
 static func _ataque(combate: Combate, actor: Combatiente, conjuro: DefinicionConjuro, objetivo: Combatiente,
 		bonificadores_ca: Array[Modificador], datos: Dictionary) -> void:
 	var prueba: Prueba = actor.prueba_conjuro()
@@ -57,6 +87,7 @@ static func _ataque(combate: Combate, actor: Combatiente, conjuro: DefinicionCon
 static func _salvacion(combate: Combate, actor: Combatiente, conjuro: DefinicionConjuro, objetivo: Combatiente, datos: Dictionary) -> int:
 	var resultado: ResultadoPrueba = objetivo.prueba_salvacion(conjuro.salvacion()).resolver(combate.dados(), actor.prueba_conjuro().cd())
 	datos.resultado = resultado
+	datos["salvacion"] = conjuro.salvacion()
 	if conjuro.hace_danio() and conjuro.salvacion_basica:
 		_daniar(combate, conjuro, objetivo, _MULTIPLICADOR_BASICA[resultado.grado],
 			resultado.grado == GradoExito.Grado.FALLO_CRITICO, datos)
@@ -77,8 +108,15 @@ static func _daniar(combate: Combate, conjuro: DefinicionConjuro, objetivo: Comb
 	if multiplicador <= 0.0:
 		return
 	var tirada: ResultadoTirada = conjuro.tirada_danio().tirar(combate.dados())
-	var base: int = maxi(Golpe.DANIO_MINIMO, tirada.total())
-	var danio: int = maxi(Golpe.DANIO_MINIMO, floori(base * multiplicador))
 	datos.tirada = tirada
+	_aplicar_danio(conjuro, objetivo, tirada.total(), multiplicador, por_critico, datos)
+
+
+## Aplica `base` de daño con el multiplicador (mitad hacia abajo, mínimo 1; 0 = nada).
+static func _aplicar_danio(conjuro: DefinicionConjuro, objetivo: Combatiente, base: int, multiplicador: float,
+		por_critico: bool, datos: Dictionary) -> void:
+	if multiplicador <= 0.0:
+		return
+	var danio: int = maxi(Golpe.DANIO_MINIMO, floori(maxi(Golpe.DANIO_MINIMO, base) * multiplicador))
 	datos.danio = danio
 	objetivo.recibir_danio(danio, por_critico, conjuro.tiene(DefinicionConjuro.Rasgo.NO_LETAL))

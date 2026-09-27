@@ -101,3 +101,8 @@ Términos de reglas en castellano, según la edición oficial en castellano de l
 | spell attack roll / basic save | ataque de conjuro / salvación básica | `es_ataque()`, `salvacion_basica` | Provisorio |
 | Divine Lance / Stabilize / Fear | Lanza divina / Estabilizar / Miedo | `lanza_divina`, `estabilizar`, `miedo` | Provisorio |
 | Telekinetic Projectile / Daze | Proyectil telequinético / Aturdir | `proyectil_telequinetico`, `aturdir` | Provisorio |
+| Heal | Curar | `curar` | Provisorio |
+| touch (range) / emanation / area / line of effect | toque / emanación / área / línea de efecto | `toque`, `emanacion_pies`, `es_area()` | Provisorio |
+| willing | que acepte | — | Provisorio |
+| undead / vitality (daño) | muerto viviente / de vitalidad | `muerto_viviente`, `VITALIDAD` | Provisorio |
+| variable-cost spell | conjuro de costo variable | `VarianteConjuro`, `variantes` | Provisorio |

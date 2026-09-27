@@ -12,6 +12,8 @@ extends Resource
 @export var fortaleza: int = 0
 @export var reflejos: int = 0
 @export var voluntad: int = 0
+## Muerto viviente: Curar le hace daño de vitalidad en vez de curarlo.
+@export var muerto_viviente: bool = false
 
 ## Modificadores totales de habilidad (las que no figuran: +0).
 @export var habilidades: Dictionary[Habilidad.Tipo, int] = {}

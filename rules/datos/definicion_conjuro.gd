@@ -7,6 +7,9 @@ extends Resource
 ## - Con defensa de salvación, el objetivo tira contra la CD de conjuro y se aplican los `efectos` de su grado;
 ##   con `salvacion_basica`, el daño es 0 / mitad / completo / doble según el grado.
 ## - Estabilizar (`estabiliza`): la criatura moribunda pierde moribundo y queda inconsciente a 0 PG.
+## - Curación (`curacion_dados`): a un ser vivo que acepte (aliado o uno mismo) le devuelve PG; a un muerto
+##   viviente le hace ese mismo daño de vitalidad con salvación básica de Fortaleza.
+## - Costo variable (`variantes`): una forma por cantidad de acciones (alcance, emanación, rasgos, extra).
 ## - Sostenido (`sostenido_rondas_max` > 0): dura hasta el final del próximo turno del lanzador salvo que
 ##   lo Sostenga; mientras dura, `piso_mientras_dura` no deja bajar de ese valor las condiciones que aplicó
 ##   (Mal de ojo) si el lanzador ve al objetivo.
@@ -46,6 +49,11 @@ const _SALVACION: Dictionary[Defensa, Estadisticas.Salvacion] = {
 @export var salvacion_basica: bool = false
 @export_group("Curación")
 @export var estabiliza: bool = false
+@export var curacion_dados: int = 0
+@export var curacion_caras: int = 8
+@export_group("Costo variable")
+## Vacío: cuesta `acciones`. Si no, una forma por cantidad de acciones.
+@export var variantes: Array[VarianteConjuro] = []
 @export_group("Duración")
 ## 0 = no se sostiene. "Sostenido hasta 1 minuto" = 10.
 @export var sostenido_rondas_max: int = 0
@@ -57,6 +65,41 @@ const _SALVACION: Dictionary[Defensa, Estadisticas.Salvacion] = {
 
 func tiene(rasgo: Rasgo) -> bool:
 	return rasgos.has(rasgo)
+
+
+func es_variable() -> bool:
+	return not variantes.is_empty()
+
+
+func cura() -> bool:
+	return curacion_dados > 0
+
+
+## Forma con esa cantidad de acciones (null si no es de costo variable o no la tiene).
+func variante(cantidad: int) -> VarianteConjuro:
+	for v: VarianteConjuro in variantes:
+		if v.acciones == cantidad:
+			return v
+	return null
+
+
+## Cantidades de acciones con las que se puede lanzar.
+func acciones_posibles() -> Array[int]:
+	var lista: Array[int] = []
+	if not es_variable():
+		lista.append(acciones)
+	for v: VarianteConjuro in variantes:
+		lista.append(v.acciones)
+	return lista
+
+
+## Rasgos con esa cantidad de acciones (los de la variante se suman).
+func rasgos_con(cantidad: int) -> Array[Rasgo]:
+	var lista: Array[Rasgo] = rasgos.duplicate()
+	var v: VarianteConjuro = variante(cantidad)
+	if v != null:
+		lista.append_array(v.rasgos_extra)
+	return lista
 
 
 func es_ataque() -> bool:
@@ -103,12 +146,16 @@ func errores_de_datos() -> PackedStringArray:
 		errores.append("Conjuro %s: necesita al menos una tradición" % nombre)
 	if tipo == Tipo.FOCO and not tradiciones.is_empty():
 		errores.append("Conjuro %s: los de foco toman la tradición de su clase" % nombre)
-	if objetivo != Objetivo.UNO_MISMO and (alcance_pies <= 0 or alcance_pies % Medicion.PIES_POR_CASILLA != 0):
+	if objetivo != Objetivo.UNO_MISMO and not es_variable() and (alcance_pies <= 0 or alcance_pies % Medicion.PIES_POR_CASILLA != 0):
 		errores.append("Conjuro %s: alcance inválido" % nombre)
 	if not efectos.is_empty() and not pide_salvacion():
 		errores.append("Conjuro %s: los efectos por grado necesitan una salvación" % nombre)
 	if piso_mientras_dura > 0 and not es_sostenido():
 		errores.append("Conjuro %s: el piso de condición solo tiene sentido en un conjuro sostenido" % nombre)
+	if cura() and not DefinicionArma.CARAS_VALIDAS.has(curacion_caras):
+		errores.append("Conjuro %s: dado de curación d%d no válido" % [nombre, curacion_caras])
+	for v: VarianteConjuro in variantes:
+		errores.append_array(v.errores_de_datos())
 	if hace_danio() and not es_ataque() and not salvacion_basica:
 		errores.append("Conjuro %s: el daño necesita un ataque de conjuro o una salvación básica" % nombre)
 	if hace_danio() and not DefinicionArma.CARAS_VALIDAS.has(danio_caras):

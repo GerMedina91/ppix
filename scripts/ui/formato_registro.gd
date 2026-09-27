@@ -24,6 +24,8 @@ static func texto(evento: EventoCombate, combate: Combate) -> String:
 		EventoCombate.Tipo.GOLPE:
 			return _golpe(actor, String(evento.datos.objetivo), evento.datos.resultado)
 		EventoCombate.Tipo.CAIDO:
+			if evento.datos.moribundo == 0:
+				return "%s queda inconsciente" % actor
 			return "%s cae (moribundo %d)" % [actor, evento.datos.moribundo]
 		EventoCombate.Tipo.MUERTE:
 			return "%s muere" % actor
@@ -46,9 +48,12 @@ static func texto(evento: EventoCombate, combate: Combate) -> String:
 				"acción" if evento.datos.cantidad == 1 else "acciones", Condiciones.nombre(evento.datos.condicion)]
 		EventoCombate.Tipo.LANZAMIENTO:
 			var conjuro: DefinicionConjuro = evento.datos.conjuro
+			var nombre: String = conjuro.nombre
+			if conjuro.es_variable():
+				nombre = "%s (%s)" % [nombre, "◆".repeat(evento.datos.get("acciones", 0))]
 			if evento.datos.objetivo == evento.actor:
-				return "%s lanza %s" % [actor, conjuro.nombre]
-			return "%s lanza %s sobre %s" % [actor, conjuro.nombre, evento.datos.objetivo]
+				return "%s lanza %s" % [actor, nombre]
+			return "%s lanza %s sobre %s" % [actor, nombre, evento.datos.objetivo]
 		EventoCombate.Tipo.EFECTO_CONJURO:
 			return _efecto_conjuro(evento)
 		EventoCombate.Tipo.CONJURO_FALLIDO:
@@ -67,7 +72,7 @@ static func texto(evento: EventoCombate, combate: Combate) -> String:
 const _NOMBRE_DANIO: Dictionary[DefinicionArma.TipoDanio, String] = {
 	DefinicionArma.TipoDanio.CORTANTE: "cortante", DefinicionArma.TipoDanio.PERFORANTE: "perforante",
 	DefinicionArma.TipoDanio.CONTUNDENTE: "contundente", DefinicionArma.TipoDanio.ESPIRITU: "de espíritu",
-	DefinicionArma.TipoDanio.MENTAL: "mental",
+	DefinicionArma.TipoDanio.MENTAL: "mental", DefinicionArma.TipoDanio.VITALIDAD: "de vitalidad",
 }
 
 
@@ -80,11 +85,14 @@ static func _efecto_conjuro(evento: EventoCombate) -> String:
 	var texto: String = ""
 	if conjuro.estabiliza:
 		return "%s se estabiliza" % evento.datos.objetivo
+	if evento.datos.get("curacion", 0) > 0:
+		var levanta: String = " y se levanta" if evento.datos.get("levanta", false) else ""
+		return "%s recupera %d PG%s" % [evento.datos.objetivo, evento.datos.curacion, levanta]
 	if r != null and conjuro.es_ataque():
 		texto = "%s → %s (%s): %s = %d contra CA %d: %s" % [evento.actor, evento.datos.objetivo, conjuro.nombre,
 			_tirada_con_desglose(r), r.total, r.cd, GradoExito.nombre(r.grado)]
 	elif r != null:
-		texto = "%s: %s %d contra CD %d: %s" % [evento.datos.objetivo, Estadisticas.nombre_salvacion(conjuro.salvacion()),
+		texto = "%s: %s %d contra CD %d: %s" % [evento.datos.objetivo, Estadisticas.nombre_salvacion(evento.datos.salvacion),
 			r.total, r.cd, GradoExito.nombre(r.grado)]
 	elif conjuro.bonificador_velocidad > 0:
 		return "%s: +%d pies de Velocidad hasta el final del turno" % [evento.actor, conjuro.bonificador_velocidad]

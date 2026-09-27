@@ -54,8 +54,21 @@ static func armar(build: DefinicionBuild) -> DefinicionPersonaje:
 	if build.subclase is DefinicionPatron and (build.subclase as DefinicionPatron).truco_maleficio != null:
 		p.trucos.append((build.subclase as DefinicionPatron).truco_maleficio)
 	p.conjuros_preparados = build.conjuros_preparados.duplicate()
+	p.conjuros_preparados.append_array(conjuros_de_fuente_divina(build))
 	p.conjuros_foco = build.conjuros_foco.duplicate()
 	return p
+
+
+## Espacios de la fuente divina (Player Core p. 108): con una entidad de fuente de curar, la clase prepara
+## su conjuro de la fuente en esos espacios extra. (Dañar: sin entidad que lo use todavía.)
+static func conjuros_de_fuente_divina(build: DefinicionBuild) -> Array[DefinicionConjuro]:
+	var lista: Array[DefinicionConjuro] = []
+	var clase: DefinicionClase = build.clase
+	if build.entidad == null or build.entidad.fuente_divina != DefinicionEntidad.FuenteDivina.CURAR or clase.conjuro_fuente_curar == null:
+		return lista
+	for i in clase.espacios_fuente_divina:
+		lista.append(clase.conjuro_fuente_curar)
+	return lista
 
 
 ## Tradición con la que lanza: la del patrón (bruja) o la de la clase.

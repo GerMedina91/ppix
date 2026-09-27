@@ -87,6 +87,11 @@ func remata_caidos() -> bool:
 	return false
 
 
+## Muerto viviente (Curar lo daña en vez de curarlo).
+func es_muerto_viviente() -> bool:
+	return false
+
+
 ## true si usa las reglas de moribundo, herido e inconsciente (personajes); false si muere a 0 PG.
 func usa_reglas_de_moribundo() -> bool:
 	return false

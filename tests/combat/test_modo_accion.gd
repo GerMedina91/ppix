@@ -55,7 +55,7 @@ func test_pies_agiles_ofrece_su_zancada_con_5_pies_mas() -> void:
 	var combate: Combate = _combate("res://data/builds/clerigo.tres")
 	var modo: ModoAccion = ModoAccion.new()
 	var actor: Combatiente = combate.turno_actual()
-	modo.elegir(combate, actor, 3)  # Lanza divina, Estabilizar, Miedo, Pies ágiles
+	modo.elegir(combate, actor, 4)  # Lanza divina, Estabilizar, Miedo, Curar, Pies ágiles
 	var normal: Dictionary = combate.casillas_de_zancada(actor)
 	assert_int(modo.casillas_movimiento.size()).is_greater(normal.size())
 	assert_int(actor.bonificador_velocidad).is_equal(0)  # solo se usó para calcular

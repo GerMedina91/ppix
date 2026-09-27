@@ -102,3 +102,31 @@ func test_el_muerto_sigue_muerto_y_el_residuo_se_recupera_pisandolo() -> void:
 	assert_bool(await _esperar(func() -> bool: return not GameState.recuerdos.hay_residuo())).override_failure_message("no recuperó el residuo").is_true()
 	assert_array(GameState.recuerdos.inventario.sueltos).contains_exactly([_suelto])
 	assert_bool(gestor.hay_marca()).is_false()
+
+
+func test_el_companero_muerto_deja_su_cuerpo_y_sale_de_la_fila() -> void:
+	_party.ir_a_celda(Vector2i(19, 5))
+	assert_bool(await _esperar(func() -> bool: return GameState.id_mapa_actual == &"mapa_prueba_b" and not _party.bloqueado)).is_true()
+	_party.ir_a_celda(Vector2i(13, 10))
+	assert_bool(await _esperar(func() -> bool: return _control.esperando_decision())).is_true()
+	var combate: Combate = _control.combate()
+	var irsa: Combatiente = combate.combatiente(&"Miembro2")
+	irsa.condiciones.muerto = true
+	var celda_cuerpo: Vector2i = irsa.celda
+	for id: StringName in [&"EnemigoDistancia", &"EnemigoCuerpoACuerpo"]:
+		combate.combatiente(id).condiciones.muerto = true
+	_control._encolar(combate.verificar_fin())
+	assert_bool(await _esperar(func() -> bool: return not _control.en_curso() and not _party.bloqueado)).is_true()
+	assert_int(_party.miembros().size()).is_equal(3)
+	assert_bool((_runner.find_child("Miembro2") as MiembroParty).visible).is_false()
+	var mapa: Mapa = _runner.find_child("MapaActual").get_child(0)
+	var cuerpo: Interactuable = mapa.interactuable_en(celda_cuerpo)
+	assert_object(cuerpo).is_instanceof(CuerpoCompanero)
+	# Al volver del mapa A, el cuerpo sigue ahí y la fila sigue siendo de 3.
+	_party.ir_a_celda(Vector2i(0, 10))
+	assert_bool(await _esperar(func() -> bool: return GameState.id_mapa_actual == &"mapa_prueba_a" and not _party.bloqueado)).is_true()
+	_party.ir_a_celda(Vector2i(19, 5))
+	assert_bool(await _esperar(func() -> bool: return GameState.id_mapa_actual == &"mapa_prueba_b" and not _party.bloqueado)).is_true()
+	mapa = _runner.find_child("MapaActual").get_child(0)
+	assert_object(mapa.interactuable_en(celda_cuerpo)).is_instanceof(CuerpoCompanero)
+	assert_int(_party.miembros().size()).is_equal(3)

@@ -215,6 +215,8 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
     - **[provisorio]** Sin punto estable registrado, la party reaparece en la última entrada del mapa.
     - **[provisorio]** Los enemigos inconscientes vencidos todavía se retiran del mapa (M4e los deja con extraer / perdonar / rematar).
     - Capturas en `docs/capturas/m4/10` a `13`.
+  - **M4d (3) hecho — muerte permanente de compañeros:** el compañero muerto deja su cuerpo (`CuerpoCompanero`, interactuable; en M4e se le extraen recuerdos) en la casilla donde cayó, anotado en `EstadoMundo.cuerpos` (persiste al cambiar de mapa), y sale de la fila (`ControlParty.fijar_retirados`; el Eco nunca se retira). F4 ya no revive a los muertos. Capturas `m4/14` y `15`.
+    - **[pendiente]** Los caídos a 0 PG (inconscientes, no muertos) siguen caminando en la fila hasta que los curen o descansen.
 - **M5 — Contenido del slice:** mapas, NPCs, diálogos, arte final.
 
 ## 9. Preguntas abiertas

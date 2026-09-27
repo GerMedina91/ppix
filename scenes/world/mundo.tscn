@@ -96,8 +96,9 @@ estilo = ExtResource("17_estil")
 script = ExtResource("21_avis")
 estilo = ExtResource("17_estil")
 
-[node name="GestorMuerte" type="Node" parent="." node_paths=PackedStringArray("panel_perdida", "aviso")]
+[node name="GestorMuerte" type="Node" parent="." node_paths=PackedStringArray("panel_perdida", "aviso", "party")]
 script = ExtResource("19_gmue")
 config = ExtResource("22_crec")
 panel_perdida = NodePath("../PanelPerdida")
 aviso = NodePath("../AvisoMundo")
+party = NodePath("../Party")

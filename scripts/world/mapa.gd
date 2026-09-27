@@ -65,6 +65,17 @@ func interactuables() -> Array[Interactuable]:
 	return lista
 
 
+## Suma un objeto interactuable creado en el juego (p. ej. el cuerpo de un compañero) en `celda`.
+func agregar_interactuable(objeto: Interactuable, celda: Vector2i) -> void:
+	if _interactuables == null:
+		_interactuables = Node2D.new()
+		_interactuables.name = "Interactuables"
+		(_interactuables as Node2D).y_sort_enabled = true
+		add_child(_interactuables)
+	_interactuables.add_child(objeto)
+	objeto.colocar(celda, celda_a_posicion(celda))
+
+
 ## El objeto interactuable de `celda`, o null.
 func interactuable_en(celda: Vector2i) -> Interactuable:
 	for objeto: Interactuable in interactuables():

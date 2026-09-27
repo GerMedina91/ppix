@@ -30,7 +30,10 @@ var _grilla: GrillaMapa
 var _camino: Array[Vector2i] = []
 ## Objeto al que va el líder (click en un interactuable); se abre al terminar el camino.
 var _interaccion: Interactuable
+## Miembros activos (en la fila; el primero es el líder). Los compañeros muertos se retiran (GDD 4.3: su
+## cuerpo queda en el mapa) y se ocultan; `_todos` los conserva.
 var _miembros: Array[MiembroParty] = []
+var _todos: Array[MiembroParty] = []
 ## Un seguimiento por seguidor: _seguimientos[i] es el del miembro i + 1.
 var _seguimientos: Array[SeguimientoFila] = []
 var _modo: Modo = Modo.EXPLORACION
@@ -41,13 +44,41 @@ var _conexiones: Array[Array] = []
 func _ready() -> void:
 	for hijo: Node in get_children():
 		if hijo is MiembroParty:
-			_miembros.append(hijo)
+			_todos.append(hijo)
+	_miembros.assign(_todos)
+	_armar_fila()
+	_conectar_exploracion()
+
+
+## Conexiones de la fila india para los miembros activos: cada seguidor sigue al de adelante.
+func _armar_fila() -> void:
+	_conexiones.clear()
+	_seguimientos.clear()
 	_conexiones.append([lider().paso_terminado, _al_terminar_paso_lider])
 	for i in range(1, _miembros.size()):
 		_seguimientos.append(SeguimientoFila.new())
 		_conexiones.append([_miembros[i - 1].paso_iniciado, _al_moverse_el_de_adelante.bind(i)])
 		_conexiones.append([_miembros[i].paso_terminado, _al_terminar_paso_seguidor.bind(i)])
-	_conectar_exploracion()
+
+
+## Deja fuera de la fila (y oculta) a los miembros de `retirados` (ids = nombres de nodo); vuelve a sumar a
+## los demás. El Eco nunca se retira (su muerte es la reaparición).
+func fijar_retirados(retirados: Array[StringName]) -> void:
+	var activos: Array[MiembroParty] = []
+	for miembro: MiembroParty in _todos:
+		var fuera: bool = retirados.has(StringName(miembro.name)) and not miembro.es_eco
+		miembro.visible = not fuera
+		if not fuera:
+			activos.append(miembro)
+	if activos == _miembros:
+		return
+	var en_exploracion: bool = _modo == Modo.EXPLORACION
+	if en_exploracion:
+		_desconectar_exploracion()
+	_miembros = activos
+	_armar_fila()
+	if en_exploracion:
+		_conectar_exploracion()
 
 
 func modo() -> Modo:
@@ -101,9 +132,14 @@ func miembros() -> Array[MiembroParty]:
 	return _miembros
 
 
+## Todos los miembros, también los retirados.
+func todos() -> Array[MiembroParty]:
+	return _todos
+
+
 ## El Eco (el miembro que integra recuerdos), o null si ninguno lo es.
 func eco() -> MiembroParty:
-	for miembro: MiembroParty in _miembros:
+	for miembro: MiembroParty in _todos:
 		if miembro.es_eco:
 			return miembro
 	return null

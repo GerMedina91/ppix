@@ -59,6 +59,8 @@ func _al_terminar_combate(resultado: ResultadoCombate) -> void:
 	if not resultado.victoria:
 		await _al_morir_el_eco(resultado, id_encuentro)
 		return
+	_party.fijar_retirados(GestorMuerte.companeros_muertos())
+	_muerte.colocar_cuerpos(_mapa, GameState.id_mapa_actual)
 	var grilla: GrillaMapa = _grilla_exploracion()
 	_party.set_grilla(grilla)
 	_party.reagrupar(Formacion.cadena(grilla, _party.celda_lider(), _party.miembros().size(), []) + _relleno())
@@ -179,6 +181,8 @@ func _cargar_mapa(id_mapa: StringName, id_entrada: StringName, id_punto: StringN
 	_mapa = (load(definicion.ruta_escena) as PackedScene).instantiate()
 	_contenedor_mapa.add_child(_mapa)
 	_mapa.aplicar_estado(GameState.mundo, id_mapa)
+	_muerte.al_cargar_mapa(_mapa, id_mapa)
+	_party.fijar_retirados(GestorMuerte.companeros_muertos())
 	_mapa.configurar_transparencia(config.alfa_pared_transparente)
 	if id_entrada != &"":
 		_ultima_entrada = id_entrada
@@ -192,7 +196,6 @@ func _cargar_mapa(id_mapa: StringName, id_entrada: StringName, id_punto: StringN
 		celdas = _mapa.celdas_de_formacion(id_entrada, cantidad, grilla)
 	_party.entrar_a_mapa(_mapa, grilla, celdas)
 	_mostrar_estado_party()
-	_muerte.al_cargar_mapa(_mapa, id_mapa)
 	_camara.objetivo = _party.lider()
 	_camara.ajustar_a_mapa(_mapa.rect_global())
 	GameState.id_mapa_actual = id_mapa

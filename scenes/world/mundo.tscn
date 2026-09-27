@@ -37,13 +37,13 @@
 [ext_resource type="Script" path="res://scripts/ui/pantalla_tasador.gd" id="33_ptas"]
 [ext_resource type="Script" path="res://scripts/ui/pantalla_recuerdos.gd" id="34_prec"]
 [ext_resource type="Script" path="res://scripts/ui/hud_exploracion.gd" id="35_hexp"]
+[ext_resource type="Script" path="res://scripts/world/interacciones_mundo.gd" id="36_inte"]
 
 [node name="Mundo" type="Node2D" unique_id=459014428]
 y_sort_enabled = true
 script = ExtResource("1_8cwwk")
 catalogo = ExtResource("2_kn5no")
 config = ExtResource("4_h2l7i")
-suenos = ExtResource("18_suen")
 id_mapa_inicial = &"mapa_prueba_a"
 id_entrada_inicial = &"inicio"
 
@@ -143,3 +143,14 @@ config = ExtResource("22_crec")
 script = ExtResource("35_hexp")
 estilo = ExtResource("17_estil")
 party = NodePath("../Party")
+
+[node name="InteraccionesMundo" type="Node" parent="." node_paths=PackedStringArray("mundo", "party", "fuentes", "tasador", "recuerdos", "panel_punto", "hud")]
+script = ExtResource("36_inte")
+mundo = NodePath("..")
+party = NodePath("../Party")
+fuentes = NodePath("../FuentesRecuerdos")
+tasador = NodePath("../PantallaTasador")
+recuerdos = NodePath("../PantallaRecuerdos")
+panel_punto = NodePath("../PanelPuntoEstable")
+hud = NodePath("../HudExploracion")
+suenos = ExtResource("18_suen")

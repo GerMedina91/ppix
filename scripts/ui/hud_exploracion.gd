@@ -1,7 +1,7 @@
 class_name HudExploracion
 extends CanvasLayer
-## HUD de exploración (placeholder): botón para abrir los recuerdos del Eco. Solo se ve en exploración con la
-## party libre (integrar es solo fuera de combate). [propuesta] Un atajo de teclado cuando se sume al InputMap.
+## HUD de exploración (placeholder): botón para abrir los recuerdos del Eco, también con la acción
+## `abrir_recuerdos` (R). Solo en exploración con la party libre (integrar es solo fuera de combate).
 
 signal recuerdos_pedidos
 
@@ -13,7 +13,7 @@ var _boton: Button
 
 func _ready() -> void:
 	var raiz: Control = ConstruccionUi.raiz(self, estilo)
-	_boton = ConstruccionUi.boton("Recuerdos", func() -> void: recuerdos_pedidos.emit())
+	_boton = ConstruccionUi.boton("Recuerdos (R)", func() -> void: recuerdos_pedidos.emit())
 	_boton.anchor_left = 1.0
 	_boton.anchor_right = 1.0
 	_boton.grow_horizontal = Control.GROW_DIRECTION_BEGIN
@@ -26,6 +26,12 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	_boton.visible = party.modo() == ControlParty.Modo.EXPLORACION and not party.bloqueado
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if _boton.visible and event.is_action_pressed(&"abrir_recuerdos"):
+		recuerdos_pedidos.emit()
+		get_viewport().set_input_as_handled()
 
 
 func boton_visible() -> bool:

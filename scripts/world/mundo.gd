@@ -1,15 +1,15 @@
+class_name Mundo
 extends Node2D
 ## Raíz del mundo: carga el mapa actual como hijo y ubica a la party.
 ## La party y la cámara persisten entre mapas; solo se reemplaza el mapa.
-## Al pisar una salida hace la transición con fundido y avisa por EventBus.mapa_cambiado.
+## Al pisar una salida hace la transición con fundido y avisa por EventBus.mapa_cambiado. Las interacciones
+## con objetos del mapa están en InteraccionesMundo; la muerte del Eco, en GestorMuerte.
 ##
 ## Y-sort: Mundo, MapaActual, cada Mapa, su capa Paredes y Party tienen y_sort_enabled,
 ## así las paredes y los miembros de la party se ordenan juntos por la posición de su base.
 
 @export var catalogo: CatalogoMapas
 @export var config: ConfigExploracion
-## Sueños al descansar en un punto estable.
-@export var suenos: CatalogoSuenos
 @export var id_mapa_inicial: StringName = &""
 @export var id_entrada_inicial: StringName = &""
 
@@ -26,25 +26,16 @@ var _encuentro_actual: Encuentro
 @onready var _party: ControlParty = $Party
 @onready var _camara: CamaraMundo = $Camara
 @onready var _fundido: Fundido = $Fundido
-@onready var _panel_punto: PanelPuntoEstable = $PanelPuntoEstable
 @onready var _muerte: GestorMuerte = $GestorMuerte
 @onready var _fuentes: FuentesRecuerdos = $FuentesRecuerdos
-@onready var _tasador: PantallaTasador = $PantallaTasador
-@onready var _recuerdos: PantallaRecuerdos = $PantallaRecuerdos
 
 
 func _ready() -> void:
 	_party.lider_llego_a.connect(_al_llegar_lider)
 	encuentro_disparado.connect(_iniciar_combate)
 	_combate.combate_terminado.connect(_al_terminar_combate)
-	_party.interaccion_alcanzada.connect(_al_interactuar)
-	_panel_punto.descanso_pedido.connect(_descansar)
-	_panel_punto.cerrado.connect(func() -> void: _party.bloqueado = false)
 	if _party.eco() != null:
 		_party.eco().paso_terminado.connect(_al_pasar_eco)
-	_tasador.cerrada.connect(_liberar_party)
-	_recuerdos.cerrada.connect(_liberar_party)
-	($HudExploracion as HudExploracion).recuerdos_pedidos.connect(_abrir_recuerdos)
 	_cargar_mapa(id_mapa_inicial, id_entrada_inicial)
 
 
@@ -68,10 +59,10 @@ func _al_terminar_combate(resultado: ResultadoCombate) -> void:
 		await _al_morir_el_eco(resultado, id_encuentro)
 		return
 	_party.fijar_retirados(GestorMuerte.companeros_muertos())
-	_mostrar_estado_party()  # los inconscientes estables ya despertaron (EstadoPartyCombate)
+	mostrar_estado_party()  # los inconscientes estables ya despertaron (EstadoPartyCombate)
 	_muerte.colocar_cuerpos(_mapa, GameState.id_mapa_actual)
 	await _fuentes.resolver_inconscientes(resultado, _encuentro_actual)
-	var grilla: GrillaMapa = _grilla_exploracion()
+	var grilla: GrillaMapa = grilla_exploracion()
 	_party.set_grilla(grilla)
 	_party.reagrupar(Formacion.cadena(grilla, _party.celda_lider(), _party.miembros().size(), []) + _relleno())
 	_camara.objetivo = _party.lider()
@@ -99,17 +90,12 @@ func _al_pasar_eco(celda: Vector2i) -> void:
 		_muerte.al_pasar_eco(celda)
 
 
-func _abrir_recuerdos() -> void:
-	_party.bloqueado = true
-	_recuerdos.abrir(_party.eco())
-
-
-func _liberar_party() -> void:
-	_party.bloqueado = false
+func mapa() -> Mapa:
+	return _mapa
 
 
 ## Aspecto de cada miembro según su estado persistente (muerto, caído a 0 PG o normal).
-func _mostrar_estado_party() -> void:
+func mostrar_estado_party() -> void:
 	for miembro: MiembroParty in _party.miembros():
 		var guardado: Dictionary = GameState.estado_party.get(StringName(miembro.name), {})
 		var estado: ActorMapa.EstadoVisual = ActorMapa.EstadoVisual.NORMAL
@@ -118,42 +104,6 @@ func _mostrar_estado_party() -> void:
 		elif guardado.get("pg", 1) == 0:
 			estado = ActorMapa.EstadoVisual.CAIDO
 		miembro.mostrar_estado(estado)
-
-
-## La party llegó al lado de un objeto: se abre según su tipo (la party queda quieta mientras tanto).
-func _al_interactuar(objeto: Interactuable) -> void:
-	if objeto is ObjetoRecuerdo:
-		_fuentes.tomar_objeto(objeto, _mapa)
-		_party.set_grilla(_grilla_exploracion())  # la casilla del objeto queda libre
-	elif objeto is CuerpoCompanero:
-		_party.bloqueado = true
-		await _fuentes.extraer_de_cuerpo(objeto)
-		_party.bloqueado = false
-	elif objeto is PuestoTasador:
-		_party.bloqueado = true
-		_tasador.abrir()
-	elif objeto is PuntoEstable:
-		_party.bloqueado = true
-		_panel_punto.abrir(objeto)
-
-
-## Descanso en un punto estable (GDD 4.3): recupera a la party y lo registra como punto de reaparición.
-func _descansar(punto: PuntoEstable) -> void:
-	Descanso.descansar(GameState.estado_party)
-	_mostrar_estado_party()
-	GameState.id_ultimo_punto_estable = punto.id
-	GameState.id_mapa_ultimo_punto_estable = GameState.id_mapa_actual
-	EventBus.punto_estable_activado.emit(punto.id)
-	_panel_punto.mostrar_descansado(_sonar())
-
-
-## El próximo sueño sin ver (o ninguno): queda visto y se avisa por EventBus.
-func _sonar() -> DefinicionSueno:
-	var sueno: DefinicionSueno = suenos.proximo(GameState.suenos_vistos) if suenos != null else null
-	if sueno != null:
-		GameState.suenos_vistos.append(sueno.id)
-		EventBus.sueno_en_descanso.emit(sueno.id)
-	return sueno
 
 
 ## Si la formación no alcanza para todos, los que faltan van a la última casilla.
@@ -165,7 +115,7 @@ func _relleno() -> Array[Vector2i]:
 
 
 ## Grilla de exploración: la del mapa, sin poder atravesar a los enemigos que siguen en pie.
-func _grilla_exploracion() -> GrillaMapa:
+func grilla_exploracion() -> GrillaMapa:
 	var grilla: GrillaMapa = _mapa.construir_grilla()
 	for encuentro: Encuentro in _mapa.encuentros():
 		for enemigo: EnemigoEnMapa in encuentro.enemigos():
@@ -216,7 +166,7 @@ func _cargar_mapa(id_mapa: StringName, id_entrada: StringName, id_punto: StringN
 	if id_entrada != &"":
 		_ultima_entrada = id_entrada
 	# En exploración no se camina a través de los enemigos (en combate lo decide MovimientoCombate).
-	var grilla: GrillaMapa = _grilla_exploracion()
+	var grilla: GrillaMapa = grilla_exploracion()
 	var cantidad: int = _party.miembros().size()
 	var celdas: Array[Vector2i] = []
 	if id_punto != &"":
@@ -224,7 +174,7 @@ func _cargar_mapa(id_mapa: StringName, id_entrada: StringName, id_punto: StringN
 	else:
 		celdas = _mapa.celdas_de_formacion(id_entrada, cantidad, grilla)
 	_party.entrar_a_mapa(_mapa, grilla, celdas)
-	_mostrar_estado_party()
+	mostrar_estado_party()
 	_camara.objetivo = _party.lider()
 	_camara.ajustar_a_mapa(_mapa.rect_global())
 	GameState.id_mapa_actual = id_mapa

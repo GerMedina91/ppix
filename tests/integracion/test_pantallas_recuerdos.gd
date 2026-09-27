@@ -90,3 +90,14 @@ func _deshabilitados(pantalla: PantallaTasador) -> Array:
 		if (boton as Button).disabled:
 			lista.append(boton)
 	return lista
+
+
+func test_la_tecla_r_abre_los_recuerdos_en_exploracion() -> void:
+	await _runner.simulate_frames(2)
+	_runner.simulate_action_pressed("abrir_recuerdos")
+	await _runner.simulate_frames(2)
+	var pantalla: PantallaRecuerdos = _runner.find_child("PantallaRecuerdos")
+	assert_bool(pantalla.abierta()).is_true()
+	assert_bool(_party.bloqueado).is_true()
+	pantalla.cerrar()
+	await _runner.simulate_frames(2)

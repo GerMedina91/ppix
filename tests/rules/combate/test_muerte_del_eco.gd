@@ -70,3 +70,20 @@ func test_rearmado_moribundo_sobrevive_con_herido_mas_uno_y_los_muertos_siguen_m
 	assert_int(estado[&"a"].pg).is_equal(a.pg_maximos())
 	assert_bool(estado[&"b"].muerto).is_true()
 	assert_bool(estado.has(&"eco")).is_false()  # el Eco se rearma entero
+
+
+func test_al_ganar_el_inconsciente_estable_despierta_con_1_pg_y_su_herido() -> void:
+	var combate: Combate = _combate()
+	var a: Combatiente = combate.combatiente(&"a")
+	a.recibir_danio(999, false)  # moribundo 1
+	a.estabilizar()  # herido 1, inconsciente a 0 PG
+	a.despertar_tras_el_combate()
+	assert_int(a.pg).is_equal(1)
+	assert_bool(a.condiciones.en_pie()).is_true()
+	assert_int(a.condiciones.herido).is_equal(1)
+	var b: Combatiente = combate.combatiente(&"b")
+	b.condiciones.muerto = true
+	b.pg = 0
+	b.despertar_tras_el_combate()
+	assert_bool(b.condiciones.muerto).is_true()
+	assert_int(b.pg).is_equal(0)

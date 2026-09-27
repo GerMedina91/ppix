@@ -117,3 +117,16 @@ func test_del_cuerpo_de_irsa_se_extraen_sus_recuerdos_una_vez() -> void:
 	await _runner.simulate_frames(5)
 	assert_bool(_panel.abierto()).is_false()
 	assert_str((_runner.find_child("AvisoMundo") as AvisoMundo).texto()).is_equal("Ya no queda nada que extraer")
+
+
+func test_al_ganar_la_companera_inconsciente_despierta_con_1_pg() -> void:
+	await _ganar_en_el_mapa_b(func(combate: Combate) -> void:
+		var irsa: Combatiente = combate.combatiente(&"Miembro2")
+		irsa.recibir_danio(irsa.pg, false)  # moribundo 1
+		for id: StringName in [&"EnemigoDistancia", &"EnemigoCuerpoACuerpo"]:
+			combate.combatiente(id).condiciones.muerto = true)
+	assert_bool(await _esperar(func() -> bool: return not _control.en_curso() and not _party.bloqueado)).is_true()
+	assert_int(GameState.estado_party[&"Miembro2"].pg).is_equal(1)
+	assert_int(GameState.estado_party[&"Miembro2"].herido).is_equal(1)
+	assert_that((_runner.find_child("Miembro2") as MiembroParty).modulate).is_equal(ActorMapa.MODULACION[ActorMapa.EstadoVisual.NORMAL])
+	assert_int(_party.miembros().size()).is_equal(4)

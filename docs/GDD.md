@@ -153,9 +153,9 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
   - Dividido en M3a (reglas en `rules/`, sin escenas) y M3b (presentación en el mapa).
   - M3a hecho: `Medicion`, `MovimientoCombate`, `LineaVision`, `Combatiente` (+ `FuenteEstadisticas`), `Condiciones`, `Flanqueo`, `Golpe`, `Combate` (eventos, reproducible) e `IASimple`.
   - M3b hecho: formación de entrada, encuentros (`Encuentro` + `DisparadorEncuentro`/`ZonaEncuentro`), `ControladorCombate` (turnos, animaciones, resaltados), `HudCombate` con registro y desglose, capas F3 de rangos y línea de visión, F4 de curación (debug).
-  - **[provisorio]** Victoria con miembros moribundos: se estabilizan (pierden moribundo, herido +1) y quedan inconscientes a 0 PG hasta curarlos.
+  - Victoria con miembros moribundos: se estabilizan (pierden moribundo, herido +1). **Decidido en M4e:** al ganar, los inconscientes estables despiertan con 1 PG y conservan su herido (ver M4e).
   - **[placeholder M4]** Derrota: la party se cura y vuelve a la última entrada del mapa.
-  - **[pendiente]** En exploración, los miembros caídos (0 PG) siguen caminando en la fila.
+  - ~~En exploración, los miembros caídos (0 PG) siguen caminando en la fila.~~ Resuelto en M4e: despiertan con 1 PG al ganar.
   - Flanqueo: el flanqueado queda desprevenido **solo frente a las criaturas que lo flanquean**.
   - Alcance de 10 pies: llega a dos casillas en diagonal aunque por la regla de diagonales contaría 15 pies.
   - Moribundo, herido e inconsciente con reglas completas para la party; los enemigos mueren a 0 PG.
@@ -216,10 +216,10 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
     - **Decidido:** los enemigos inconscientes vencidos se retiran del mapa hasta M4e (que los deja con extraer / perdonar / rematar).
     - Capturas en `docs/capturas/m4/10` a `13`.
   - **M4d (3) hecho — muerte permanente de compañeros:** el compañero muerto deja su cuerpo (`CuerpoCompanero`, interactuable; en M4e se le extraen recuerdos) en la casilla donde cayó, anotado en `EstadoMundo.cuerpos` (persiste al cambiar de mapa), y sale de la fila (`ControlParty.fijar_retirados`; el Eco nunca se retira). F4 ya no revive a los muertos. Capturas `m4/14` y `15`.
-    - **[pendiente]** Los caídos a 0 PG (inconscientes, no muertos) siguen caminando en la fila hasta que los curen o descansen.
+    - **Decidido (M4e):** los compañeros inconscientes estables despiertan con 1 PG al ganar el combate y conservan su herido (Player Core p. 446: a 0 PG sin moribundo vuelven a 1 PG tras al menos 10 minutos; el rato después del combate cuenta como ese tiempo).
   - **M4e hecho — fuentes de recuerdos en el mundo:**
     - `ObjetoRecuerdo` (interactuable): el Eco lo toma y desaparece para siempre (`EstadoMundo.objetos_tomados`).
-    - Enemigos inconscientes tras la victoria: `FuentesRecuerdos` pregunta por cada uno (`PanelOpciones`): **extraer** (su `DefinicionCriatura.recuerdo`), **perdonar** o **rematar**; se registra el destino en `GameState.recuerdos.destinos` y el enemigo se retira del mapa. **[provisorio]** Los tres destinos lo retiran (extraído: queda vacío y se va; perdonado: se va).
+    - Enemigos inconscientes tras la victoria: `FuentesRecuerdos` pregunta por cada uno (`PanelOpciones`): **extraer** (su `DefinicionCriatura.recuerdo`), **perdonar** o **rematar**; se registra el destino en `GameState.recuerdos.destinos` y el enemigo se retira del mapa. **Decidido:** los tres destinos lo retiran del mapa, con el destino registrado (extraído: queda vacío y se va; perdonado: se va).
     - Cuerpo de un compañero: se le extraen una vez sus recuerdos predefinidos (`MiembroParty.recuerdos_del_cuerpo`; Irsa lleva además el tercer fragmento del Doliente).
     - Muerto viviente de prueba (base: Zombie Shambler, Monster Core p. 356; verificado en `docs/verificacion/m4_recuerdos.md`): debilidad cortante y vitalidad 5, inmune a lo mental, lento 1, destruido a 0 PG aunque el daño sea no letal. Dos en un encuentro al fondo del mapa B. **[aproximación]** Sin Agarrar ni Mordisco.
     - Contenido placeholder en `data/recuerdos/` (catálogo en `catalogo_recuerdos.tres`); stock inicial del Tasador en `ConfigRecuerdos`.
@@ -230,7 +230,7 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
     |---|---|---|---|---|
     | Objeto, mapa A | Entrenado en Medicina | destreza | 20 | sí |
     | Objeto, mapa A | Vivencia 2 | vivencia | 10 | sí |
-    | Objeto, mapa B (detrás de los muertos vivientes) | Entrenado en Sigilo | destreza | 30 | sí |
+    | Objeto, mapa B (detrás de los muertos vivientes; decidido) | Entrenado en Sigilo | destreza | 30 | sí |
     | Objeto, mapa B | Vivencia 3 | vivencia | 10 | sí |
     | Objeto, mapa B | Fragmento del Doliente 2 | Doliente | 50 | no |
     | Extraer, enemigo cuerpo a cuerpo | Duro de matar | destreza | 30 | sí |
@@ -242,6 +242,7 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
     | Cuerpo de Irsa (si muere) | Sigilo 20 + vivencia 10 + Fragmento del Doliente 3 | — | 30 vendible | parcial |
     | Cuerpo de Orven / de Vaisha (si mueren) | Religión / Ocultismo 20 + vivencia 10 | — | 30 vendible c/u | sí |
 
+    - **Decidido (2026-09-27): no tocar este balance.** El dilema buscado: rematar en vez de extraer deja sin fragmento.
     - **Camino normal** (todos los objetos y extraer a los dos enemigos): 110 de valor vendible → vendiendo todo, 55 de crédito. El fragmento del Tasador cuesta 50: comprarlo obliga a vender casi todo (incluidas las vivencias sin verlas) y renunciar a integrar Medicina, Sigilo y Duro de matar. Sin comprarlo, sobran recuerdos para llenar los 3 espacios y todavía cambiar algo en el Tasador.
     - Rematar o perdonar a un enemigo baja el total: sin Duro de matar quedan 80 (40 de crédito, no alcanza para el fragmento); sin la vivencia 4 quedan 100 (50, justo).
     - Extraer de compañeros muertos no es el camino normal: suma hasta 90 vendibles más.

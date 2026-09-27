@@ -19,6 +19,9 @@ const _CAMBIO_MORIBUNDO_POR_GRADO: Dictionary[GradoExito.Grado, int] = {
 	GradoExito.Grado.FALLO_CRITICO: 2,
 }
 
+## PG con los que despierta un inconsciente estable.
+const PG_AL_DESPERTAR: int = 1
+
 var id: StringName = &""
 ## Nombre que se muestra (HUD, registro). Por defecto, el id; la presentación pone el de la party (Irsa, el Eco...).
 var nombre_visible: String = ""
@@ -257,6 +260,15 @@ func restaurar_por_completo() -> void:
 func estabilizar() -> void:
 	if condiciones.moribundo > 0 and not condiciones.muerto:
 		_perder_moribundo()
+
+
+## Inconsciente estable (0 PG, sin moribundo) al terminar un combate ganado: vuelve a 1 PG y despierta,
+## con su herido (Player Core p. 446: tras al menos 10 minutos; el rato después del combate cuenta así).
+func despertar_tras_el_combate() -> void:
+	if condiciones.muerto or condiciones.moribundo > 0 or pg > 0:
+		return
+	pg = PG_AL_DESPERTAR
+	condiciones.inconsciente = false
 
 
 ## Moribundo con el que muere: 4, o lo que digan sus capacidades (Duro de matar: 5).

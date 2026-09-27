@@ -63,6 +63,7 @@ func _al_terminar_combate(resultado: ResultadoCombate) -> void:
 		await _al_morir_el_eco(resultado, id_encuentro)
 		return
 	_party.fijar_retirados(GestorMuerte.companeros_muertos())
+	_mostrar_estado_party()  # los inconscientes estables ya despertaron (EstadoPartyCombate)
 	_muerte.colocar_cuerpos(_mapa, GameState.id_mapa_actual)
 	await _fuentes.resolver_inconscientes(resultado, _encuentro_actual)
 	var grilla: GrillaMapa = _grilla_exploracion()

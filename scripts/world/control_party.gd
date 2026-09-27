@@ -96,6 +96,14 @@ func miembros() -> Array[MiembroParty]:
 	return _miembros
 
 
+## El Eco (el miembro que integra recuerdos), o null si ninguno lo es.
+func eco() -> MiembroParty:
+	for miembro: MiembroParty in _miembros:
+		if miembro.es_eco:
+			return miembro
+	return null
+
+
 ## Ubica a la party en el mapa nuevo: el miembro i en celdas[i] (formación en cadena, líder primero).
 func entrar_a_mapa(mapa: Mapa, grilla: GrillaMapa, celdas: Array[Vector2i]) -> void:
 	_mapa = mapa

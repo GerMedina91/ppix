@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="CapacidadDuroDeMatar" format=3]
+
+[ext_resource type="Script" path="res://rules/capacidades/capacidad_duro_de_matar.gd" id="1_jmdu3"]
+
+[resource]
+script = ExtResource("1_jmdu3")
+id = &"duro_de_matar"
+nombre = "Duro de matar"

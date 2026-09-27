@@ -13,6 +13,11 @@ func atributo_de_danio(_personaje: DefinicionPersonaje, _arma: DefinicionArma) -
 	return null
 
 
+## Valor de moribundo con el que se muere (Duro de matar lo sube; `actual` = el que corresponde sin esta).
+func umbral_de_muerte(actual: int) -> int:
+	return actual
+
+
 ## Daño adicional de un Golpe que impactó: [{"fuente": String, "tirada": Tirada}]. Se duplica en un crítico.
 func danio_adicional(_contexto: ContextoGolpe) -> Array[Dictionary]:
 	return []

@@ -227,7 +227,7 @@ func _perder_moribundo() -> void:
 
 
 func _revisar_muerte() -> void:
-	if condiciones.moribundo >= Condiciones.MORIBUNDO_MUERTE:
+	if condiciones.moribundo >= umbral_de_muerte():
 		condiciones.muerto = true
 
 
@@ -243,6 +243,14 @@ func restaurar_por_completo() -> void:
 func estabilizar() -> void:
 	if condiciones.moribundo > 0 and not condiciones.muerto:
 		_perder_moribundo()
+
+
+## Moribundo con el que muere: 4, o lo que digan sus capacidades (Duro de matar: 5).
+func umbral_de_muerte() -> int:
+	var umbral: int = Condiciones.MORIBUNDO_MUERTE
+	for capacidad: Capacidad in fuente.capacidades():
+		umbral = capacidad.umbral_de_muerte(umbral)
+	return umbral
 
 
 func gastar_acciones(cantidad: int) -> bool:

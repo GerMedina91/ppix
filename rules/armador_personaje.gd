@@ -13,7 +13,8 @@ const MEJORAS_TRASFONDO: int = 2
 const MEJORAS_LIBRES: int = 4
 
 
-static func armar(build: DefinicionBuild) -> DefinicionPersonaje:
+## `recuerdos`: los integrados del Eco (sus beneficios se suman al final; GDD 4.2).
+static func armar(build: DefinicionBuild, recuerdos: Array[DefinicionRecuerdo] = []) -> DefinicionPersonaje:
 	var clase: DefinicionClase = build.clase
 	var p: DefinicionPersonaje = DefinicionPersonaje.new()
 	p.nombre = build.nombre
@@ -56,6 +57,9 @@ static func armar(build: DefinicionBuild) -> DefinicionPersonaje:
 	p.conjuros_preparados = build.conjuros_preparados.duplicate()
 	p.conjuros_preparados.append_array(conjuros_de_fuente_divina(build))
 	p.conjuros_foco = build.conjuros_foco.duplicate()
+	for recuerdo: DefinicionRecuerdo in recuerdos:
+		if recuerdo.beneficio != null:
+			recuerdo.beneficio.aplicar(p)
 	return p
 
 

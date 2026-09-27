@@ -31,3 +31,21 @@ resumidas y referencias. Principio de diseño: opciones, no poder bruto (sin bon
   y responde una pregunta.
 - **Ataque no letal** (PC p. 407 · `/Rules.aspx?ID=2311`): con un arma sin el rasgo no letal, -2 de circunstancia
   al ataque para noquear en vez de matar.
+
+## Recordar conocimiento (verificado para M4b)
+- **Acción** (PC p. 231 · `/Actions.aspx?ID=2367`): 1 acción, rasgos concentrar y **secreto** (PC p. 460 ·
+  `/Traits.aspx?ID=690`: el DJ tira en secreto). Éxito crítico: respuesta verdadera y algo más; éxito: respuesta
+  verdadera; fallo: nada; fallo crítico: respuesta **falsa** (o nada). Se puede usar sin entrenamiento
+  (PC p. 225 · `/Rules.aspx?ID=2136`).
+- **CD por nivel** (GM Core p. 52 · `/Rules.aspx?ID=2629`): nivel 0 → 14, 1 → 15, 2 → 16, 3 → 18, 4 → 19, 5 → 20.
+  **Ajustes** (GM Core p. 52 · `ID=2630`): poco común +2, raro +5, único +10.
+- **Habilidad por rasgo de la criatura** (GM Core p. 54 · `/Rules.aspx?ID=2641`): aberración, astral, onírica,
+  etérea, cieno, espíritu, tiempo → Ocultismo; animal, hongo, planta, feérica → Naturaleza; bestia y elemental →
+  Arcanos o Naturaleza; celestial, infernal, monitor, sombra, muerto viviente → Religión; constructo → Arcanos o
+  Artesanía; dragón → Arcanos; humanoide → Sociedad.
+
+### Interpretación para el slice (decisión del director: acotado)
+- 1 acción; el personaje usa la mejor de sus habilidades que correspondan al rasgo de la criatura.
+- Éxito o éxito crítico: la ficha muestra la salvación más débil. Fallo: nada. Fallo crítico: la ficha muestra
+  una salvación que no es la más débil, como si lo fuera (el jugador no ve la tirada: rasgo secreto).
+- Se puede reintentar; vale el último resultado.

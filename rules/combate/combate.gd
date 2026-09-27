@@ -37,6 +37,8 @@ var reacciones: GestorReacciones = GestorReacciones.new(self)
 var movimiento: AccionesMovimiento
 var conjuros: AccionesConjuro = AccionesConjuro.new(self)
 var golpes: AccionesGolpe = AccionesGolpe.new(self)
+## Acciones de dotes y habilidades (Carga repentina, Medicina en batalla, Recordar conocimiento).
+var especiales: AccionesEspeciales = AccionesEspeciales.new(self)
 ## La presentación lo activa: después de usar una reacción, la acción interrumpida no sigue sola; espera
 ## continuar(), así se puede animar la reacción con el estado del combate en ese punto.
 var pausar_tras_reacciones: bool = false
@@ -169,8 +171,8 @@ func sostener() -> Array[EventoCombate]:
 	return conjuros.sostener()
 
 
-func golpe(id_objetivo: StringName, arma: DefinicionArma = null) -> Array[EventoCombate]:
-	return golpes.golpe(id_objetivo, arma)
+func golpe(id_objetivo: StringName, arma: DefinicionArma = null, no_letal: bool = false) -> Array[EventoCombate]:
+	return golpes.golpe(id_objetivo, arma, no_letal)
 
 
 ## Golpe de una reacción (Golpe reactivo): no gasta acciones ni cuenta para el penalizador por ataque múltiple.

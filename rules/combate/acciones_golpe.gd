@@ -15,7 +15,8 @@ func _combate() -> Combate:
 	return _combate_ref.get_ref() as Combate
 
 
-func golpe(id_objetivo: StringName, arma: DefinicionArma) -> Array[EventoCombate]:
+## `no_letal`: ataque no letal (-2; a 0 PG deja inconsciente).
+func golpe(id_objetivo: StringName, arma: DefinicionArma, no_letal: bool = false) -> Array[EventoCombate]:
 	var combate: Combate = _combate()
 	var actor: Combatiente = combate.turno_actual()
 	var invalido: EventoCombate = combate.validar_accion(actor, Combate.COSTO_GOLPE, Combate.ACCION_GOLPE)
@@ -29,11 +30,18 @@ func golpe(id_objetivo: StringName, arma: DefinicionArma) -> Array[EventoCombate
 	if motivo != Golpe.Motivo.VALIDO:
 		return [invalido_por(actor, motivo)]
 	actor.gastar_acciones(Combate.COSTO_GOLPE)
-	var al_objetivo: DisparoReaccion = DisparoReaccion.objetivo_de_ataque(actor, objetivo, arma_usada)
-	var tirar: Callable = func() -> Array[EventoCombate]: return _tirar(actor, objetivo, arma_usada, al_objetivo)
+	return golpe_incluido(actor, objetivo, arma_usada, no_letal)
+
+
+## Golpe ya validado y pagado (también el que va dentro de otra acción, como Carga repentina): antes de
+## tirar se ofrecen las reacciones al ataque a distancia y al ser objetivo.
+func golpe_incluido(actor: Combatiente, objetivo: Combatiente, arma: DefinicionArma, no_letal: bool = false) -> Array[EventoCombate]:
+	var combate: Combate = _combate()
+	var al_objetivo: DisparoReaccion = DisparoReaccion.objetivo_de_ataque(actor, objetivo, arma)
+	var tirar: Callable = func() -> Array[EventoCombate]: return _tirar(actor, objetivo, arma, al_objetivo, no_letal)
 	var avisar_objetivo: Callable = func() -> Array[EventoCombate]: return combate.reacciones.procesar(al_objetivo, tirar)
-	if arma_usada.a_distancia:
-		return combate.reacciones.procesar(DisparoReaccion.ataque_a_distancia(actor, arma_usada), avisar_objetivo)
+	if arma.a_distancia:
+		return combate.reacciones.procesar(DisparoReaccion.ataque_a_distancia(actor, arma), avisar_objetivo)
 	return avisar_objetivo.call()
 
 
@@ -59,12 +67,12 @@ func invalido_por(actor: Combatiente, motivo: Golpe.Motivo) -> EventoCombate:
 
 
 ## Tira el Golpe si el atacante sigue en pie después de las reacciones (si cayó, el ataque se pierde).
-func _tirar(actor: Combatiente, objetivo: Combatiente, arma: DefinicionArma, disparo: DisparoReaccion) -> Array[EventoCombate]:
+func _tirar(actor: Combatiente, objetivo: Combatiente, arma: DefinicionArma, disparo: DisparoReaccion, no_letal: bool) -> Array[EventoCombate]:
 	var combate: Combate = _combate()
 	if combate.estado != Combate.Estado.EN_CURSO or not actor.condiciones.puede_actuar() or objetivo.condiciones.muerto:
 		return []
 	var estaba_en_pie: bool = objetivo.condiciones.en_pie()
-	var resultado: ResultadoGolpe = Golpe.resolver(actor, objetivo, arma, combate.dados(), combate.participantes, combate.vision(), disparo.bonificadores_ca)
+	var resultado: ResultadoGolpe = Golpe.resolver(actor, objetivo, arma, combate.dados(), combate.participantes, combate.vision(), disparo.bonificadores_ca, true, no_letal)
 	if not resultado.es_valido():
 		return [invalido_por(actor, resultado.motivo)]
 	var eventos: Array[EventoCombate] = [combate.emitir(EventoCombate.new(EventoCombate.Tipo.GOLPE, actor.id,

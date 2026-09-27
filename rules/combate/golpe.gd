@@ -27,6 +27,7 @@ const PENALIZADORES_ATAQUE_MULTIPLE_AGIL: Array[int] = [0, -4, -8]
 const PENALIZADOR_POR_INCREMENTO: int = -2
 const INCREMENTOS_MAXIMOS: int = 6
 const DANIO_MINIMO: int = 1
+const PENALIZADOR_NO_LETAL: int = -2
 const MULTIPLICADOR_CRITICO: int = 2
 
 
@@ -68,12 +69,16 @@ static func validar(atacante: Combatiente, objetivo: Combatiente, arma: Definici
 ## `cuenta_para_pam`: false en un Golpe reactivo (no sufre ni suma al penalizador por ataque múltiple).
 static func resolver(atacante: Combatiente, objetivo: Combatiente, arma: DefinicionArma, dados: Dados,
 		participantes: Array[Combatiente], vision: LineaVision, modificadores_defensa: Array[Modificador] = [],
-		cuenta_para_pam: bool = true) -> ResultadoGolpe:
+		cuenta_para_pam: bool = true, no_letal: bool = false) -> ResultadoGolpe:
 	var resultado: ResultadoGolpe = ResultadoGolpe.new()
 	resultado.motivo = validar(atacante, objetivo, arma, vision)
 	if not resultado.es_valido():
 		return resultado
 	var prueba: Prueba = prueba_de_ataque(atacante, objetivo, arma, cuenta_para_pam)
+	resultado.no_letal = no_letal
+	if no_letal:
+		# Ataque no letal con un arma sin ese rasgo (Player Core p. 407): -2 de circunstancia.
+		prueba.modificadores.append(Modificador.new(PENALIZADOR_NO_LETAL, Modificador.Tipo.CIRCUNSTANCIA, "ataque no letal"))
 	resultado.flanqueando = Flanqueo.atacante_flanquea(atacante, objetivo, participantes)
 	var defensa: Prueba = objetivo.defensa_contra(resultado.flanqueando)
 	defensa.modificadores.append_array(modificadores_defensa)
@@ -103,7 +108,7 @@ static func resolver(atacante: Combatiente, objetivo: Combatiente, arma: Definic
 			if arma.letal_caras > 0:
 				resultado.danio_letal = dados.tirar(arma.letal_caras)
 				resultado.danio += resultado.danio_letal
-		objetivo.recibir_danio(resultado.danio, resultado.critico)
+		objetivo.recibir_danio(resultado.danio, resultado.critico, no_letal)
 	return resultado
 
 

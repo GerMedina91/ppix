@@ -22,6 +22,8 @@ enum Tipo {
 	SOSTENER,
 	## Terminó un conjuro sostenido: {"conjuro", "objetivo"}.
 	FIN_CONJURO,
+	## Acción de una dote o habilidad (ya pagada): {"accion": nombre, "objetivo"}.
+	ACCION_ESPECIAL,
 }
 
 var tipo: Tipo

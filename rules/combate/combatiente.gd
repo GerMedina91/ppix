@@ -35,6 +35,8 @@ var condiciones: Condiciones = Condiciones.new()
 var conjuros: ReservaConjuros
 ## Ya lanzó un conjuro con el rasgo maleficio en este turno (solo uno por turno).
 var maleficio_en_turno: bool = false
+## Ya usó una acción con el rasgo floritura en este turno (Player Core p. 139: una por ronda).
+var floritura_en_turno: bool = false
 ## Bonificador de estatus a la Velocidad hasta el final del turno (Pies ágiles).
 var bonificador_velocidad: int = 0
 
@@ -85,6 +87,7 @@ func empezar_turno() -> void:
 	reaccion_disponible = true
 	ataques_en_turno = 0
 	maleficio_en_turno = false
+	floritura_en_turno = false
 
 
 ## Lo que termina con el turno propio (bonificadores "hasta el final del turno").

@@ -83,8 +83,10 @@ func motivo_zancada_imposible(actor: Combatiente, destino: Vector2i, recorrido: 
 
 
 ## Hace la Zancada ya validada y pagada (también sirve para Zancadas que vienen dentro de otra acción).
-func mover_zancada(actor: Combatiente, destino: Vector2i, recorrido: Array[Vector2i]) -> Array[EventoCombate]:
-	return _avanzar_zancada(actor, _camino_para(actor, destino, recorrido), 0, false)
+## `despues`: lo que sigue cuando termina la Zancada (p. ej. la segunda Zancada y el Golpe de Carga
+## repentina); se llama también si una reacción la pausó y después continúa.
+func mover_zancada(actor: Combatiente, destino: Vector2i, recorrido: Array[Vector2i], despues: Callable = Callable()) -> Array[EventoCombate]:
+	return _avanzar_zancada(actor, _camino_para(actor, destino, recorrido), 0, false, despues)
 
 
 func paso(destino: Vector2i) -> Array[EventoCombate]:
@@ -129,7 +131,8 @@ func _camino_para(actor: Combatiente, destino: Vector2i, recorrido: Array[Vector
 ## Avanza la Zancada casilla por casilla desde `indice`; antes de salir de cada casilla ofrece las
 ## reacciones (salvo `disparo_resuelto`, que evita volver a ofrecerlas en la casilla donde se retoma).
 ## Si el que se mueve queda fuera de combate, el movimiento se corta ahí.
-func _avanzar_zancada(actor: Combatiente, camino: Array[Vector2i], indice: int, disparo_resuelto: bool) -> Array[EventoCombate]:
+func _avanzar_zancada(actor: Combatiente, camino: Array[Vector2i], indice: int, disparo_resuelto: bool,
+		despues: Callable = Callable()) -> Array[EventoCombate]:
 	var combate: Combate = _combate()
 	var eventos: Array[EventoCombate] = []
 	var desde: Vector2i = actor.celda
@@ -144,7 +147,7 @@ func _avanzar_zancada(actor: Combatiente, camino: Array[Vector2i], indice: int, 
 					eventos.append(_evento_movimiento(actor, desde, recorrido, indice > 0 or disparo_resuelto))
 				var siguiente: int = i
 				eventos.append_array(combate.reacciones.procesar(disparo,
-					func() -> Array[EventoCombate]: return _avanzar_zancada(actor, camino, siguiente, true)))
+					func() -> Array[EventoCombate]: return _avanzar_zancada(actor, camino, siguiente, true, despues)))
 				return eventos
 		actor.celda = camino[i]
 		recorrido.append(camino[i])
@@ -152,6 +155,8 @@ func _avanzar_zancada(actor: Combatiente, camino: Array[Vector2i], indice: int, 
 		resuelto = false
 	if not recorrido.is_empty():
 		eventos.append(_evento_movimiento(actor, desde, recorrido, indice > 0 or disparo_resuelto))
+	if despues.is_valid():
+		eventos.append_array(despues.call())
 	return eventos
 
 

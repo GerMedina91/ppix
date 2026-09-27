@@ -62,6 +62,8 @@ static func texto(evento: EventoCombate, combate: Combate) -> String:
 			return "%s sostiene %s" % [actor, (evento.datos.conjuro as DefinicionConjuro).nombre]
 		EventoCombate.Tipo.FIN_CONJURO:
 			return "Termina %s de %s" % [(evento.datos.conjuro as DefinicionConjuro).nombre, actor]
+		EventoCombate.Tipo.ACCION_ESPECIAL:
+			return "%s usa %s contra %s" % [actor, evento.datos.accion, evento.datos.objetivo]
 		EventoCombate.Tipo.ARCADAS:
 			var a: ResultadoPrueba = evento.datos.resultado
 			return "%s: Arcadas, Fortaleza %d contra CD %d: %s (indispuesto %d)" % [
@@ -149,6 +151,8 @@ static func _golpe(atacante: String, objetivo: String, resultado: ResultadoGolpe
 		atacante, objetivo, texto_tirada, ", ".join(partes), r.total, r.cd, GradoExito.nombre(r.grado)]
 	if resultado.flanqueando:
 		texto += " [flanqueo]"
+	if resultado.no_letal:
+		texto += " [no letal]"
 	if resultado.impacto():
 		texto += ", %d de daño" % resultado.danio
 		for adicional: Dictionary in resultado.danio_adicional:

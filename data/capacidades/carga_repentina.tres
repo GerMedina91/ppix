@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="Capacidad" format=3]
+
+[ext_resource type="Script" path="res://rules/capacidades/capacidad.gd" id="1_5doiw"]
+
+[resource]
+script = ExtResource("1_5doiw")
+id = &"carga_repentina"
+nombre = "Carga repentina"

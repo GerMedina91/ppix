@@ -52,13 +52,28 @@ Con la Convergencia, los recuerdos se volvieron extraíbles y tangibles.
 - Nota para M3: las entradas de mapa necesitan **posiciones de formación** para la party (una celda por miembro), no un punto único. Hoy los 4 aparecen apilados en la celda de entrada y se despliegan al caminar.
 
 ### 4.2 Recuerdos
-- **Comprar:** un recuerdo ajeno otorga competencias, dotes o conocimiento (se apoya en las reglas de reentrenamiento de PF2e).
-- **Vender:** perder un recuerdo propio es real. Si vendés el recuerdo de un NPC, esa entrada desaparece del diario y el NPC pasa a ser un desconocido.
-- **Lore:** los recuerdos comprados muestran escenas desde el punto de vista de otros. Algunos pueden ser falsos o manipulados.
+**Diseño cerrado con el director (2026-09-27). Reemplaza la versión anterior de esta sección y de 4.3.**
+- **Solo el Eco integra recuerdos.** La party sube de nivel con la XP normal de PF2e (el slice sigue en nivel 1; XP y subida de nivel quedan fuera del slice). En el slice, **el Eco es el guerrero**; en el juego completo, la clase la elige el jugador.
+- **Principio:** los recuerdos dan **opciones, no poder bruto**. Nunca bonificadores numéricos directos; sí competencias (hasta entrenado), dotes generales y de habilidad y familiaridad con armas específicas. Todo verificado en AoN.
+- **Estados:** *suelto* (objeto comerciable) / *integrado* (parte del Eco, da su beneficio, no se comercia).
+- **Tipos:**
+  - *Destreza:* beneficio mecánico; ocupa capacidad.
+  - *Vivencia:* escena de lore; al verla se consume y queda en el diario; no ocupa capacidad.
+  - *Del Doliente:* vivencia especial de trama; nunca se pierde; no ocupa capacidad.
+- **Capacidad** de integrados de destreza: 2 + nivel (en la config). Soltar un integrado lo pierde para siempre. Integrar, solo fuera de combate.
+- **Economía:** los recuerdos se pagan con otros recuerdos sueltos; cada uno tiene un valor entero (en `data/`). La moneda común existe aparte para lo mundano (no hace falta en el slice). El **Tasador** compra al 50 % del valor y vende al 100 % (en la config).
+- **Fuentes:** comprar al Tasador; encontrar en el mundo (objetos interactuables en el mapa); extraer a enemigos inconscientes; extraer a compañeros muertos.
+- **Enemigos inconscientes:** tras la victoria **quedan en el mapa** (reemplaza el "sacarlos del mapa" de M3c) y el jugador elige por cada uno: **extraer** (obtiene su recuerdo; el enemigo queda vacío), **perdonar** o **rematar**.
+- **Lore (se mantiene):** los recuerdos muestran escenas desde el punto de vista de otros; algunos pueden ser falsos o manipulados.
 
 ### 4.3 Muerte del Eco
-Al morir, el Eco se rearma con menos recuerdos: pierde algo concreto (un fragmento de lore, una dote, la relación con un NPC). El mundo sigue: los mapas no se regeneran y lo hecho, hecho está.
-**[propuesta]** Modo hardcore opcional con muerte permanente, para más adelante.
+**Diseño cerrado con el director (2026-09-27).**
+- **Muerte del Eco:** el Eco llega a moribundo 4, o cae toda la party. El combate termina y la party viva se rearma en el **último punto estable**. Los compañeros moribundos en ese momento sobreviven con herido +1.
+- **Residuo:** los recuerdos sueltos que llevaba el Eco quedan en la casilla donde cayó, recuperables. Solo hay un residuo a la vez: si el Eco muere de nuevo antes de recuperarlo, los recuerdos de ese residuo pasan al stock del Tasador con un recargo (en la config).
+- **Pérdida:** al rearmarse, el jugador **elige** un recuerdo integrado de destreza para perder (si tiene alguno). Los del Doliente y las vivencias vistas no se pierden.
+- **Compañeros:** moribundo 4 = muerte permanente. El Eco puede extraer de su cuerpo (fuera de combate) recuerdos predefinidos de ese compañero (destreza y vivencia).
+- El mundo sigue: los mapas no se regeneran y lo hecho, hecho está.
+- **[propuesta]** Modo hardcore opcional con muerte permanente, para más adelante.
 
 #### Guardado y puntos estables
 - Solo se guarda en **puntos estables**: lugares donde la Convergencia no deforma la realidad.
@@ -145,7 +160,7 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
   - Reacciones antes del primer turno: **habilitadas para ambos bandos** (el Player Core p. 436 lo deja al DJ). Opción `reacciones_antes_del_primer_turno` en `ConfigCombate`, true por defecto.
   - Objetivos de conjuros: se permiten aliados (reglas), resaltados con otro color que los oponentes. La IA nunca elige aliados como objetivo de un conjuro dañino.
   - Clérigo: prepara Miedo en sus 2 espacios de rango 1 (la lista tiene un solo conjuro de rango 1).
-  - Daño no letal (Aturdir): el enemigo que queda a 0 PG queda inconsciente, no muere. La victoria cuenta a los enemigos fuera de combate (muertos o inconscientes) y al ganar se sacan todos del mapa.
+  - Daño no letal (Aturdir): el enemigo que queda a 0 PG queda inconsciente, no muere. La victoria cuenta a los enemigos fuera de combate (muertos o inconscientes) Al ganar se sacaban todos del mapa; **M4 lo reemplaza:** los inconscientes quedan (ver 4.2).
   - Curar (C5): 1 acción toque, 2 acciones 30 pies y +8, 3 acciones emanación de 30 pies. El clérigo tiene 4 espacios de fuente divina solo para Curar. Los enemigos no aceptan curación de objetivo único, pero la emanación cura a todos los seres vivos que estén dentro (incluidos enemigos), como dicen las reglas. Selección: tecla del conjuro y después 1-3 para las acciones (placeholder hasta la barra de C6).
   - Huyendo simplificado: en su turno solo puede hacer Zancadas o Pasos que terminen más lejos de la fuente del miedo (party e IA).
   - Pasos: C4a condiciones y estadísticas de conjuro → C4b motor de lanzamiento (Mal de ojo, Debilitar, Pies ágiles, Sostener, un maleficio por turno, manipular dispara el Golpe reactivo) → C4c el resto de la lista.
@@ -171,8 +186,8 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
     - Aproximaciones: línea de efecto = línea de visión; en criaturas, el ataque cuerpo a cuerpo sin sutil se toma como de Fuerza (para debilitado); huyendo simplificado.
   - **A verificar (terminología):** todos los términos del glosario marcados **Provisorio** están pendientes de confirmar contra la edición oficial en castellano (condiciones, conjuros, rasgos, acciones, clases, armas). Marcados **A verificar** (no van a UI ni textos): grado de éxito, competencia / rango de competencia, bonificador por competencia, modificador de atributo, bonificador / penalizador, sin tipo, CD de clase, atributo clave, tope de Destreza, 20 natural / 1 natural.
 - **Después de M3:** cobertura (menor / normal / mayor) calculada con la línea de visión; posicionamiento previo de la party antes del combate.
-- **M4 — Recuerdos:** inventario de recuerdos, compra/venta, diario, pérdida al morir.
-  - **Idea de diseño (no implementar):** los enemigos que quedan inconscientes podrían quedarse en el mapa después de la victoria para que el jugador decida qué hacer con ellos (interrogar, perdonar, rematar, extraerles recuerdos). Por ahora se sacan del mapa.
+- **M4 — Recuerdos:** ver 4.2 y 4.3. Alcance del slice: puntos estables funcionales (reaparición y recuperación de PG, espacios y foco), 1 Tasador con compra/venta, contenido placeholder `TODO_LORE` (5-6 recuerdos de destreza, 3-4 vivencias, 1-2 fragmentos del Doliente, recuerdos predefinidos de los 3 compañeros), diario básico, UI funcional con el tema centralizado. Guardado a disco como paso final si encaja. Además: Carga repentina del guerrero (el Eco). Cobertura y posicionamiento previo quedan para después de M4.
+  - Enemigos inconscientes tras la victoria: pasó de idea a decisión (extraer, perdonar, rematar; ver 4.2). Interrogar queda como idea para más adelante.
 - **M5 — Contenido del slice:** mapas, NPCs, diálogos, arte final.
 
 ## 9. Preguntas abiertas
@@ -232,6 +247,7 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
 | 2026-09-25 | Reacciones antes del primer turno habilitadas para ambos bandos (opción de ConfigCombate, true por defecto). Conjuros sobre aliados permitidos con otro color; la IA no elige aliados para conjuros dañinos. |
 | 2026-09-27 | 1 punto de foco al terminar cada combate (implementado al cerrar M3c). |
 | 2026-09-27 | **M3c cerrado.** |
+| 2026-09-27 | M4 (recuerdos) diseñado con el director: solo el Eco integra; opciones, no poder bruto; suelto/integrado; destreza/vivencia/del Doliente; capacidad 2 + nivel; economía de trueque con el Tasador (50 % / 100 %); enemigos inconscientes quedan tras la victoria (extraer, perdonar, rematar); muerte del Eco con residuo y pérdida elegida de un integrado; compañeros con muerte permanente. El Eco es el guerrero en el slice. Ver 4.2 y 4.3. |
 | 2026-09-25 | Dominios de El Umbral: viaje, sueños y **muerte** (Player Core p. 39, verificado en AoN). Muerte reemplaza a vigilia; vigilia y reposo solo están en *Divine Mysteries*. |
 | 2026-09-25 | Clases del slice: guerrero, pícaro, clérigo y bruja (Player Core, Remaster), nivel 1. |
 | 2026-09-25 | `remata_caidos`: **decidido**, depende de cada criatura (perfil de IA en `DefinicionCriatura`). |

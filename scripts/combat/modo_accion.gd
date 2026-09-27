@@ -1,19 +1,22 @@
 class_name ModoAccion
 extends RefCounted
 ## Acciones del jugador además de moverse y golpear (placeholder hasta la barra del HUD de C6): lista
-## numerada con los conjuros que puede lanzar ahora, Sostener y Arcadas. Teclas 1-9 eligen; Esc o
+## numerada con los conjuros que puede lanzar ahora, las acciones con objetivo (AccionesConObjetivo: Golpe
+## no letal, Carga repentina, Medicina en batalla, Recordar conocimiento), Sostener y Arcadas. Teclas 1-9 eligen; Esc o
 ## click derecho cancelan. Con un conjuro elegido, el click va al objetivo; Pies ágiles: click en el
 ## propio personaje (sin moverse), en una casilla de su Zancada, o Shift + click para el Paso.
 ## Costo variable (Curar): después de elegirlo, 1-3 eligen cuántas acciones; la emanación se confirma
 ## con click en la propia casilla.
 ## Solo arma intenciones: el Combate valida y resuelve.
 
-enum Tipo { CONJURO, SOSTENER, ARCADAS }
+enum Tipo { CONJURO, ACCION, SOSTENER, ARCADAS }
 
 const _PIP: String = "◆"
 
 ## Conjuro elegido esperando objetivo (null si no hay ninguno).
 var elegido: DefinicionConjuro
+## Acción con objetivo elegida (id de AccionesConObjetivo; vacío si no hay ninguna).
+var accion: StringName = &""
 ## Acciones elegidas para un conjuro de costo variable (0 = todavía no).
 var acciones: int = 0
 ## Emanación: el lanzador no se incluye (se alterna con `alternar_incluirse`).
@@ -29,6 +32,8 @@ static func opciones(combate: Combate, actor: Combatiente) -> Array[Dictionary]:
 		if actor.conjuros.puede_lanzar(conjuro) and not combate.conjuros.falla_por_maleficio(actor, conjuro) \
 				and actor.acciones_restantes >= conjuro.acciones_posibles().min():
 			lista.append({"tipo": Tipo.CONJURO, "conjuro": conjuro, "texto": _texto_conjuro(actor, conjuro)})
+	for id: StringName in AccionesConObjetivo.disponibles(actor):
+		lista.append({"tipo": Tipo.ACCION, "accion": id, "texto": AccionesConObjetivo.texto(id)})
 	if not combate.conjuros.por_sostener(actor).is_empty() and actor.acciones_restantes >= AccionesConjuro.COSTO_SOSTENER:
 		var sostenido: EfectoSostenido = combate.conjuros.por_sostener(actor)[0]
 		lista.append({"tipo": Tipo.SOSTENER, "texto": "Sostener %s ◆" % sostenido.conjuro.nombre})
@@ -49,6 +54,8 @@ static func _texto_conjuro(actor: Combatiente, conjuro: DefinicionConjuro) -> St
 
 ## Texto de la lista para el HUD ("1 Mal de ojo ◆ · 2 Debilitar ◆◆ (1)"), o la instrucción del elegido.
 func texto(combate: Combate, actor: Combatiente) -> String:
+	if accion != &"":
+		return "%s: click en el objetivo · Esc cancela" % AccionesConObjetivo.NOMBRES[accion]
 	if elegido != null:
 		if pide_acciones():
 			return "%s: %s · Esc cancela" % [elegido.nombre, " · ".join(_formas(actor))]
@@ -92,6 +99,11 @@ func _formas(actor: Combatiente) -> PackedStringArray:
 	return partes
 
 
+## true si hay un conjuro o una acción con objetivo elegidos (el click va a eso).
+func hay_eleccion() -> bool:
+	return elegido != null or accion != &""
+
+
 ## true si el conjuro elegido es de costo variable y todavía falta elegir las acciones.
 func pide_acciones() -> bool:
 	return elegido != null and elegido.es_variable() and acciones == 0
@@ -118,6 +130,9 @@ func elegir(combate: Combate, actor: Combatiente, indice: int) -> Callable:
 			return combate.sostener
 		Tipo.ARCADAS:
 			return combate.arcadas
+		Tipo.ACCION:
+			accion = lista[indice].accion
+			return Callable()
 	elegido = lista[indice].conjuro
 	acciones = 0
 	casillas_movimiento.clear()
@@ -131,6 +146,7 @@ func elegir(combate: Combate, actor: Combatiente, indice: int) -> Callable:
 
 func cancelar() -> void:
 	elegido = null
+	accion = &""
 	acciones = 0
 	excluirse = false
 	casillas_movimiento.clear()
@@ -140,6 +156,8 @@ func cancelar() -> void:
 ## emanación, las que quedan dentro. Sobre uno mismo: solo el actor.
 func objetivos(combate: Combate, actor: Combatiente) -> Array[Combatiente]:
 	var lista: Array[Combatiente] = []
+	if accion != &"":
+		return AccionesConObjetivo.objetivos(combate, actor, accion)
 	if elegido == null or pide_acciones():
 		return lista
 	if es_area():
@@ -170,6 +188,10 @@ func casillas_area(combate: Combate, actor: Combatiente) -> Array[Vector2i]:
 func al_click(combate: Combate, actor: Combatiente, celda: Vector2i, es_paso: bool) -> Callable:
 	if pide_acciones():
 		return Callable()
+	if accion != &"":
+		var id: StringName = accion
+		cancelar()
+		return AccionesConObjetivo.intencion(combate, id, _vivo_en(combate, celda))
 	var conjuro: DefinicionConjuro = elegido
 	var cantidad: int = acciones
 	var area: bool = es_area()
@@ -187,3 +209,10 @@ func al_click(combate: Combate, actor: Combatiente, celda: Vector2i, es_paso: bo
 		if c.celda == celda and not c.condiciones.muerto:
 			objetivo = c.id
 	return combate.lanzar_conjuro.bind(conjuro, objetivo, AccionesConjuro.SIN_CELDA, recorrido, false, cantidad)
+
+
+static func _vivo_en(combate: Combate, celda: Vector2i) -> StringName:
+	for c: Combatiente in combate.participantes:
+		if c.celda == celda and not c.condiciones.muerto:
+			return c.id
+	return &""

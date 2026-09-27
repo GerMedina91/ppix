@@ -29,7 +29,7 @@ func _draw() -> void:
 	if prevision == null:
 		return
 	var modo: ModoAccion = controlador.modo_accion()
-	if modo.elegido != null:
+	if modo.hay_eleccion():
 		var actor: Combatiente = controlador.combate().turno_actual()
 		for casilla: Vector2i in modo.casillas_movimiento:
 			_rombo(casilla, estilo.resaltado_conjuro_movimiento)

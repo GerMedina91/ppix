@@ -27,16 +27,19 @@ func actualizar() -> void:
 	var combate: Combate = controlador.combate()
 	var actor: Combatiente = combate.turno_actual()
 	var modo: ModoAccion = controlador.modo_accion()
-	if modo.elegido == null:
+	if not modo.hay_eleccion():
 		var opciones: Array[Dictionary] = ModoAccion.opciones(combate, actor)
 		for i in opciones.size():
 			_boton("%d %s" % [i + 1, opciones[i].texto], controlador.elegir_accion.bind(i))
 		return
 	_instruccion = Label.new()
-	_instruccion.text = "%s:" % modo.elegido.nombre
+	var nombre: String = AccionesConObjetivo.NOMBRES[modo.accion] if modo.accion != &"" else modo.elegido.nombre
+	_instruccion.text = "%s:" % nombre
 	_instruccion.add_theme_color_override("font_color", controlador.estilo().color_conjuro)
 	add_child(_instruccion)
-	if modo.pide_acciones():
+	if modo.accion != &"":
+		_instruccion.text += " click en el objetivo"
+	elif modo.pide_acciones():
 		for forma: Dictionary in modo.formas(actor):
 			_boton(forma.texto, controlador.elegir_accion.bind(forma.acciones - 1))
 	elif modo.es_area():

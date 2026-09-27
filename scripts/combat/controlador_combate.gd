@@ -204,7 +204,7 @@ func iniciar(encuentro: Encuentro, mapa: Mapa, party: ControlParty, camara: Cama
 func click_en_celda(celda: Vector2i, es_paso: bool = false) -> void:
 	if not esperando_decision():
 		return
-	if _modo.elegido != null:
+	if _modo.hay_eleccion():
 		var accion: Callable = _modo.al_click(_combate, _combate.turno_actual(), celda, es_paso)
 		if accion.is_valid():
 			_encolar(accion.call())

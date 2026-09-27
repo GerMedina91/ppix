@@ -65,7 +65,7 @@ static func texto(evento: EventoCombate, combate: Combate) -> String:
 		EventoCombate.Tipo.RESULTADO_ESPECIAL:
 			return _resultado_especial(evento)
 		EventoCombate.Tipo.ACCION_ESPECIAL:
-			return "%s usa %s contra %s" % [actor, evento.datos.accion, evento.datos.objetivo]
+			return "%s usa %s sobre %s" % [actor, evento.datos.accion, evento.datos.objetivo]
 		EventoCombate.Tipo.ARCADAS:
 			var a: ResultadoPrueba = evento.datos.resultado
 			return "%s: Arcadas, Fortaleza %d contra CD %d: %s (indispuesto %d)" % [

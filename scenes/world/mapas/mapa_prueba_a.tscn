@@ -5,6 +5,7 @@
 [ext_resource type="Script" path="res://scripts/world/capa_paredes.gd" id="3_8lyn0"]
 [ext_resource type="Script" path="res://scripts/world/entrada_mapa.gd" id="4_uijl3"]
 [ext_resource type="Script" path="res://scripts/world/salida_mapa.gd" id="5_oafth"]
+[ext_resource type="Script" path="res://scripts/world/punto_estable.gd" id="6_pesta"]
 
 [node name="MapaPruebaA" type="Node2D" unique_id=601651974]
 y_sort_enabled = true
@@ -40,3 +41,12 @@ position = Vector2(480, 400)
 script = ExtResource("5_oafth")
 id_mapa_destino = &"mapa_prueba_b"
 id_entrada_destino = &"desde_a"
+
+[node name="Interactuables" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="PuntoEstablePrueba" type="Node2D" parent="Interactuables"]
+position = Vector2(-128, 224)
+script = ExtResource("6_pesta")
+id = &"punto_estable_prueba_a"
+color_placeholder = Color(0.55, 0.8, 0.95, 1)

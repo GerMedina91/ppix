@@ -11,5 +11,5 @@ signal encuentro_iniciado(id_encuentro: StringName)
 ## Se emite cuando termina el combate de un encuentro.
 signal encuentro_terminado(id_encuentro: StringName, victoria: bool)
 
-## Se emite cuando la party guarda en un punto estable.
+## Se emite cuando la party descansa en un punto estable (lo registra como reaparición; SaveSystem guarda).
 signal punto_estable_activado(id_punto: StringName)

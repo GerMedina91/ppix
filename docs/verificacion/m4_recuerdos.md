@@ -49,3 +49,19 @@ resumidas y referencias. Principio de diseño: opciones, no poder bruto (sin bon
 - Éxito o éxito crítico: la ficha muestra la salvación más débil. Fallo: nada. Fallo crítico: la ficha muestra
   una salvación que no es la más débil, como si lo fuera (el jugador no ve la tirada: rasgo secreto).
 - Se puede reintentar; vale el último resultado.
+
+## Descanso en puntos estables (verificado para M4c)
+- **Descanso y preparativos diarios** (*Rest and Daily Preparations*, PC p. 439 · `/Rules.aspx?ID=2443`): una vez
+  cada 24 horas, 8 horas de descanso: se recuperan PG igual al modificador de Constitución (mínimo 1) × nivel, y
+  algunas condiciones se recuperan o mejoran. Después, preparativos (1 hora): los lanzadores recuperan los espacios
+  de conjuro; se restablecen los puntos de foco y las capacidades de uso diario.
+- **Herido** (*Wounded*, PC p. 447 · `/Conditions.aspx?ID=99`): termina con Tratar heridas exitoso o con los PG
+  completos y 10 minutos de descanso.
+- **Condenado / drenado / fatigado** (PC p. 443 y ss.): bajan o se van con una noche completa de descanso. No
+  existen todavía en el slice.
+- **Medicina en batalla:** la inmunidad dura 1 día (ver arriba), así que termina con el descanso.
+
+### Interpretación para el slice (GDD, M3c: PG y espacios solo en puntos estables)
+- Descansar en un punto estable = descanso completo + preparativos: PG completos (en vez de Con × nivel), todos
+  los espacios y puntos de foco, sin herido (queda con PG completos y descansa) y sin inmunidades a Medicina en
+  batalla. Los muertos siguen muertos. Sin límite de una vez por día (no hay paso del tiempo todavía).

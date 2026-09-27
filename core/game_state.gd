@@ -5,8 +5,10 @@ extends Node
 ## Mapa donde está la party.
 var id_mapa_actual: StringName = &""
 
-## Último punto estable donde se guardó. Al morir, el Eco reaparece acá.
+## Último punto estable donde se descansó (y guardó). Al morir, el Eco reaparece acá.
 var id_ultimo_punto_estable: StringName = &""
+## Mapa de ese punto estable.
+var id_mapa_ultimo_punto_estable: StringName = &""
 
 ## Estado persistente de cada miembro de la party entre combates: id -> {"pg": int, "herido": int}.
 ## Sin entrada = PG completos y sin herido.

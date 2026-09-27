@@ -2,7 +2,7 @@ class_name AtajosDepuracion
 extends Node
 ## Atajos de depuración (solo builds de debug).
 ## - F4 (`curar_party_depuracion`): restaura por completo a la party (PG, sin moribundo/herido/inconsciente;
-##   también revive), porque los PG persisten entre combates y todavía no hay descanso.
+##   también revive). Solo para depurar: en el juego se descansa en los puntos estables.
 
 const ACCION_CURAR: StringName = &"curar_party_depuracion"
 

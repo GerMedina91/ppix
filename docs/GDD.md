@@ -75,6 +75,8 @@ Con la Convergencia, los recuerdos se volvieron extraíbles y tangibles.
   - Encuentro donde murió el Eco: los muertos siguen muertos; los vivos y los inconscientes recuperan PG y vuelven a su posición.
   - Interacción en exploración: solo click por ahora.
   - Guardado a disco (M4g): una sola ranura por partida; incluye el estado del RNG (recargar no cambia las tiradas).
+  - **Contenido de prueba (M4e):** al menos un enemigo muerto viviente (TODO_LORE; idea del director: "un muerto que no terminó de irse", consecuencia de la herida del Umbral). Vulnerable al daño de vitalidad según su definición PF2e (base a verificar en AoN, GM Core), así Curar le hace daño y Religión sirve para Recordar conocimiento.
+  - **Barra de acciones (M4f):** las acciones sin objetivos válidos se muestran deshabilitadas (en gris) con el motivo al pasar el cursor, en vez de ocultarlas o dejarlas activas.
 - **Lore (se mantiene):** los recuerdos muestran escenas desde el punto de vista de otros; algunos pueden ser falsos o manipulados.
 
 ### 4.3 Muerte del Eco
@@ -199,6 +201,8 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
 - **Después de M3:** cobertura (menor / normal / mayor) calculada con la línea de visión; posicionamiento previo de la party antes del combate.
 - **M4 — Recuerdos:** ver 4.2 y 4.3. Alcance del slice: puntos estables funcionales (reaparición y recuperación de PG, espacios y foco), 1 Tasador con compra/venta, contenido placeholder `TODO_LORE` (5-6 recuerdos de destreza, 3-4 vivencias, 1-2 fragmentos del Doliente, recuerdos predefinidos de los 3 compañeros), diario básico, UI funcional con el tema centralizado. Guardado a disco como paso final si encaja. Además: Carga repentina del guerrero (el Eco). Cobertura y posicionamiento previo quedan para después de M4.
   - Enemigos inconscientes tras la victoria: pasó de idea a decisión (extraer, perdonar, rematar; ver 4.2). Interrogar queda como idea para más adelante.
+  - **M4c hecho:** objetos interactuables en los mapas (`Interactuable`, ocupan su casilla): click en uno y la party camina hasta una casilla vecina (`GrillaMapa.celda_junto_a`) y se abre; otro click o el teclado lo cancelan. `PuntoEstable` con panel Descansar / Seguir: el descanso (`Descanso`, PC p. 439, ver `docs/verificacion/m4_recuerdos.md`) recupera PG, espacios, foco, herido e inmunidad a Medicina en batalla; los muertos siguen muertos. Registra el punto de reaparición (`GameState.id_ultimo_punto_estable` + mapa) y emite `punto_estable_activado` (SaveSystem guarda en M4g). F4 queda solo para depuración. Punto de prueba en el mapa A (4,9); capturas en `docs/capturas/m4/05` a `07`.
+    - **[provisorio]** Sin límite de un descanso por día (no hay paso del tiempo).
 - **M5 — Contenido del slice:** mapas, NPCs, diálogos, arte final.
 
 ## 9. Preguntas abiertas

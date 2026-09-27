@@ -22,6 +22,8 @@ const VECINAS: Array[Vector2i] = [
 @onready var _salidas: Node = $Salidas
 ## Opcional: nodo con los Encuentros del mapa.
 @onready var _encuentros: Node = get_node_or_null("Encuentros")
+## Opcional: nodo con los objetos interactuables (puntos estables, a futuro objetos con recuerdos).
+@onready var _interactuables: Node = get_node_or_null("Interactuables")
 
 
 func _ready() -> void:
@@ -30,6 +32,9 @@ func _ready() -> void:
 		for enemigo: EnemigoEnMapa in encuentro.enemigos():
 			var casilla: Vector2i = posicion_a_celda(enemigo.global_position)
 			enemigo.colocar(casilla, celda_a_posicion(casilla))
+	for objeto: Interactuable in interactuables():
+		var casilla: Vector2i = posicion_a_celda(objeto.global_position)
+		objeto.colocar(casilla, celda_a_posicion(casilla))
 
 
 func encuentros() -> Array[Encuentro]:
@@ -41,14 +46,33 @@ func encuentros() -> Array[Encuentro]:
 	return lista
 
 
-## Construye la grilla lógica: una celda es transitable si su suelo tiene `transitable = true`
-## y no hay pared encima.
+func interactuables() -> Array[Interactuable]:
+	var lista: Array[Interactuable] = []
+	if _interactuables != null:
+		for hijo: Node in _interactuables.get_children():
+			if hijo is Interactuable:
+				lista.append(hijo)
+	return lista
+
+
+## El objeto interactuable de `celda`, o null.
+func interactuable_en(celda: Vector2i) -> Interactuable:
+	for objeto: Interactuable in interactuables():
+		if objeto.celda == celda:
+			return objeto
+	return null
+
+
+## Construye la grilla lógica: una celda es transitable si su suelo tiene `transitable = true`,
+## no hay pared encima y no la ocupa un objeto interactuable.
 func construir_grilla() -> GrillaMapa:
 	var grilla: GrillaMapa = GrillaMapa.new(_region())
 	for celda: Vector2i in _suelo.get_used_cells():
 		var datos: TileData = _suelo.get_cell_tile_data(celda)
 		var hay_pared: bool = _paredes.get_cell_source_id(celda) != -1
 		grilla.set_transitable(celda, datos.get_custom_data(DATO_TRANSITABLE) and not hay_pared)
+	for objeto: Interactuable in interactuables():
+		grilla.set_transitable(objeto.celda, false)
 	return grilla
 
 

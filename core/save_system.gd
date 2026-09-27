@@ -10,13 +10,14 @@ extends Node
 
 func _ready() -> void:
 	EventBus.mapa_cambiado.connect(_al_cambiar_mapa)
+	EventBus.punto_estable_activado.connect(guardar_en_punto_estable)
 
 
 func _al_cambiar_mapa(_id_mapa: StringName) -> void:
 	autoguardar()
 
 
-## Guarda la partida al activar un punto estable y lo registra como punto de reaparición.
+## Guarda la partida al descansar en un punto estable (el Mundo ya lo registró como punto de reaparición).
 func guardar_en_punto_estable(id_punto: StringName) -> void:
 	push_warning("SaveSystem.guardar_en_punto_estable: no implementado (%s)" % id_punto)
 

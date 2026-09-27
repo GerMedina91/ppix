@@ -57,3 +57,36 @@ func camino(desde: Vector2i, hasta: Vector2i) -> Array[Vector2i]:
 	for i in range(1, puntos.size()):
 		resultado.append(puntos[i])
 	return resultado
+
+
+## Casilla vecina de `objetivo` (8 direcciones) a la que se llega con el camino más corto desde `desde`,
+## para pararse al lado de algo (p. ej. un objeto interactuable). `desde` si ya está al lado; null si no se
+## puede llegar a ninguna.
+func celda_junto_a(desde: Vector2i, objetivo: Vector2i) -> Variant:
+	var paso: Vector2i = objetivo - desde
+	if paso != Vector2i.ZERO and absi(paso.x) <= 1 and absi(paso.y) <= 1:
+		return desde
+	var mejor: Variant = null
+	var mejor_largo: float = INF
+	for dx in [-1, 0, 1]:
+		for dy in [-1, 0, 1]:
+			var vecina: Vector2i = objetivo + Vector2i(dx, dy)
+			if vecina == objetivo or not es_transitable(vecina):
+				continue
+			var largo: float = _largo(desde, camino(desde, vecina))
+			if largo < mejor_largo:
+				mejor_largo = largo
+				mejor = vecina
+	return mejor
+
+
+## Largo de un camino en celdas (ortogonal 1, diagonal √2); INF si está vacío.
+static func _largo(desde: Vector2i, recorrido: Array[Vector2i]) -> float:
+	if recorrido.is_empty():
+		return INF
+	var largo: float = 0.0
+	var anterior: Vector2i = desde
+	for celda: Vector2i in recorrido:
+		largo += Vector2(celda - anterior).length()
+		anterior = celda
+	return largo

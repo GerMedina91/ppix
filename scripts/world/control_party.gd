@@ -8,6 +8,8 @@ extends Node2D
 
 ## Se emite cada vez que el líder termina un paso (solo en exploración).
 signal lider_llego_a(celda: Vector2i)
+## Se emite cuando el líder llega al lado del objeto clickeado (lo abre el Mundo).
+signal interaccion_alcanzada(objeto: Interactuable)
 
 ## EXPLORACION: fila india y aviso de pasos del líder conectados. COMBATE: todo eso desconectado;
 ## cada miembro se mueve solo por orden del ControladorCombate.
@@ -21,10 +23,13 @@ var bloqueado: bool = false:
 		bloqueado = valor
 		if valor:
 			_camino.clear()
+			_interaccion = null
 
 var _mapa: Mapa
 var _grilla: GrillaMapa
 var _camino: Array[Vector2i] = []
+## Objeto al que va el líder (click en un interactuable); se abre al terminar el camino.
+var _interaccion: Interactuable
 var _miembros: Array[MiembroParty] = []
 ## Un seguimiento por seguidor: _seguimientos[i] es el del miembro i + 1.
 var _seguimientos: Array[SeguimientoFila] = []
@@ -109,6 +114,7 @@ func entrar_a_mapa(mapa: Mapa, grilla: GrillaMapa, celdas: Array[Vector2i]) -> v
 	_mapa = mapa
 	_grilla = grilla
 	_camino.clear()
+	_interaccion = null
 	for seguimiento: SeguimientoFila in _seguimientos:
 		seguimiento.limpiar()
 	for i in _miembros.size():
@@ -128,10 +134,31 @@ func set_grilla(grilla_nueva: GrillaMapa) -> void:
 	_grilla = grilla_nueva
 
 
+## Lleva al líder hasta una casilla al lado de `objeto` y, al llegar, emite `interaccion_alcanzada`. Si
+## ya está al lado, la emite enseguida; si no puede llegar, no hace nada.
+func ir_a_interactuar(objeto: Interactuable) -> void:
+	if bloqueado or _grilla == null:
+		return
+	var junto: Variant = _grilla.celda_junto_a(celda_lider(), objeto.celda)
+	if junto == null:
+		return
+	ir_a_celda(junto)
+	_interaccion = objeto
+	if junto == celda_lider() and not lider().esta_moviendose():
+		_abrir_interaccion()
+
+
+func _abrir_interaccion() -> void:
+	var objeto: Interactuable = _interaccion
+	_interaccion = null
+	interaccion_alcanzada.emit(objeto)
+
+
 ## Lleva al líder hasta `destino` por el camino más corto. Si no hay camino, no hace nada.
 func ir_a_celda(destino: Vector2i) -> void:
 	if bloqueado or _grilla == null:
 		return
+	_interaccion = null
 	if destino == celda_lider():
 		_camino.clear()
 		return
@@ -147,7 +174,12 @@ func _unhandled_input(event: InputEvent) -> void:
 	if bloqueado:
 		return
 	if _mapa != null and event.is_action_pressed("mover_a_click"):
-		ir_a_celda(_mapa.posicion_a_celda(get_global_mouse_position()))
+		var celda: Vector2i = _mapa.posicion_a_celda(get_global_mouse_position())
+		var objeto: Interactuable = _mapa.interactuable_en(celda)
+		if objeto != null:
+			ir_a_interactuar(objeto)
+		else:
+			ir_a_celda(celda)
 		get_viewport().set_input_as_handled()
 
 
@@ -161,6 +193,7 @@ func _avanzar() -> void:
 	var direccion: Vector2i = _direccion_teclado()
 	if direccion != Vector2i.ZERO:
 		_camino.clear()
+		_interaccion = null
 		var destino: Vector2i = celda_lider() + direccion
 		if _grilla.puede_dar_paso(celda_lider(), destino):
 			_dar_paso_lider(destino)
@@ -201,8 +234,12 @@ func _avanzar_seguidor(indice_seguidor: int) -> void:
 
 func _al_terminar_paso_lider(celda: Vector2i) -> void:
 	lider_llego_a.emit(celda)
-	if not bloqueado:
-		_avanzar()
+	if bloqueado:
+		return
+	if _interaccion != null and _camino.is_empty() and _direccion_teclado() == Vector2i.ZERO:
+		_abrir_interaccion()
+		return
+	_avanzar()
 
 
 ## Dirección del teclado en direcciones de pantalla (W arriba, D derecha...), traducida a la grilla.

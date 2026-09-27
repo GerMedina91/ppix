@@ -113,3 +113,4 @@ Términos de reglas en castellano, según la edición oficial en castellano de l
 | Diehard / Sudden Charge / flourish | Duro de matar / Carga repentina / floritura | `duro_de_matar`, `carga_repentina`, `floritura_en_turno` | Provisorio |
 | nonlethal attack | ataque no letal | `no_letal` | Provisorio |
 | memory (skill / experience / of the Mourner) | recuerdo (de destreza / vivencia / del Doliente) | `DefinicionRecuerdo` | Provisorio |
+| rest / daily preparations | descanso, descansar / preparativos diarios | `Descanso`, `descansar()` | Provisorio |

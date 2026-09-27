@@ -23,12 +23,16 @@ var _id_encuentro_actual: StringName = &""
 @onready var _party: ControlParty = $Party
 @onready var _camara: CamaraMundo = $Camara
 @onready var _fundido: Fundido = $Fundido
+@onready var _panel_punto: PanelPuntoEstable = $PanelPuntoEstable
 
 
 func _ready() -> void:
 	_party.lider_llego_a.connect(_al_llegar_lider)
 	encuentro_disparado.connect(_iniciar_combate)
 	_combate.combate_terminado.connect(_al_terminar_combate)
+	_party.interaccion_alcanzada.connect(_al_interactuar)
+	_panel_punto.descanso_pedido.connect(_descansar)
+	_panel_punto.cerrado.connect(func() -> void: _party.bloqueado = false)
 	_cargar_mapa(id_mapa_inicial, id_entrada_inicial)
 
 
@@ -62,6 +66,25 @@ func _al_terminar_combate(victoria: bool) -> void:
 	_camara.objetivo = _party.lider()
 	_party.salir_de_combate()
 	EventBus.encuentro_terminado.emit(id_encuentro, true)
+
+
+## La party llegó al lado de un objeto: se abre según su tipo (la party queda quieta mientras tanto).
+func _al_interactuar(objeto: Interactuable) -> void:
+	if objeto is PuntoEstable:
+		_party.bloqueado = true
+		_panel_punto.abrir(objeto)
+
+
+## Descanso en un punto estable (GDD 4.3): recupera a la party y lo registra como punto de reaparición.
+func _descansar(punto: PuntoEstable) -> void:
+	Descanso.descansar(GameState.estado_party)
+	for miembro: MiembroParty in _party.miembros():
+		if not GameState.estado_party.has(StringName(miembro.name)):
+			miembro.mostrar_estado(ActorMapa.EstadoVisual.NORMAL)
+	GameState.id_ultimo_punto_estable = punto.id
+	GameState.id_mapa_ultimo_punto_estable = GameState.id_mapa_actual
+	EventBus.punto_estable_activado.emit(punto.id)
+	_panel_punto.mostrar_descansado()
 
 
 ## Si la formación no alcanza para todos, los que faltan van a la última casilla.

@@ -91,3 +91,26 @@ func test_puede_dar_paso_no_corta_esquinas() -> void:
 func test_puede_dar_paso_a_pared() -> void:
 	var grilla: GrillaMapa = _grilla([".#"])
 	assert_bool(grilla.puede_dar_paso(Vector2i(0, 0), Vector2i(1, 0))).is_false()
+
+
+# --- celda_junto_a (acercarse a un objeto que ocupa su casilla) ---
+
+func test_junto_a_elige_la_vecina_mas_cercana() -> void:
+	var grilla: GrillaMapa = _grilla([".......", ".....#.", "......."])
+	assert_that(grilla.celda_junto_a(Vector2i(0, 1), Vector2i(5, 1))).is_equal(Vector2i(4, 1))
+
+
+func test_junto_a_si_ya_esta_al_lado_no_se_mueve() -> void:
+	var grilla: GrillaMapa = _grilla(["...", ".#.", "..."])
+	assert_that(grilla.celda_junto_a(Vector2i(0, 0), Vector2i(1, 1))).is_equal(Vector2i(0, 0))
+
+
+func test_junto_a_rodea_paredes() -> void:
+	# A la izquierda del objeto (3,2) hay pared: la vecina más cercana es la de abajo a la izquierda.
+	var grilla: GrillaMapa = _grilla([".....", "..##.", "..#..", "....."])
+	assert_that(grilla.celda_junto_a(Vector2i(0, 2), Vector2i(3, 2))).is_equal(Vector2i(2, 3))
+
+
+func test_junto_a_sin_acceso_da_null() -> void:
+	var grilla: GrillaMapa = _grilla([".#...", ".#.#.", ".#..."])
+	assert_that(grilla.celda_junto_a(Vector2i(0, 1), Vector2i(3, 1))).is_null()

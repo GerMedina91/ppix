@@ -6,7 +6,8 @@ extends RefCounted
 ## - Flanqueo: el objetivo queda desprevenido (-2 por circunstancia) solo frente a quien lo flanquea.
 ## - Daño: dados + bonificador + daño adicional de capacidades (p. ej. ataque furtivo), mínimo 1 si impacta;
 ##   éxito crítico, el doble de todo. Letal: en un crítico,
-##   un dado más del tamaño indicado, tirado después de duplicar.
+##   un dado más del tamaño indicado, tirado después de duplicar. Después, debilidad y resistencia del objetivo
+##   (AjusteDanio; con un arma versátil, el tipo que más daño le hace).
 ## El costo en acciones lo maneja Combate.
 
 enum Motivo { VALIDO, SIN_ARMA, OBJETIVO_ALIADO, OBJETIVO_MUERTO, FUERA_DE_ALCANCE, SIN_LINEA_DE_VISION, SIN_ACCIONES }
@@ -114,8 +115,11 @@ static func resolver(atacante: Combatiente, objetivo: Combatiente, arma: Definic
 			if arma.letal_caras > 0:
 				resultado.danio_letal = dados.tirar(arma.letal_caras)
 				resultado.danio += resultado.danio_letal
-		resultado.debilidad = objetivo.fuente.debilidad(arma.tipo_danio)
-		resultado.danio += resultado.debilidad
+		resultado.tipo_danio = AjusteDanio.tipo_de_golpe(arma, objetivo.fuente)
+		var ajuste: Dictionary = AjusteDanio.aplicar(objetivo.fuente, resultado.tipo_danio, resultado.danio)
+		resultado.debilidad = ajuste.debilidad
+		resultado.resistencia = ajuste.resistencia
+		resultado.danio = ajuste.danio
 		objetivo.recibir_danio(resultado.danio, resultado.critico, no_letal)
 	return resultado
 

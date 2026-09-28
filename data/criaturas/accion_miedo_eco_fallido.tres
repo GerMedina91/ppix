@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="DefinicionAccionMiedo" format=3]
+
+[ext_resource type="Script" path="res://rules/datos/definicion_accion_miedo.gd" id="1_miedo"]
+
+[resource]
+script = ExtResource("1_miedo")
+nombre = "TODO_LORE: acción de miedo"

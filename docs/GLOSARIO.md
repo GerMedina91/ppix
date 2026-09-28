@@ -72,6 +72,7 @@ Términos de reglas en castellano, según la edición oficial en castellano de l
 | favored weapon | arma predilecta | `arma_predilecta` | Provisorio |
 | travel / dreams / death (dominios) | viaje / sueños / muerte | `viaje`, `suenos`, `muerte` | Provisorio |
 | halberd | alabarda | `alabarda` | Provisorio |
+| sickle / scythe / scimitar / shortbow | hoz / guadaña / cimitarra / arco corto | `hoz`, `guadana`, `cimitarra`, `arco_corto` | Provisorio |
 | Occultism | Ocultismo | `ocultismo` | Provisorio |
 | skill | habilidad | `Habilidad` | Provisorio |
 | Acrobatics / Arcana / Athletics / Crafting | Acrobacias / Arcanos / Atletismo / Artesanía | `ACROBACIAS`, `ARCANOS`, `ATLETISMO`, `ARTESANIA` | Provisorio |
@@ -97,6 +98,7 @@ Términos de reglas en castellano, según la edición oficial en castellano de l
 | tradition (arcane / divine / occult / primal) | tradición (arcana / divina / ocultista / primigenia) | `Tradicion` | Provisorio |
 | disrupt (an action) | interrumpir | `interrumpida` | Provisorio |
 | spirit / mental (daño) | de espíritu / mental | `ESPIRITU`, `MENTAL` | Provisorio |
+| fire / cold / electricity (daño) | de fuego / de frío / de electricidad | `FUEGO`, `FRIO`, `ELECTRICIDAD` | Provisorio |
 | nonlethal | no letal | `NO_LETAL` | Provisorio |
 | spell attack roll / basic save | ataque de conjuro / salvación básica | `es_ataque()`, `salvacion_basica` | Provisorio |
 | Divine Lance / Stabilize / Fear | Lanza divina / Estabilizar / Miedo | `lanza_divina`, `estabilizar`, `miedo` | Provisorio |
@@ -114,11 +116,12 @@ Términos de reglas en castellano, según la edición oficial en castellano de l
 | nonlethal attack | ataque no letal | `no_letal` | Provisorio |
 | memory (skill / experience / of the Mourner) | recuerdo (de destreza / vivencia / del Doliente) | `DefinicionRecuerdo` | Provisorio |
 | rest / daily preparations | descanso, descansar / preparativos diarios | `Descanso`, `descansar()` | Provisorio |
-| weakness / immunity / resistance | debilidad / inmunidad / resistencia | `debilidades`, `inmune_mental` | Provisorio |
+| weakness / immunity / resistance | debilidad / inmunidad / resistencia | `debilidades`, `inmune_mental`, `resistencias` | Provisorio |
 | slowed | lento | `LENTO`, `lento` | Provisorio |
 | lesser / standard / greater cover | cobertura menor / normal / mayor | `Cobertura.Nivel` | Provisorio |
 | Take Cover | Tomar cobertura | `tomar_cobertura()`, `tomando_cobertura` | Provisorio |
 | mindless | sin mente | — | Provisorio |
+| knocked out | noqueado (en UI: inconsciente) | `inconsciente_a_cero` | Provisorio |
 
 ## Términos del mundo (no son de PF2e)
 

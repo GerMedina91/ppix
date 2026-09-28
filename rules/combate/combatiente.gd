@@ -46,6 +46,8 @@ var maleficio_en_turno: bool = false
 var floritura_en_turno: bool = false
 ## Sanadores cuya Medicina en batalla ya recibió (inmune hasta descansar en un punto estable).
 var inmune_medicina_de: Dictionary[StringName, bool] = {}
+## Criaturas cuya acción de miedo ya sufrió (inmune el resto del combate).
+var inmune_miedo_de: Dictionary[StringName, bool] = {}
 ## Lo que la party cree saber de este combatiente por Recordar conocimiento:
 ## {"salvacion_debil": Estadisticas.Salvacion, "segun": nombre de quien lo recordó} (puede ser falso).
 var conocimiento: Dictionary = {}
@@ -186,14 +188,15 @@ func _aplicar_inconsciente(prueba: Prueba) -> void:
 
 
 ## Aplica daño. Personajes: a 0 PG caen moribundos (reglas completas). Criaturas: mueren a 0 PG.
-## `no_letal` (Player Core p. 407): si lo deja a 0 PG, queda inconsciente en vez de morir o quedar moribundo.
+## `no_letal` (Player Core p. 407), o una criatura que queda inconsciente a 0 PG: queda inconsciente en vez de
+## morir o quedar moribundo.
 ## Los muertos vivientes quedan destruidos a 0 PG aunque el daño sea no letal (Player Core p. 462).
 func recibir_danio(cantidad: int, por_critico: bool, no_letal: bool = false) -> void:
 	if condiciones.muerto or cantidad <= 0:
 		return
 	if pg > 0:
 		pg = maxi(0, pg - cantidad)
-		if pg == 0 and no_letal and not fuente.es_muerto_viviente():
+		if pg == 0 and (no_letal or fuente.inconsciente_a_cero()) and not fuente.es_muerto_viviente():
 			condiciones.inconsciente = true
 			tomando_cobertura = false
 		elif pg == 0:

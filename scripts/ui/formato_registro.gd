@@ -100,6 +100,8 @@ const _NOMBRE_DANIO: Dictionary[DefinicionArma.TipoDanio, String] = {
 	DefinicionArma.TipoDanio.CORTANTE: "cortante", DefinicionArma.TipoDanio.PERFORANTE: "perforante",
 	DefinicionArma.TipoDanio.CONTUNDENTE: "contundente", DefinicionArma.TipoDanio.ESPIRITU: "de espíritu",
 	DefinicionArma.TipoDanio.MENTAL: "mental", DefinicionArma.TipoDanio.VITALIDAD: "de vitalidad",
+	DefinicionArma.TipoDanio.FUEGO: "de fuego", DefinicionArma.TipoDanio.FRIO: "de frío",
+	DefinicionArma.TipoDanio.ELECTRICIDAD: "de electricidad",
 }
 
 
@@ -126,10 +128,9 @@ static func _efecto_conjuro(evento: EventoCombate, combate: Combate) -> String:
 			r.total, r.cd, GradoExito.nombre(r.grado)]
 	elif conjuro.bonificador_velocidad > 0:
 		return "%s: +%d pies de Velocidad hasta el final del turno" % [actor, conjuro.bonificador_velocidad]
-	if evento.datos.get("danio", 0) > 0:
+	if evento.datos.get("danio", 0) > 0 or evento.datos.get("resistencia", 0) > 0:
 		texto += ", %d de daño %s" % [evento.datos.danio, _NOMBRE_DANIO[conjuro.tipo_danio]]
-		if evento.datos.get("debilidad", 0) > 0:
-			texto += " (+%d debilidad)" % evento.datos.debilidad
+		texto += _ajuste(evento.datos.get("debilidad", 0), evento.datos.get("resistencia", 0))
 	return texto
 
 
@@ -200,12 +201,21 @@ static func _golpe(atacante: String, objetivo: String, resultado: ResultadoGolpe
 		texto += " [flanqueo]"
 	if resultado.no_letal:
 		texto += " [no letal]"
-	if resultado.impacto():
+	if resultado.acerto():
 		texto += ", %d de daño" % resultado.danio
 		for adicional: Dictionary in resultado.danio_adicional:
 			texto += " (+%d %s)" % [(adicional.tirada as ResultadoTirada).total(), adicional.fuente]
-		if resultado.debilidad > 0:
-			texto += " (+%d debilidad)" % resultado.debilidad
+		texto += _ajuste(resultado.debilidad, resultado.resistencia)
+	return texto
+
+
+## " (+5 debilidad)", " (-5 resistencia)", ambos o "".
+static func _ajuste(debilidad: int, resistencia: int) -> String:
+	var texto: String = ""
+	if debilidad > 0:
+		texto += " (+%d debilidad)" % debilidad
+	if resistencia > 0:
+		texto += " (-%d resistencia)" % resistencia
 	return texto
 
 

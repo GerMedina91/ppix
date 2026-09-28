@@ -1,7 +1,7 @@
 class_name DefinicionCriatura
 extends Resource
 ## Criatura con números directos (como un bloque de estadísticas), sin atributos ni competencias.
-## Las criaturas mueren al llegar a 0 PG (no usan las reglas de moribundo).
+## Las criaturas mueren al llegar a 0 PG (no usan las reglas de moribundo), salvo las que quedan inconscientes.
 
 @export var nombre: String = "TODO_LORE"
 @export_range(-1, 25) var nivel: int = 1
@@ -17,6 +17,11 @@ extends Resource
 @export var voluntad: int = 0
 ## Debilidades por tipo de daño (Player Core p. 408): se suman una vez al daño de ese tipo.
 @export var debilidades: Dictionary[DefinicionArma.TipoDanio, int] = {}
+## Resistencias por tipo de daño (Player Core p. 408): se restan después de la debilidad, hasta 0.
+@export var resistencias: Dictionary[DefinicionArma.TipoDanio, int] = {}
+## A 0 PG queda inconsciente en vez de morir, aunque el daño sea letal (decisión del director para los humanos
+## del slice; Player Core p. 410). Otro golpe estando a 0 PG lo mata. No aplica a los muertos vivientes.
+@export var inconsciente_a_cero: bool = false
 ## Inmune a los efectos mentales (sin mente, Player Core p. 458).
 @export var inmune_mental: bool = false
 ## Lento permanente (Player Core p. 446): recupera menos acciones al empezar su turno.
@@ -33,6 +38,8 @@ extends Resource
 ## Bonificador fijo que se suma al daño de sus Golpes.
 @export var bonificador_danio: int = 0
 @export var armas: Array[DefinicionArma] = []
+## Acción de miedo (la usa la IA cuando hay a quién asustar); null = no tiene.
+@export var accion_miedo: DefinicionAccionMiedo
 
 @export_group("Recuerdos")
 ## Lo que el Eco puede extraerle si queda inconsciente tras la victoria (GDD 4.2); null = nada.
@@ -54,4 +61,6 @@ func errores_de_datos() -> PackedStringArray:
 		errores.append("Criatura %s: necesita al menos un arma para sus Golpes" % nombre)
 	for arma: DefinicionArma in armas:
 		errores.append_array(arma.errores_de_datos())
+	if accion_miedo != null:
+		errores.append_array(accion_miedo.errores_de_datos())
 	return errores

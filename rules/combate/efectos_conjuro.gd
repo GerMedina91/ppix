@@ -123,13 +123,15 @@ static func _daniar(combate: Combate, conjuro: DefinicionConjuro, objetivo: Comb
 	_aplicar_danio(conjuro, objetivo, tirada.total(), multiplicador, por_critico, datos)
 
 
-## Aplica `base` de daño con el multiplicador (mitad hacia abajo, mínimo 1; 0 = nada).
+## Aplica `base` de daño con el multiplicador (mitad hacia abajo, mínimo 1; 0 = nada), y después debilidad y
+## resistencia (AjusteDanio).
 static func _aplicar_danio(conjuro: DefinicionConjuro, objetivo: Combatiente, base: int, multiplicador: float,
 		por_critico: bool, datos: Dictionary) -> void:
 	if multiplicador <= 0.0:
 		return
 	var danio: int = maxi(Golpe.DANIO_MINIMO, floori(maxi(Golpe.DANIO_MINIMO, base) * multiplicador))
-	datos["debilidad"] = objetivo.fuente.debilidad(conjuro.tipo_danio)
-	danio += datos.debilidad
-	datos.danio = danio
-	objetivo.recibir_danio(danio, por_critico, conjuro.tiene(DefinicionConjuro.Rasgo.NO_LETAL))
+	var ajuste: Dictionary = AjusteDanio.aplicar(objetivo.fuente, conjuro.tipo_danio, danio)
+	datos["debilidad"] = ajuste.debilidad
+	datos["resistencia"] = ajuste.resistencia
+	datos.danio = ajuste.danio
+	objetivo.recibir_danio(ajuste.danio, por_critico, conjuro.tiene(DefinicionConjuro.Rasgo.NO_LETAL))

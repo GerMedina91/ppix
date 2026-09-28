@@ -10,6 +10,7 @@ extends RefCounted
 ## Huyendo: Zancada a la casilla más lejana de la fuente (si lo aleja); si no puede, termina el turno.
 ## Conjuros (cuando los enemigos lancen): nunca elige aliados como objetivo de un conjuro dañino.
 ## Indispuesto: si no puede golpear a nadie este turno (ni desde donde está ni tras una Zancada), Arcadas.
+## Acción de miedo (si la tiene): la usa antes de golpear, siempre que haya alguien a quien asustar.
 
 ## Tope de seguridad de decisiones por turno (cada una gasta al menos una acción o termina).
 const _DECISIONES_MAXIMAS: int = 6
@@ -43,6 +44,10 @@ static func jugar_accion(combate: Combate) -> Array[EventoCombate]:
 		var arcadas: Array[EventoCombate] = combate.arcadas()
 		if arcadas.back().tipo != EventoCombate.Tipo.ACCION_INVALIDA:
 			return arcadas
+	if actor.fuente.accion_miedo() != null and not combate.especiales.objetivos_de_miedo(actor).is_empty():
+		var miedo: Array[EventoCombate] = combate.especiales.accion_de_miedo()
+		if miedo.back().tipo != EventoCombate.Tipo.ACCION_INVALIDA:
+			return miedo
 	if arma == null:
 		return combate.terminar_turno()
 	if arma.a_distancia and actor.acciones_restantes == Combatiente.ACCIONES_POR_TURNO:

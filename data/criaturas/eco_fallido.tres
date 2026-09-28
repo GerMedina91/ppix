@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="DefinicionCriatura" format=3]
+
+[ext_resource type="Script" path="res://rules/datos/definicion_arma.gd" id="1_arma"]
+[ext_resource type="Resource" path="res://data/armas/arma_eco_fallido_mano.tres" id="2_arma"]
+[ext_resource type="Script" path="res://rules/datos/definicion_criatura.gd" id="3_crit"]
+[ext_resource type="Resource" path="res://data/criaturas/accion_miedo_eco_fallido.tres" id="4_miedo"]
+
+[resource]
+script = ExtResource("3_crit")
+nombre = "TODO_LORE: criatura (nivel 2)"
+nivel = 2
+rasgo = 9
+ca = 17
+pg = 36
+fortaleza = 8
+reflejos = 8
+voluntad = 5
+inmune_mental = true
+percepcion = 8
+bonificador_ataque = 9
+bonificador_danio = 4
+armas = Array[ExtResource("1_arma")]([ExtResource("2_arma")])
+accion_miedo = ExtResource("4_miedo")

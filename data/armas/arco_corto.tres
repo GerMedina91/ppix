@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="DefinicionArma" format=3]
+
+[ext_resource type="Script" path="res://rules/datos/definicion_arma.gd" id="1_arma"]
+
+[resource]
+script = ExtResource("1_arma")
+id = &"arco_corto"
+nombre = "Arco corto"
+categoria = 1
+caras_dado = 6
+tipo_danio = 1
+letal_caras = 10
+a_distancia = true
+incremento_rango_pies = 60

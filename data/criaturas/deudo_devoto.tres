@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="DefinicionCriatura" format=3]
+
+[ext_resource type="Script" path="res://rules/datos/definicion_arma.gd" id="1_arma"]
+[ext_resource type="Resource" path="res://data/armas/arco_corto.tres" id="2_arma"]
+[ext_resource type="Script" path="res://rules/datos/definicion_criatura.gd" id="3_crit"]
+
+[resource]
+script = ExtResource("3_crit")
+nombre = "TODO_LORE: humano con arco (nivel -1)"
+nivel = -1
+ca = 14
+pg = 8
+fortaleza = 2
+reflejos = 5
+voluntad = 8
+inconsciente_a_cero = true
+habilidades = Dictionary[int, int]({11: 4})
+percepcion = 5
+bonificador_ataque = 6
+bonificador_danio = 0
+armas = Array[ExtResource("1_arma")]([ExtResource("2_arma")])

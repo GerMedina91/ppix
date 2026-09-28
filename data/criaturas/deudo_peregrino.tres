@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="DefinicionCriatura" format=3]
+
+[ext_resource type="Script" path="res://rules/datos/definicion_arma.gd" id="1_arma"]
+[ext_resource type="Resource" path="res://data/armas/hoz.tres" id="2_arma"]
+[ext_resource type="Script" path="res://rules/datos/definicion_criatura.gd" id="3_crit"]
+
+[resource]
+script = ExtResource("3_crit")
+nombre = "TODO_LORE: humano con hoz (nivel 0)"
+nivel = 0
+ca = 15
+pg = 15
+fortaleza = 6
+reflejos = 3
+voluntad = 9
+inconsciente_a_cero = true
+habilidades = Dictionary[int, int]({2: 5, 11: 5})
+percepcion = 6
+bonificador_ataque = 8
+bonificador_danio = 2
+armas = Array[ExtResource("1_arma")]([ExtResource("2_arma")])

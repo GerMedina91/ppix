@@ -8,6 +8,8 @@ extends RefCounted
 ## - Carga repentina (guerrero, 2 acciones, floritura): dos Zancadas y, si termina a alcance cuerpo a cuerpo
 ##   del enemigo, un Golpe cuerpo a cuerpo contra él. Se elige el enemigo y se va a la casilla más cercana
 ##   desde la que se lo alcanza.
+## - Acción de miedo de una criatura (DefinicionAccionMiedo): Voluntad de cada enemigo vivo en la emanación, con
+##   línea de efecto; asustado según el grado; inmune a la de esa criatura el resto del combate.
 
 const CARGA_REPENTINA: StringName = &"carga_repentina"
 const ACCION_TOMAR_COBERTURA: String = "Tomar cobertura"
@@ -135,6 +137,56 @@ func _tramo_de_carga(actor: Combatiente, objetivo: Combatiente, tramos: Array[Ar
 	resto.assign(tramos.slice(1))
 	return combate.movimiento.mover_zancada(actor, tramo.back(), tramo,
 		func() -> Array[EventoCombate]: return _tramo_de_carga(actor, objetivo, resto))
+
+
+# --- Acción de miedo ---
+
+## A quiénes afectaría ahora la acción de miedo de `actor` (vacío si no tiene o no hay nadie).
+func objetivos_de_miedo(actor: Combatiente) -> Array[Combatiente]:
+	var accion: DefinicionAccionMiedo = actor.fuente.accion_miedo()
+	var lista: Array[Combatiente] = []
+	if accion == null:
+		return lista
+	var combate: Combate = _combate()
+	for c: Combatiente in combate.participantes:
+		if c.es_aliado_de(actor) or c.condiciones.muerto or c.fuente.es_muerto_viviente() or c.fuente.inmune_mental():
+			continue
+		if c.inmune_miedo_de.has(actor.id) or Medicion.pies_entre(actor.celda, c.celda) > accion.emanacion_pies:
+			continue
+		if combate.vision().hay_linea(actor.celda, c.celda):
+			lista.append(c)
+	return lista
+
+
+func accion_de_miedo() -> Array[EventoCombate]:
+	var combate: Combate = _combate()
+	var actor: Combatiente = combate.turno_actual()
+	var accion: DefinicionAccionMiedo = actor.fuente.accion_miedo() if actor != null else null
+	if accion == null:
+		return [combate.invalida(actor, "acción de miedo", "no la tiene")]
+	var invalido: EventoCombate = combate.validar_accion(actor, accion.acciones, accion.nombre)
+	if invalido != null:
+		return [invalido]
+	var objetivos: Array[Combatiente] = objetivos_de_miedo(actor)
+	if objetivos.is_empty():
+		return [combate.invalida(actor, accion.nombre, "no hay a quién asustar")]
+	actor.gastar_acciones(accion.acciones)
+	var antes: Dictionary = ReglasCondiciones.valores(combate)
+	var eventos: Array[EventoCombate] = [combate.emitir(EventoCombate.new(EventoCombate.Tipo.ACCION_ESPECIAL, actor.id, {"accion": accion.nombre}))]
+	for objetivo: Combatiente in objetivos:
+		var resultado: ResultadoPrueba = objetivo.prueba_salvacion(Estadisticas.Salvacion.VOLUNTAD).resolver(combate.dados(), accion.cd)
+		objetivo.inmune_miedo_de[actor.id] = true
+		var valor: int = 0
+		if resultado.grado == GradoExito.Grado.FALLO:
+			valor = accion.valor_fallo
+		elif resultado.grado == GradoExito.Grado.FALLO_CRITICO:
+			valor = accion.valor_fallo_critico
+		if valor > 0:
+			objetivo.condiciones.aplicar(EfectoCondicion.new(Condiciones.Tipo.ASUSTADO, valor, accion.cd, actor.id))
+		eventos.append(combate.emitir(EventoCombate.new(EventoCombate.Tipo.RESULTADO_ESPECIAL, objetivo.id,
+			{"accion": "Voluntad", "objetivo": objetivo.id, "resultado": resultado, "curacion": 0, "danio": 0})))
+	eventos.append_array(ReglasCondiciones.cambios_desde(combate, antes))
+	return eventos
 
 
 static func _arma_cuerpo_a_cuerpo(c: Combatiente) -> DefinicionArma:

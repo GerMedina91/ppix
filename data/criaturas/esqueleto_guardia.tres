@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="DefinicionCriatura" format=3]
+
+[ext_resource type="Script" path="res://rules/datos/definicion_arma.gd" id="1_arma"]
+[ext_resource type="Resource" path="res://data/armas/cimitarra.tres" id="2_arma"]
+[ext_resource type="Script" path="res://rules/datos/definicion_criatura.gd" id="3_crit"]
+
+[resource]
+script = ExtResource("3_crit")
+nombre = "TODO_LORE: esqueleto (base: Skeleton Guard, Monster Core p. 312)"
+nivel = -1
+rasgo = 16
+ca = 16
+pg = 4
+fortaleza = 2
+reflejos = 8
+voluntad = 2
+resistencias = Dictionary[int, int]({0: 5, 1: 5, 6: 5, 7: 5, 8: 5})
+inmune_mental = true
+habilidades = Dictionary[int, int]({0: 6, 2: 3})
+percepcion = 2
+bonificador_ataque = 6
+bonificador_danio = 2
+armas = Array[ExtResource("1_arma")]([ExtResource("2_arma")])

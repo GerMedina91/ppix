@@ -305,7 +305,20 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
     - No es una regla de PF2e: representa el instante antes de notarse; la iniciativa (Percepción) no depende de la posición. **Sin sorpresa en el slice** (no hay Evitar ser notado ni iniciativa con Sigilo).
     - Guardado: al dispararse el encuentro (si se cierra durante el posicionamiento, al cargar se vuelve a posicionar desde las casillas guardadas) y después del posicionamiento (el estado previo al primer turno, con el mismo RNG).
     - Capturas `docs/capturas/cobertura/05` a `07`.
-- **M5 — Contenido del slice:** mapas, NPCs, diálogos, arte final.
+- **M5 — Contenido del slice** (plan aprobado 2026-09-28; estructura en `docs/lore/slice.md`, SPOILER). Arte: todo placeholder hasta que Germán produzca los sprites. Orden: a) reglas y criaturas → b) mapas (Kardel, el linde del Monte, el corazón del Monte) con el reparto de recuerdos y el fin del slice → c) banco de rendimiento web y capturas.
+  - **Decidido (director, 2026-09-28):**
+    - Encuentros con el presupuesto del GM Core para 4 de nivel 1 (`PresupuestoEncuentro`): combate 1 moderado (80 XP), combate 2 moderado (80), combate 3 severo (120). Números en `docs/verificacion/m5_criaturas.md`.
+    - Los humanos del slice, incluido el líder, quedan **inconscientes a 0 PG** en vez de morir (Player Core p. 410: el DJ lo decide para criaturas importantes). Dato por criatura: `DefinicionCriatura.inconsciente_a_cero`. Otro golpe a 0 PG los mata; no aplica a muertos vivientes.
+    - "Lo que atrajo del otro lado": criatura de nivel 2 **construida con el GM Core** (concepto: una forma hecha de recuerdos de los muertos del Monte, un Eco fallido; nombre TODO_LORE). Golpes, una acción de miedo (asustado), inmune a lo mental, sin incorporeidad; placeholder con la rampa Herida.
+    - Líder humano **marcial** (la IA no lanza conjuros).
+    - **Segunda Lumbre** al final del linde, justo antes de la salida al corazón: combate 1 → descanso posible → combates 2 y 3 sin descanso entre medio.
+    - Resistencias por tipo de daño: implementadas. Bloqueo con escudo: no hace falta.
+  - **a) hecho — reglas y criaturas:**
+    - **Resistencias** (Player Core p. 408): después de la debilidad, hasta 0 (`AjusteDanio`, en Golpes y conjuros). El registro muestra "(-5 resistencia)"; un acierto puede hacer 0 de daño. Tipos de daño nuevos (solo para resistencias): fuego, frío, electricidad.
+    - **Versátil** (Player Core p. 283): **decisión de implementación:** se usa solo el tipo que más daño hace contra el objetivo (lo que elegiría el jugador).
+    - **Acción de miedo** de criatura (`DefinicionAccionMiedo`, `AccionesEspeciales.accion_de_miedo`): 1 acción, 30 pies, Voluntad contra la CD; fallo asustado 1, fallo crítico asustado 2; inmune el resto del combate tras cualquier resultado. La IA la usa antes de golpear mientras haya a quién asustar. Afecta solo a sus enemigos.
+    - Criaturas nuevas en `data/criaturas/`: esqueleto (Skeleton Guard, Monster Core p. 312; con cimitarra o con arco corto), humanos de nivel 0 (hoz), -1 (arco corto) y 2 (guadaña), y la criatura de nivel 2. Armas nuevas: hoz, arco corto, guadaña, cimitarra. **[aproximación]** Sin derribo, vigorosa ni barrido.
+    - Un enemigo del mapa puede llevar su propio recuerdo (`EnemigoEnMapa.recuerdo`; si no, el de su definición): el reparto de recuerdos es del mapa.
 
 ## 9. Preguntas abiertas
 - Título del juego.

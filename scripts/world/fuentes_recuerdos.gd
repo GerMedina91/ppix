@@ -30,7 +30,7 @@ func resolver_inconscientes(resultado: ResultadoCombate, encuentro: Encuentro) -
 		var enemigo: EnemigoEnMapa = encuentro.get_node_or_null(NodePath(String(id)))
 		if enemigo == null:
 			continue
-		var recuerdo: DefinicionRecuerdo = enemigo.definicion.recuerdo
+		var recuerdo: DefinicionRecuerdo = enemigo.recuerdo_extraible()
 		var opciones: PackedStringArray = PackedStringArray([PERDONAR, REMATAR])
 		if recuerdo != null:
 			opciones.insert(0, EXTRAER)

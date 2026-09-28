@@ -3,8 +3,9 @@ extends Resource
 ## Arma: dados y tipo de daño, categoría (para la competencia) y rasgos (Player Core; ver
 ## docs/verificacion/c1_clases.md). Nombres de las armas de prueba: TODO_LORE.
 
-## Tipos de daño (Player Core p. 407). Espíritu y mental: solo de conjuros por ahora.
-enum TipoDanio { CORTANTE, PERFORANTE, CONTUNDENTE, ESPIRITU, MENTAL, VITALIDAD }
+## Tipos de daño (Player Core p. 407). Espíritu y mental: solo de conjuros por ahora. Fuego, frío y electricidad:
+## solo para las resistencias de las criaturas (nada del slice hace ese daño todavía). Nuevos, siempre al final.
+enum TipoDanio { CORTANTE, PERFORANTE, CONTUNDENTE, ESPIRITU, MENTAL, VITALIDAD, FUEGO, FRIO, ELECTRICIDAD }
 enum Categoria { SIMPLE, MARCIAL, AVANZADA, SIN_ARMAS }
 
 const CARAS_VALIDAS: Array[int] = [4, 6, 8, 10, 12]
@@ -25,7 +26,7 @@ const CARAS_VALIDAS: Array[int] = [4, 6, 8, 10, 12]
 @export var sutil: bool = false
 ## Letal: en un crítico suma un dado de estas caras, tirado después de duplicar (0 = sin letal).
 @export var letal_caras: int = 0
-## Versátil: puede hacer este otro tipo de daño (solo dato por ahora: no hay resistencias).
+## Versátil: puede hacer este otro tipo de daño; se elige el que más daño hace al objetivo (AjusteDanio).
 @export var versatil: bool = false
 @export var tipo_versatil: TipoDanio = TipoDanio.CORTANTE
 ## Arrojadiza: incremento de rango al lanzarla (0 = no se lanza). Solo dato por ahora.

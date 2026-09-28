@@ -10,6 +10,16 @@ const COLOR_BORDE: Color = Color(0.1, 0.05, 0.05)
 	set(valor):
 		definicion = valor
 		update_configuration_warnings()
+## Recuerdo que lleva este enemigo en particular (se le extrae si queda inconsciente). Vacío: el de su definición.
+## Así el reparto de recuerdos es del mapa y la criatura se define una sola vez.
+@export var recuerdo: DefinicionRecuerdo
+
+
+## Lo que el Eco puede extraerle (null = nada).
+func recuerdo_extraible() -> DefinicionRecuerdo:
+	if recuerdo != null:
+		return recuerdo
+	return definicion.recuerdo if definicion != null else null
 
 
 func _enter_tree() -> void:
@@ -29,6 +39,8 @@ func _get_configuration_warnings() -> PackedStringArray:
 		avisos.append("Falta la definición de la criatura (data/criaturas/).")
 	if not get_parent() is Encuentro:
 		avisos.append("Tiene que ser hijo de un Encuentro.")
+	if recuerdo != null and not ValidacionMapa.recuerdo_catalogado(recuerdo):
+		avisos.append("El recuerdo no está en el catálogo (data/recuerdos/catalogo_recuerdos.tres).")
 	return avisos
 
 

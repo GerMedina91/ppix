@@ -60,6 +60,18 @@ func debilidad(tipo: DefinicionArma.TipoDanio) -> int:
 	return _criatura.debilidades.get(tipo, 0)
 
 
+func resistencia(tipo: DefinicionArma.TipoDanio) -> int:
+	return _criatura.resistencias.get(tipo, 0)
+
+
+func accion_miedo() -> DefinicionAccionMiedo:
+	return _criatura.accion_miedo
+
+
+func inconsciente_a_cero() -> bool:
+	return _criatura.inconsciente_a_cero
+
+
 func inmune_mental() -> bool:
 	return _criatura.inmune_mental
 

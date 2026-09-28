@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="DefinicionCriatura" format=3]
+
+[ext_resource type="Script" path="res://rules/datos/definicion_arma.gd" id="1_arma"]
+[ext_resource type="Resource" path="res://data/armas/guadana.tres" id="2_arma"]
+[ext_resource type="Script" path="res://rules/datos/definicion_criatura.gd" id="3_crit"]
+
+[resource]
+script = ExtResource("3_crit")
+nombre = "TODO_LORE: humano con guadaña (nivel 2)"
+nivel = 2
+ca = 18
+pg = 32
+fortaleza = 8
+reflejos = 5
+voluntad = 11
+inconsciente_a_cero = true
+habilidades = Dictionary[int, int]({2: 8, 6: 8, 11: 7})
+percepcion = 8
+bonificador_ataque = 11
+bonificador_danio = 4
+armas = Array[ExtResource("1_arma")]([ExtResource("2_arma")])

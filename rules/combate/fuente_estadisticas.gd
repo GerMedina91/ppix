@@ -97,10 +97,25 @@ func cd_recordar() -> int:
 	return RasgoCriatura.cd_recordar(nivel(), RasgoCriatura.Rareza.COMUN)
 
 
-## Muerto viviente (Curar lo daña en vez de curarlo).
 ## Debilidad al tipo de daño (0 = ninguna).
 func debilidad(_tipo: DefinicionArma.TipoDanio) -> int:
 	return 0
+
+
+## Acción de miedo de una criatura (null = no tiene).
+func accion_miedo() -> DefinicionAccionMiedo:
+	return null
+
+
+## Resistencia al tipo de daño (0 = ninguna).
+func resistencia(_tipo: DefinicionArma.TipoDanio) -> int:
+	return 0
+
+
+## true si a 0 PG queda inconsciente en vez de morir, aunque el daño sea letal (Player Core p. 410: el DJ lo
+## decide para personajes y criaturas importantes). No aplica a los muertos vivientes.
+func inconsciente_a_cero() -> bool:
+	return false
 
 
 func inmune_mental() -> bool:
@@ -112,6 +127,7 @@ func lento() -> int:
 	return 0
 
 
+## Muerto viviente (Curar lo daña en vez de curarlo).
 func es_muerto_viviente() -> bool:
 	return false
 

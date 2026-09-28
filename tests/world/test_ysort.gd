@@ -1,7 +1,7 @@
 extends GdUnitTestSuite
 ## La party y las paredes solo se ordenan juntas si toda la cadena de nodos tiene y-sort.
 
-const ESCENA: String = "res://scenes/world/mundo.tscn"
+const ESCENA: String = "res://tests/escenas/mundo_prueba.tscn"
 
 var _runner: GdUnitSceneRunner
 

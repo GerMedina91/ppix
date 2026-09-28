@@ -1,7 +1,7 @@
 extends GdUnitTestSuite
 ## Integración de la transparencia de paredes en el mapa de prueba A.
 
-const ESCENA: String = "res://scenes/world/mundo.tscn"
+const ESCENA: String = "res://tests/escenas/mundo_prueba.tscn"
 const ESPERA_MS: int = 8000
 
 ## Actor de prueba ajeno a la party, para verificar que la detección es genérica.

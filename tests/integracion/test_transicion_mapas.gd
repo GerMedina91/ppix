@@ -1,7 +1,7 @@
 extends GdUnitTestSuite
 ## Test de integración de las transiciones entre los mapas de prueba A y B.
 
-const ESCENA: String = "res://scenes/world/mundo.tscn"
+const ESCENA: String = "res://tests/escenas/mundo_prueba.tscn"
 const SALIDA_A_HACIA_B: Vector2i = Vector2i(19, 5)
 const ENTRADA_B_DESDE_A: Vector2i = Vector2i(1, 10)
 const SALIDA_B_HACIA_A: Vector2i = Vector2i(0, 10)

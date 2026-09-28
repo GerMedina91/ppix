@@ -1,7 +1,7 @@
 extends GdUnitTestSuite
 ## Pantallas de M4f: el trueque con el Tasador y los recuerdos del Eco con el diario.
 
-const ESCENA: String = "res://scenes/world/mundo.tscn"
+const ESCENA: String = "res://tests/escenas/mundo_prueba.tscn"
 const FRAMES_MAXIMOS: int = 3000
 
 var _runner: GdUnitSceneRunner

@@ -2,7 +2,7 @@ extends GdUnitTestSuite
 ## Guardado en el mundo (M4g): un combate cortado vuelve a empezar igual al cargar, la pérdida pendiente del Eco
 ## se vuelve a preguntar y los cambios irreversibles se guardan enseguida.
 
-const ESCENA: String = "res://scenes/world/mundo.tscn"
+const ESCENA: String = "res://tests/escenas/mundo_prueba.tscn"
 const FRAMES_MAXIMOS: int = 3000
 
 

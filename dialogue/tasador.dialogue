@@ -1,5 +1,7 @@
 ~ presentacion
 Tasador: TODO_LORE: el Tasador se presenta la primera vez.
+if estado.companero_vivo("Miembro2")
+	Tasador: TODO_LORE: una línea para Irsa.
 Tasador: TODO_LORE: explica el trueque de recuerdos.
 - Comerciar
 	$> estado.comerciar()

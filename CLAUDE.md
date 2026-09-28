@@ -40,7 +40,7 @@ docs/
   capturas/      # capturas de cada hito (docs/capturas/<hito>/)
   propuestas/    # comparaciones y propuestas para decidir
 ```
-- Escena principal: `scenes/ui/inicio.tscn` (Continuar / Nueva partida). El mundo es `scenes/world/mundo.tscn`; los mapas, `scenes/world/mapas/`.
+- Escena principal: `scenes/ui/inicio.tscn` (Continuar / Nueva partida). El mundo es `scenes/world/mundo.tscn` (empieza en Kardel); los mapas, `scenes/world/mapas/` (los del slice y los de prueba). Los tests de integración usan `tests/escenas/mundo_prueba.tscn`, el mismo mundo empezando en el mapa de prueba A.
 
 ## Arquitectura
 - Separación estricta: `rules/` calcula (tiradas, grados de éxito, acciones, condiciones); las escenas solo presentan y envían intenciones.

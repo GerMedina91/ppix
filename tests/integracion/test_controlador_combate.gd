@@ -1,7 +1,7 @@
 extends GdUnitTestSuite
 ## Integración del combate en el mapa de prueba A (encuentro de prueba con dos enemigos).
 
-const ESCENA: String = "res://scenes/world/mundo.tscn"
+const ESCENA: String = "res://tests/escenas/mundo_prueba.tscn"
 const ESPERA_MS: int = 8000
 const FRAMES_MAXIMOS: int = 20000
 

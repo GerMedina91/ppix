@@ -1,6 +1,6 @@
 extends GdUnitTestSuite
 
-const ESCENA: String = "res://scenes/world/mundo.tscn"
+const ESCENA: String = "res://tests/escenas/mundo_prueba.tscn"
 
 var _runner: GdUnitSceneRunner
 

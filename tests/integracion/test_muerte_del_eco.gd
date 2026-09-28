@@ -2,7 +2,7 @@ extends GdUnitTestSuite
 ## Muerte del Eco en el mundo (GDD 4.3): reaparece junto al último punto estable, el residuo queda donde cayó
 ## (y se recupera pisándolo) y el jugador elige el integrado que pierde. Los enemigos muertos siguen muertos.
 
-const ESCENA: String = "res://scenes/world/mundo.tscn"
+const ESCENA: String = "res://tests/escenas/mundo_prueba.tscn"
 const ESPERA_MS: int = 8000
 const FRAMES_MAXIMOS: int = 3000
 const CELDA_PUNTO: Vector2i = Vector2i(4, 9)

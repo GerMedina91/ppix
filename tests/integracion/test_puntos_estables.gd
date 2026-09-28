@@ -1,7 +1,7 @@
 extends GdUnitTestSuite
 ## Punto estable del mapa de prueba A (en (4,9)): click, la party camina al lado, se abre el panel y descansa.
 
-const ESCENA: String = "res://scenes/world/mundo.tscn"
+const ESCENA: String = "res://tests/escenas/mundo_prueba.tscn"
 const CELDA_PUNTO: Vector2i = Vector2i(4, 9)
 const ESPERA_MS: int = 5000
 

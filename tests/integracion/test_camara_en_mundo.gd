@@ -1,7 +1,7 @@
 extends GdUnitTestSuite
 ## Integración de la cámara con el mapa isométrico de prueba A.
 
-const ESCENA: String = "res://scenes/world/mundo.tscn"
+const ESCENA: String = "res://tests/escenas/mundo_prueba.tscn"
 const ESPERA_MS: int = 8000
 
 var _runner: GdUnitSceneRunner

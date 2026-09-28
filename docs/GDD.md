@@ -319,6 +319,27 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
     - **Acción de miedo** de criatura (`DefinicionAccionMiedo`, `AccionesEspeciales.accion_de_miedo`): 1 acción, 30 pies, Voluntad contra la CD; fallo asustado 1, fallo crítico asustado 2; inmune el resto del combate tras cualquier resultado. La IA la usa antes de golpear mientras haya a quién asustar. Afecta solo a sus enemigos.
     - Criaturas nuevas en `data/criaturas/`: esqueleto (Skeleton Guard, Monster Core p. 312; con cimitarra o con arco corto), humanos de nivel 0 (hoz), -1 (arco corto) y 2 (guadaña), y la criatura de nivel 2. Armas nuevas: hoz, arco corto, guadaña, cimitarra. **[aproximación]** Sin derribo, vigorosa ni barrido.
     - Un enemigo del mapa puede llevar su propio recuerdo (`EnemigoEnMapa.recuerdo`; si no, el de su definición): el reparto de recuerdos es del mapa.
+  - **b) hecho — mapas del slice** (arte placeholder; generados con suelo, paredes y nodos, editables desde el editor como cualquier mapa):
+    - **Kardel** (`kardel`, sin combate): la partida nueva empieza en el camino; la Lumbre-farol en la entrada (`lumbre_kardel`), el Tasador en la plaza (presentación con una línea TODO_LORE para Irsa si está viva), tres vecinos con disparadores de diálogo (`dialogue/kardel.dialogue`, TODO_LORE), un recuerdo escondido detrás de una casa (la pared lo tapa) y la salida al linde.
+    - **El linde del Monte** (`linde_del_monte`): el combate 1 en un claro con árboles para cubrirse; el sendero del norte vuelve sobre sí mismo (una salida al mismo mapa que devuelve al principio del linde, sin mecánica nueva); el árbol con cara queda marcado como arte pendiente (`ArtePendiente/ArbolConCara`); la segunda Lumbre (`lumbre_linde`) al final, antes de la salida al corazón.
+    - **El corazón del Monte** (`corazon_del_monte`): el combate 2 en el pasillo de entrada, con el recuerdo de Sigilo detrás; el combate 3 al entrar al claro central; en el centro, el fragmento 2 del Doliente. Tomarlo deja la marca `fin_del_slice` y abre `PantallaFinSlice`: la visión (TODO_LORE), corte a negro, "Fin del slice" y "Volver al inicio".
+    - Tono de cada mapa con la modulación del suelo y las paredes (Kardel neutro, el linde verdoso, el corazón frío); placeholders de criaturas y objetos con colores de la paleta (la criatura de nivel 2 y el fragmento 2, rampa Herida).
+    - **Reparto de recuerdos** (mismo balance que M4e: 110 vendibles, el dilema del fragmento intacto):
+
+      | Fuente | Recuerdo | Antes (mapas de prueba) |
+      |---|---|---|
+      | Objeto escondido, Kardel | Entrenado en Medicina (20) | objeto, mapa A |
+      | Objeto, el linde (claro del sur) | Vivencia 2 (10) | objeto, mapa A |
+      | Extraer, humano con hoz del combate 1 | Duro de matar (30) | extraer, enemigo cuerpo a cuerpo |
+      | Extraer, humano con arco del combate 1 | Vivencia 4 (10) | extraer, enemigo a distancia |
+      | Objeto, el corazón (detrás de los muertos vivientes) | Entrenado en Sigilo (30) | objeto, mapa B |
+      | Objeto, el corazón (recoveco del pasillo) | Vivencia 3 (10) | objeto, mapa B |
+      | Objeto, el corazón (centro) | Fragmento del Doliente 2 (50, no vendible) | objeto, mapa B |
+
+      El segundo humano con hoz, el líder y la criatura de nivel 2 no llevan recuerdo (extraerles no da nada). Stock del Tasador y cuerpos de compañeros, sin cambios.
+    - Los mapas de prueba A y B siguen en el catálogo solo para los tests (`tests/escenas/mundo_prueba.tscn` empieza en el A); desde el slice no se llega a ellos.
+    - Capturas `docs/capturas/m5/02` a `12` (los tres mapas, el combate 1 y la decisión con un inconsciente, la acción de miedo en el combate 3, la visión y el fin).
+    - Tests: `tests/world/test_mapas_del_slice.gd` (presupuesto de cada encuentro, reparto y total vendible, Lumbres, recorridos obligados por las zonas de encuentro, todo alcanzable en Kardel, inicio en Kardel) y `tests/integracion/test_slice.gd` (arranque, humanos inconscientes con la decisión, fin del slice).
 
 ## 9. Preguntas abiertas
 - Título del juego.

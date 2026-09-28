@@ -2,7 +2,8 @@ class_name InteraccionesMundo
 extends Node
 ## Qué pasa cuando la party llega a un objeto del mapa (click en exploración) y las pantallas que se abren
 ## desde la exploración. La party queda quieta mientras hay una pantalla o un panel abierto.
-## - ObjetoRecuerdo: el Eco lo toma. CuerpoCompanero: extraer sus recuerdos.
+## - ObjetoRecuerdo: el Eco lo toma; si `cierra_el_slice` (el fragmento 2 del Doliente), queda la marca
+##   `fin_del_slice` y se muestra el fin del slice. CuerpoCompanero: extraer sus recuerdos.
 ## - PuestoTasador: la primera vez, su diálogo de presentación (obligatorio; queda la marca
 ##   `tasador_presentado`); después, el comercio directo, con "Hablar" para una charla.
 ## - PuntoEstable: panel Descansar / Seguir / Hablar con… (compañeros vivos); descansar recupera a la party,
@@ -19,6 +20,7 @@ extends Node
 @export var panel_punto: PanelPuntoEstable
 @export var hud: HudExploracion
 @export var caja: CajaDialogo
+@export var fin_slice: PantallaFinSlice
 ## Sueños al descansar en un punto estable.
 @export var suenos: CatalogoSuenos
 @export_file("*.dialogue") var dialogo_tasador: String = "res://dialogue/tasador.dialogue"
@@ -27,6 +29,7 @@ extends Node
 const MARCA_TASADOR: String = "tasador_presentado"
 const CUE_PRESENTACION: String = "presentacion"
 const CUE_CHARLA: String = "charla"
+const MARCA_FIN_DEL_SLICE: String = "fin_del_slice"
 
 
 func _ready() -> void:
@@ -42,8 +45,14 @@ func _ready() -> void:
 
 func al_interactuar(objeto: Interactuable) -> void:
 	if objeto is ObjetoRecuerdo:
+		var cierra: bool = (objeto as ObjetoRecuerdo).cierra_el_slice
+		if cierra:
+			GameState.marcas[StringName(MARCA_FIN_DEL_SLICE)] = true  # entra en el autoguardado de tomar el objeto
 		fuentes.tomar_objeto(objeto, mundo.mapa())
 		party.set_grilla(mundo.grilla_exploracion())  # la casilla del objeto queda libre
+		if cierra:
+			party.bloqueado = true
+			fin_slice.mostrar()
 	elif objeto is CuerpoCompanero:
 		party.bloqueado = true
 		await fuentes.extraer_de_cuerpo(objeto)

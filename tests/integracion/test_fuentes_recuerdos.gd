@@ -2,7 +2,7 @@ extends GdUnitTestSuite
 ## Fuentes de recuerdos en el mundo (GDD 4.2): objetos, enemigos inconscientes tras la victoria y el cuerpo de
 ## un compañero muerto.
 
-const ESCENA: String = "res://scenes/world/mundo.tscn"
+const ESCENA: String = "res://tests/escenas/mundo_prueba.tscn"
 const FRAMES_MAXIMOS: int = 3000
 
 var _runner: GdUnitSceneRunner

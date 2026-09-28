@@ -2,7 +2,7 @@ extends GdUnitTestSuite
 ## Posicionamiento previo en el mundo: al dispararse el encuentro, antes de la iniciativa, se reubica a los
 ## miembros (hasta 10 pies) y el combate empieza con esas casillas.
 
-const ESCENA: String = "res://scenes/world/mundo.tscn"
+const ESCENA: String = "res://tests/escenas/mundo_prueba.tscn"
 const FRAMES_MAXIMOS: int = 3000
 
 var _runner: GdUnitSceneRunner

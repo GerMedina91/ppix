@@ -2,7 +2,7 @@ extends GdUnitTestSuite
 ## Diálogos con Dialogue Manager (M5-prep b): Tasador (presentación obligatoria y después comercio con
 ## "Hablar"), compañeros en el punto estable y disparadores de diálogo con condición.
 
-const ESCENA: String = "res://scenes/world/mundo.tscn"
+const ESCENA: String = "res://tests/escenas/mundo_prueba.tscn"
 const FRAMES_MAXIMOS: int = 3000
 
 var _runner: GdUnitSceneRunner

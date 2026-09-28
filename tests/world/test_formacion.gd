@@ -44,7 +44,7 @@ func test_no_usa_casillas_a_evitar() -> void:
 
 
 func test_la_party_entra_al_mapa_a_en_formacion() -> void:
-	var runner: GdUnitSceneRunner = scene_runner("res://scenes/world/mundo.tscn")
+	var runner: GdUnitSceneRunner = scene_runner("res://tests/escenas/mundo_prueba.tscn")
 	var party: ControlParty = runner.find_child("Party")
 	var mapa: Mapa = runner.find_child("MapaActual").get_child(0)
 	var celdas: Array[Vector2i] = []
@@ -55,6 +55,6 @@ func test_la_party_entra_al_mapa_a_en_formacion() -> void:
 
 
 func test_los_miembros_tienen_definicion_de_reglas() -> void:
-	var runner: GdUnitSceneRunner = scene_runner("res://scenes/world/mundo.tscn")
+	var runner: GdUnitSceneRunner = scene_runner("res://tests/escenas/mundo_prueba.tscn")
 	for m: MiembroParty in (runner.find_child("Party") as ControlParty).miembros():
 		assert_object(m.definicion_de_reglas()).is_not_null()

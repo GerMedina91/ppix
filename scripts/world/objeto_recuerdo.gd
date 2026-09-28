@@ -8,6 +8,8 @@ extends Interactuable
 	set(valor):
 		recuerdo = valor
 		update_configuration_warnings()
+## Al tomarlo termina el vertical slice (el fragmento 2 del Doliente, en el corazón del Monte).
+@export var cierra_el_slice: bool = false
 
 
 func _get_configuration_warnings() -> PackedStringArray:

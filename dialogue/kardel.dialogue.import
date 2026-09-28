@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=18
+type="Resource"
+uid="uid://cryxyxju1yf6x"
+path="res://.godot/imported/kardel.dialogue-071464eefe2cfe4ab38ccb0f41857c16.tres"
+
+[deps]
+
+source_file="res://dialogue/kardel.dialogue"
+dest_files=["res://.godot/imported/kardel.dialogue-071464eefe2cfe4ab38ccb0f41857c16.tres"]
+
+[params]
+
+defaults=true

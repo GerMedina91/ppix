@@ -12,6 +12,10 @@ Pequeñas llamas que arden sin nada que quemar y que la Marea del Sueño no pued
 lugar (farol, nicho, piedra); la llama es siempre la misma. En UI y textos: "Lumbre", "descansar en la Lumbre".
 En código, la mecánica sigue siendo `PuntoEstable`.
 
+**Lumbres del slice (decidido 2026-09-28):** dos. La de Kardel (el farol de la entrada del camino) y una **al final
+del linde, justo antes de la salida al corazón**. Curva resultante: combate 1 → descanso posible → combates 2 y 3
+**sin descanso entre medio**. Si el Eco muere en el corazón, reaparece en la Lumbre del linde (si descansó ahí).
+
 ## Mapa 1 — Kardel (el pueblo). Sin combate.
 - Llegada al anochecer por el camino a Kardel. En la entrada del camino, **la Lumbre del slice: un farol viejo**.
   Primer descanso y **primer sueño de Nalia** (voz todavía ininteligible).
@@ -26,6 +30,7 @@ En código, la mecánica sigue siendo `PuntoEstable`.
   decisión con un inconsciente.**
 - **La realidad empieza a fallar** (narrativa visual, sin mecánica): sendero que vuelve sobre sí mismo, un árbol
   con una cara que parpadea.
+- **La segunda Lumbre**, al final, justo antes de la salida al corazón.
 
 ## Mapa 3 — El corazón del Monte, donde la Convergencia tocó la herida.
 - **Combate 2:** muertos que no terminan de irse (muertos vivientes).
@@ -35,6 +40,10 @@ En código, la mecánica sigue siendo `PuntoEstable`.
 
 ## Fragmento 3
 Lo lleva Irsa: solo se obtiene si muere (ver `companeros.md`).
+
+## En el juego (M5)
+Mapas `kardel`, `linde_del_monte` y `corazon_del_monte` (arte placeholder). Encuentros y criaturas en
+`docs/verificacion/m5_criaturas.md`; reparto de recuerdos y decisiones en el GDD (M5).
 
 ## Para M5 (pedido del director)
 - Plan de mapas.

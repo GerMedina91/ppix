@@ -1,7 +1,7 @@
 extends GdUnitTestSuite
 ## Test de integración del movimiento de la party en el mundo, arrancando en el mapa de prueba A.
 
-const ESCENA: String = "res://scenes/world/mundo.tscn"
+const ESCENA: String = "res://tests/escenas/mundo_prueba.tscn"
 const ENTRADA_INICIAL: Vector2i = Vector2i(3, 5)
 const ESPERA_MS: int = 5000
 

@@ -1,6 +1,6 @@
 extends GdUnitTestSuite
 
-const ESCENA: String = "res://scenes/world/mundo.tscn"
+const ESCENA: String = "res://tests/escenas/mundo_prueba.tscn"
 const ESPERA_MS: int = 8000
 const FRAMES_MAXIMOS: int = 3000
 

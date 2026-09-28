@@ -38,6 +38,9 @@ func al_interactuar(objeto: Interactuable) -> void:
 	elif objeto is PuestoTasador:
 		party.bloqueado = true
 		tasador.abrir()
+	elif objeto is DisparadorDialogo:
+		# [M5-prep b] Acá se abre el diálogo con Dialogue Manager.
+		fuentes.aviso.mostrar("Diálogo: %s (%s)" % [(objeto as DisparadorDialogo).titulo, (objeto as DisparadorDialogo).dialogo.get_file()])
 	elif objeto is PuntoEstable:
 		party.bloqueado = true
 		panel_punto.abrir(objeto)

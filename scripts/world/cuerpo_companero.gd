@@ -1,3 +1,4 @@
+@tool
 class_name CuerpoCompanero
 extends Interactuable
 ## Cuerpo de un compañero muerto (muerte permanente, GDD 4.3): queda en la casilla donde cayó. En M4e el Eco

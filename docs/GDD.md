@@ -276,6 +276,9 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
     - Tooltips de la UI: no salen en las capturas automáticas (sí en el juego).
     - Arte: todo placeholder.
   - **A verificar (terminología):** se suman como **Provisorio** descanso / preparativos diarios, debilidad / inmunidad / resistencia, lento, sin mente, Recordar conocimiento, Medicina en batalla, Duro de matar, Carga repentina, floritura, ataque no letal, rasgo de criatura y rareza; siguen **A verificar** los de M3c.
+- **M5-prep — Preparación técnica del contenido** (plan aprobado 2026-09-28): a) herramientas de mapas → b) diálogos con Dialogue Manager → c) exportación web. Cobertura y posicionamiento previo quedan para después de M5.
+  - **a) hecho — herramientas de mapas:** los nodos que se colocan en un mapa son `@tool`: se acomodan solos a su casilla en el editor, el encuentro dibuja su zona y cada uno avisa en el árbol de escena lo que está mal (`ValidacionMapa`). Escenas listas para arrastrar en `scenes/world/objetos/` y plantilla `scenes/world/mapas/plantilla_mapa.tscn`. Nuevo `DisparadorDialogo` (archivo, título, condición validada como expresión sobre `estado`, una vez); el diálogo en sí llega en b. Test de todos los mapas del catálogo con los mismos avisos, más un mapa roto a propósito. Guía: `docs/guia_mapas.md`.
+    - Decidido (Tasador, para b): el primer click abre su diálogo de presentación (obligatorio); después, click abre el comercio directo, con un botón "Hablar". Se registra en GameState si ya se habló con él (entra en el guardado).
 - **M5 — Contenido del slice:** mapas, NPCs, diálogos, arte final.
 
 ## 9. Preguntas abiertas

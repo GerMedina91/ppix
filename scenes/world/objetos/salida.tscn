@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/world/salida_mapa.gd" id="1_sal"]
+
+[node name="Salida" type="Marker2D"]
+script = ExtResource("1_sal")

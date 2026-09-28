@@ -1,3 +1,4 @@
+@tool
 class_name ActorMapa
 extends Node2D
 ## Algo que ocupa una casilla del mapa y se desplaza de celda en celda (party, enemigos, a futuro NPCs).
@@ -19,7 +20,10 @@ const MODULACION: Dictionary[EstadoVisual, Color] = {
 	EstadoVisual.MUERTO: Color(0.25, 0.1, 0.1, 0.6),
 }
 
-@export var color_placeholder: Color = Color.WHITE
+@export var color_placeholder: Color = Color.WHITE:
+	set(valor):
+		color_placeholder = valor
+		queue_redraw()
 
 ## Celda que ocupa, o hacia la que se está moviendo.
 var celda: Vector2i = Vector2i.ZERO
@@ -28,7 +32,8 @@ var _tween: Tween
 
 
 func _ready() -> void:
-	add_to_group(OclusionParedes.GRUPO_VISIBLES)
+	if not Engine.is_editor_hint():
+		add_to_group(OclusionParedes.GRUPO_VISIBLES)
 
 
 ## Rect del sprite en pantalla, para que las paredes que lo tapan se vuelvan transparentes.

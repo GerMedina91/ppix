@@ -1,3 +1,4 @@
+@tool
 class_name DisparadorEncuentro
 extends Node
 ## Interfaz genérica de lo que inicia un Encuentro. Se evalúa cada vez que la party se mueve.

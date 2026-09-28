@@ -1,0 +1,28 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/world/mapa.gd" id="1_mapa"]
+[ext_resource type="TileSet" path="res://assets/placeholder/tileset_iso_placeholder.tres" id="2_tiles"]
+[ext_resource type="Script" path="res://scripts/world/capa_paredes.gd" id="3_pared"]
+
+[node name="PlantillaMapa" type="Node2D"]
+y_sort_enabled = true
+script = ExtResource("1_mapa")
+
+[node name="Suelo" type="TileMapLayer" parent="."]
+z_index = -1
+tile_set = ExtResource("2_tiles")
+
+[node name="Paredes" type="TileMapLayer" parent="."]
+y_sort_enabled = true
+tile_set = ExtResource("2_tiles")
+script = ExtResource("3_pared")
+
+[node name="Entradas" type="Node2D" parent="."]
+
+[node name="Salidas" type="Node2D" parent="."]
+
+[node name="Encuentros" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Interactuables" type="Node2D" parent="."]
+y_sort_enabled = true

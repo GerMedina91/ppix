@@ -33,7 +33,7 @@ res://
 docs/
   GDD.md         # diseño y registro de decisiones
   GLOSARIO.md    # terminología obligatoria
-  lore/          # lore definido por el director (verdad.md y companeros.md son SPOILER; estilo.md: nombres)
+  lore/          # lore definido por el director (verdad.md, companeros.md y slice.md son SPOILER; estilo.md: nombres)
   verificacion/  # reglas verificadas en Archives of Nethys antes de implementarlas
   capturas/      # capturas de cada hito (docs/capturas/<hito>/)
   propuestas/    # comparaciones y propuestas para decidir

@@ -34,3 +34,6 @@ TODO: declarar qué material propio (si lo hay) se libera bajo ORC. Por defecto:
 - [ ] Confirmar que no se usa material reservado de Paizo (setting, dioses, regiones, personajes, organizaciones, nombres propios).
 - [ ] Confirmar que la marca "Pathfinder" no aparece en textos del juego (solo en este aviso de atribución, si la licencia lo exige).
 - [ ] Definir dónde se muestra el aviso (créditos, menú, archivo de la distribución).
+- [ ] **Licencias de terceros** (`docs/creditos.md`): Godot (MIT, con los componentes de terceros de su
+      `COPYRIGHT.txt`) y Dialogue Manager (MIT). Los avisos tienen que aparecer **dentro del juego** (pantalla
+      de créditos), junto con este aviso ORC.

@@ -13,7 +13,8 @@ El diseño completo está en `docs/GDD.md`. Consultalo antes de implementar cual
 - Texture filter por defecto: `Nearest`. Sin mipmaps. Snap 2D de transforms y vértices a píxel activado.
 - Tiles isométricos en rombo de 64×32 px (TileSet isométrico, layout Diamond Down). 1 celda = 5 pies (casilla de PF2e).
 - La lógica es una grilla cuadrada (`GrillaMapa`); isométrico es solo la proyección. Nada de reglas en coordenadas de pantalla.
-- Personajes: placeholder 32×56 px, con los pies en el centro del rombo; tamaño final a definir con el sprite canónico del Eco. Retratos de diálogo: 96–128 px (capa de UI aparte).
+- Personajes: placeholder 32×56 px, con los pies en el centro del rombo; el sprite final ronda los 48 px de alto (ver `docs/arte/direccion.md`). Retratos de diálogo: 96–128 px (capa de UI aparte).
+- Paleta "Lumbre" (`assets/paleta/`): todo sprite y tile estrictamente en la paleta; lo controla `tests/assets/test_paleta.gd`.
 - Vista isométrica.
 - Y-sort activo desde el principio: party, paredes y objetos comparten una jerarquía con `y_sort_enabled`. El suelo se dibuja debajo, sin y-sort.
 - Paredes en su propia capa, separada del suelo. Transparencia implementada: las paredes con el dato `se_transparenta` se vuelven semitransparentes cuando tapan a un actor del grupo `mantener_visible` (opacidad en `ConfigExploracion`).
@@ -35,6 +36,7 @@ docs/
   GLOSARIO.md    # terminología obligatoria
   lore/          # lore definido por el director (verdad.md, companeros.md y slice.md son SPOILER; estilo.md: nombres)
   verificacion/  # reglas verificadas en Archives of Nethys antes de implementarlas
+  arte/          # dirección de arte (direccion.md)
   capturas/      # capturas de cada hito (docs/capturas/<hito>/)
   propuestas/    # comparaciones y propuestas para decidir
 ```

@@ -73,7 +73,7 @@ func test_en_el_punto_estable_se_habla_con_los_companeros_vivos() -> void:
 	assert_array(Array(panel.opciones())).is_equal(["Hablar con Irsa", "Hablar con Vaisha"])
 	panel.hablar(&"Miembro2")
 	assert_bool(await _esperar(func() -> bool: return _caja.abierta())).is_true()
-	assert_str(_caja.texto_actual()).is_equal("Irsa: TODO_LORE: Irsa habla en el punto estable.")
+	assert_str(_caja.texto_actual()).is_equal("Irsa: TODO_LORE: Irsa habla en la Lumbre.")
 	await _avanzar_hasta_opciones()
 	_caja.elegir(2)  # Nada
 	assert_bool(await _esperar(func() -> bool: return panel.abierto())).is_true()

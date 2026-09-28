@@ -89,6 +89,7 @@ Con la Convergencia, los recuerdos se volvieron extraíbles y tangibles.
 - **[propuesta]** Modo hardcore opcional con muerte permanente, para más adelante.
 
 #### Guardado y puntos estables
+- **En el mundo se llaman Lumbres** (decidido por Germán, 2026-09-28; ver `docs/GLOSARIO.md`). En UI y textos, "Lumbre"; en código, `PuntoEstable`.
 - Solo se guarda en **puntos estables**: lugares donde la Convergencia no deforma la realidad.
 - Autoguardado al cambiar de mapa.
 - Sin guardado libre y sin guardado durante el combate.
@@ -105,6 +106,7 @@ Mundo no lineal, muchos mapas conectados, mínimos o nulos marcadores de misión
 - **Party:** los 4 miembros caminan en fila india detrás del líder. El seguimiento se diseña para poder desactivarlo y controlar a cada miembro por separado (ver 4.1).
 
 ## 5. Dirección de arte
+- **Decidida por Germán (2026-09-28):** ver `docs/arte/direccion.md` (referencias, paleta "Lumbre" v0.1 de 42 colores en `assets/paleta/`, rampas Lumbre y Herida, luz libre, contorno selectivo, personajes de ~48 px con 2 direcciones dibujadas y espejadas, costuras de luz del Eco). Lo que sigue en esta sección queda como historial; donde choque, vale `direccion.md`.
 - **Vista isométrica.** Tiles en rombo de 64×32 (1 celda = 5 pies). La lógica sigue siendo una grilla cuadrada; isométrico es solo la proyección.
 - **Resolución nativa: 960×540**, escalado entero (×2 a 1080p, ×4 a 4K). Se ven ~450 celdas y hasta 50–60 pies desde el centro, casi todo el rango de 60 pies (comparación con 640×360 en `docs/propuestas/`).
   - Contra: en web, dentro de una ventana de navegador no llega a ×2 y queda a ×1. **La versión web necesita un botón de pantalla completa.**

@@ -2,7 +2,7 @@
 if estado.vio_sueno("sueno_placeholder_1")
 	Irsa: TODO_LORE: Irsa comenta algo sobre el sueño del Eco.
 else
-	Irsa: TODO_LORE: Irsa habla en el punto estable.
+	Irsa: TODO_LORE: Irsa habla en la Lumbre.
 Irsa: TODO_LORE: ¿qué pregunta el Eco?
 - (TODO_LORE) preguntar algo
 	Irsa: TODO_LORE: respuesta.
@@ -15,7 +15,7 @@ Irsa: TODO_LORE: ¿qué pregunta el Eco?
 if estado.vio_sueno("sueno_placeholder_1")
 	Orven: TODO_LORE: Orven comenta algo sobre el sueño del Eco.
 else
-	Orven: TODO_LORE: Orven habla en el punto estable.
+	Orven: TODO_LORE: Orven habla en la Lumbre.
 Orven: TODO_LORE: ¿qué pregunta el Eco?
 - (TODO_LORE) preguntar algo
 	Orven: TODO_LORE: respuesta.
@@ -26,7 +26,7 @@ Orven: TODO_LORE: ¿qué pregunta el Eco?
 if estado.vio_sueno("sueno_placeholder_1")
 	Vaisha: TODO_LORE: Vaisha comenta algo sobre el sueño del Eco.
 else
-	Vaisha: TODO_LORE: Vaisha habla en el punto estable.
+	Vaisha: TODO_LORE: Vaisha habla en la Lumbre.
 Vaisha: TODO_LORE: ¿qué pregunta el Eco?
 - (TODO_LORE) preguntar algo
 	Vaisha: TODO_LORE: respuesta.

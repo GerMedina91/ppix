@@ -119,3 +119,14 @@ Términos de reglas en castellano, según la edición oficial en castellano de l
 | lesser / standard / greater cover | cobertura menor / normal / mayor | `Cobertura.Nivel` | Provisorio |
 | Take Cover | Tomar cobertura | `tomar_cobertura()`, `tomando_cobertura` | Provisorio |
 | mindless | sin mente | — | Provisorio |
+
+## Términos del mundo (no son de PF2e)
+
+Nombres propios del mundo del juego (lore en `docs/lore/`). Se usan en UI y textos; en código la mecánica puede
+tener otro nombre.
+
+| Término del mundo | Qué es | En código | Estado |
+|---|---|---|---|
+| Lumbre / descansar en la Lumbre | Punto estable (GDD 4.3): pequeña llama que arde sin nada que quemar y que la Marea del Sueño no puede apagar; su forma cambia según el lugar (farol, nicho, piedra). | `PuntoEstable`, `Descanso` | Confirmado |
+| Kardel | El pueblo del slice (mapa 1). | — | Confirmado |
+| el Monte de los Idos | El bosque del slice (mapas 2 y 3: el linde del Monte, el corazón del Monte). | — | Confirmado |

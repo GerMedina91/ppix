@@ -8,8 +8,9 @@ signal cerrado
 ## "Hablar con…" un compañero vivo (id del miembro).
 signal hablar_pedido(id_miembro: StringName)
 
-const TITULO: String = "Punto estable"
-const EXPLICACION: String = "Descansar recupera PG, espacios de conjuro y puntos de foco, y quita herido.\nAl morir, el Eco reaparece en el último punto estable donde descansó."
+## En el mundo los puntos estables se llaman Lumbres (docs/GLOSARIO.md); en código, PuntoEstable.
+const TITULO: String = "Lumbre"
+const EXPLICACION: String = "Descansar en la Lumbre recupera PG, espacios de conjuro y puntos de foco, y quita herido.\nAl morir, el Eco reaparece en la última Lumbre donde descansó."
 const DESCANSADO: String = "La party descansó."
 
 @export var estilo: EstiloHud

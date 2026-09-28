@@ -49,6 +49,8 @@ var inmune_medicina_de: Dictionary[StringName, bool] = {}
 ## Lo que la party cree saber de este combatiente por Recordar conocimiento:
 ## {"salvacion_debil": Estadisticas.Salvacion, "segun": nombre de quien lo recordó} (puede ser falso).
 var conocimiento: Dictionary = {}
+## Tomó cobertura (Player Core p. 418): hasta moverse, hacer un ataque o quedar inconsciente.
+var tomando_cobertura: bool = false
 ## Bonificador de estatus a la Velocidad hasta el final del turno (Pies ágiles).
 var bonificador_velocidad: int = 0
 
@@ -193,6 +195,7 @@ func recibir_danio(cantidad: int, por_critico: bool, no_letal: bool = false) -> 
 		pg = maxi(0, pg - cantidad)
 		if pg == 0 and no_letal and not fuente.es_muerto_viviente():
 			condiciones.inconsciente = true
+			tomando_cobertura = false
 		elif pg == 0:
 			_caer(por_critico)
 	elif condiciones.moribundo > 0:
@@ -230,6 +233,7 @@ func prueba_de_recuperacion(dados: Dados) -> ResultadoPrueba:
 
 
 func _caer(por_critico: bool) -> void:
+	tomando_cobertura = false
 	if not fuente.usa_reglas_de_moribundo():
 		condiciones.muerto = true
 		return

@@ -124,8 +124,8 @@ func test_sin_linea_de_vision_el_piso_no_vale() -> void:
 	combate.lanzar_conjuro(load(OJO), &"e")
 	var e: Combatiente = combate.combatiente(&"e")
 	assert_int(e.condiciones.piso(I)).is_equal(1)
-	combate.grilla().set_transitable(Vector2i(3, 2), false)
-	combate.grilla().set_transitable(Vector2i(4, 2), false)
+	for y in 12:
+		combate.grilla().set_transitable(Vector2i(3, y), false)  # un muro entero entre la bruja y el enemigo
 	combate.conjuros.actualizar_pisos()
 	assert_int(e.condiciones.piso(I)).is_equal(0)
 

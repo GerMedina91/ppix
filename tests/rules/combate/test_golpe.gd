@@ -14,7 +14,8 @@ func before_test() -> void:
 	for x in 100:
 		for y in 30:
 			grilla.set_transitable(Vector2i(x, y), true)
-	grilla.set_transitable(Vector2i(10, 20), false)  # una pared para probar línea de visión
+	for x in range(8, 13):
+		grilla.set_transitable(Vector2i(x, 20), false)  # un muro para probar línea de visión
 	_vision = LineaVision.new(grilla)
 
 

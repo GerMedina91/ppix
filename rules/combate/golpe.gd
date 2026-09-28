@@ -65,7 +65,8 @@ static func validar(atacante: Combatiente, objetivo: Combatiente, arma: Definici
 	return Motivo.VALIDO
 
 
-## `modificadores_defensa`: bonificadores a la CA solo para este ataque (p. ej. Esquiva ágil).
+## `modificadores_defensa`: bonificadores a la CA solo para este ataque (p. ej. Esquiva ágil). La cobertura del
+## objetivo frente al atacante (Cobertura) se suma sola.
 ## `cuenta_para_pam`: false en un Golpe reactivo (no sufre ni suma al penalizador por ataque múltiple).
 static func resolver(atacante: Combatiente, objetivo: Combatiente, arma: DefinicionArma, dados: Dados,
 		participantes: Array[Combatiente], vision: LineaVision, modificadores_defensa: Array[Modificador] = [],
@@ -82,6 +83,11 @@ static func resolver(atacante: Combatiente, objetivo: Combatiente, arma: Definic
 	resultado.flanqueando = Flanqueo.atacante_flanquea(atacante, objetivo, participantes)
 	var defensa: Prueba = objetivo.defensa_contra(resultado.flanqueando)
 	defensa.modificadores.append_array(modificadores_defensa)
+	resultado.cobertura = Cobertura.de(atacante, objetivo, participantes, vision)
+	var por_cobertura: Modificador = Cobertura.modificador_ca(resultado.cobertura)
+	if por_cobertura != null:
+		defensa.modificadores.append(por_cobertura)
+	atacante.tomando_cobertura = false  # una acción de ataque termina Tomar cobertura
 	var cd: int = defensa.cd()
 	resultado.prueba = prueba.resolver(dados, cd)
 	if cuenta_para_pam:

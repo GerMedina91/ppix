@@ -116,4 +116,6 @@ Términos de reglas en castellano, según la edición oficial en castellano de l
 | rest / daily preparations | descanso, descansar / preparativos diarios | `Descanso`, `descansar()` | Provisorio |
 | weakness / immunity / resistance | debilidad / inmunidad / resistencia | `debilidades`, `inmune_mental` | Provisorio |
 | slowed | lento | `LENTO`, `lento` | Provisorio |
+| lesser / standard / greater cover | cobertura menor / normal / mayor | `Cobertura.Nivel` | Provisorio |
+| Take Cover | Tomar cobertura | `tomar_cobertura()`, `tomando_cobertura` | Provisorio |
 | mindless | sin mente | — | Provisorio |

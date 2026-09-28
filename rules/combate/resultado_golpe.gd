@@ -14,6 +14,8 @@ var danio_adicional: Array[Dictionary] = []
 var danio_letal: int = 0
 ## Debilidad del objetivo al tipo de daño del arma, ya sumada a `danio`.
 var debilidad: int = 0
+## Cobertura del objetivo frente al atacante (ya sumada a la CA).
+var cobertura: Cobertura.Nivel = Cobertura.Nivel.NINGUNA
 var critico: bool = false
 ## Ataque no letal: a 0 PG deja inconsciente en vez de matar.
 var no_letal: bool = false

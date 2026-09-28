@@ -2,11 +2,16 @@ class_name AccionesEspeciales
 extends RefCounted
 ## Acciones que vienen de dotes y habilidades (M4b; verificadas en c4_conjuros.md y m4_recuerdos.md). Combate
 ## las expone en `especiales` (referencia débil al Combate, como GestorReacciones).
+## - Tomar cobertura (acción básica, 1 acción; Player Core p. 418): requiere estar junto a una pared (en cruz) o
+##   tener cobertura normal frente a algún enemigo. Da cobertura mayor donde ya había normal y normal en el resto
+##   (Cobertura), hasta moverse, atacar o quedar inconsciente.
 ## - Carga repentina (guerrero, 2 acciones, floritura): dos Zancadas y, si termina a alcance cuerpo a cuerpo
 ##   del enemigo, un Golpe cuerpo a cuerpo contra él. Se elige el enemigo y se va a la casilla más cercana
 ##   desde la que se lo alcanza.
 
 const CARGA_REPENTINA: StringName = &"carga_repentina"
+const ACCION_TOMAR_COBERTURA: String = "Tomar cobertura"
+const VECINAS_EN_CRUZ: Array[Vector2i] = [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]
 const COSTO_CARGA: int = 2
 const ZANCADAS_CARGA: int = 2
 
@@ -24,6 +29,35 @@ func _combate() -> Combate:
 ## true si el combatiente tiene la capacidad con ese id (dote o recuerdo integrado).
 static func tiene(c: Combatiente, id: StringName) -> bool:
 	return c.fuente.capacidades().any(func(capacidad: Capacidad) -> bool: return capacidad.id == id)
+
+
+# --- Tomar cobertura ---
+
+func motivo_tomar_cobertura_imposible(actor: Combatiente) -> String:
+	if actor.tomando_cobertura:
+		return "ya está a cubierto"
+	var combate: Combate = _combate()
+	var vision: LineaVision = combate.vision()
+	if VECINAS_EN_CRUZ.any(func(d: Vector2i) -> bool: return vision.es_opaca(actor.celda + d)):
+		return ""
+	for c: Combatiente in combate.participantes:
+		if not c.es_aliado_de(actor) and not c.condiciones.muerto and vision.tapa_la_recta_central(c.celda, actor.celda):
+			return ""
+	return "no hay dónde cubrirse"
+
+
+func tomar_cobertura() -> Array[EventoCombate]:
+	var combate: Combate = _combate()
+	var actor: Combatiente = combate.turno_actual()
+	var invalido: EventoCombate = combate.validar_accion(actor, 1, ACCION_TOMAR_COBERTURA)
+	if invalido != null:
+		return [invalido]
+	var motivo: String = motivo_tomar_cobertura_imposible(actor)
+	if motivo != "":
+		return [combate.invalida(actor, ACCION_TOMAR_COBERTURA, motivo)]
+	actor.gastar_acciones(1)
+	actor.tomando_cobertura = true
+	return [combate.emitir(EventoCombate.new(EventoCombate.Tipo.ACCION_ESPECIAL, actor.id, {"accion": ACCION_TOMAR_COBERTURA}))]
 
 
 # --- Carga repentina ---

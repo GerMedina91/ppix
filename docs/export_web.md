@@ -87,3 +87,16 @@ sale con clicks reales; el navegador solo lo acepta desde una acción del jugado
 
 Lo que se descarga depende de que el servidor comprima (gzip o brotli). El motor es casi todo: un build del
 motor a medida (sin 3D ni módulos que no se usan) podría achicarlo, a evaluar si hace falta.
+
+## Banco después de la cobertura (2026-09-28)
+La visión nueva (decisión A: hasta 25 segmentos entre centros y esquinas por par) se volvió a medir:
+
+| PrevisionTurno (ms) | Combate: media / máx | Peor caso: media / máx |
+|---|---|---|
+| Escritorio (Windows) | 3,88 / 4,68 | 5,06 / 5,25 |
+| Chrome (web) | 4,51 / 5,90 | 7,35 / **15,90** |
+| Firefox (web, sin ventana) | 4,50 / 6,00 | 8,15 / 14,00 |
+
+- Sigue por debajo de ~16 ms, pero el pico del peor caso en Chrome (15,9 ms, un solo cálculo de 20; mediana
+  6,3) quedó al borde. Las medias casi no cambiaron: el costo nuevo aparece solo cuando hay paredes entre las
+  casillas. Sin optimizar (a la espera del director).

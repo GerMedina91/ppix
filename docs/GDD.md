@@ -291,6 +291,14 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
     - Retratos en la caja de diálogo (el lugar está reservado).
     - Medir FPS fuera de la sesión remota (acá todo topa en ~30) y en máquinas modestas; evaluar un build del motor a medida si el tamaño molesta.
     - Contenido real de los diálogos (todo `TODO_LORE`).
+- **Después de M4 (pedido 2026-09-28):** créditos, cobertura y posicionamiento previo (plan aprobado; verificación en `docs/verificacion/cobertura.md`).
+  - **Créditos hecho:** `PantallaCreditos` desde el inicio (aviso ORC en borrador, Godot y sus componentes, Dialogue Manager). Ver `docs/creditos.md`.
+  - **Cobertura hecho:**
+    - **Decidido (A, fiel a PF2e):** se puede apuntar si algún segmento desde la casilla del atacante (centro o esquina) llega a la del objetivo (centro o esquina) sin pasar por pared; la recta de centro a centro decide la cobertura (pared = normal, criatura = menor). Reemplaza la línea de efecto de C4 (centro a centro).
+    - `Cobertura` suma el bonificador de circunstancia a la CA del Golpe y del ataque de conjuro; vale la mayor. Tomar cobertura (1 acción, junto a una pared en cruz o con cobertura normal frente a algún enemigo): normal → mayor, si no normal; termina al moverse, atacar o quedar inconsciente.
+    - La ficha del objetivo muestra la cobertura frente al que está en turno; el registro la incluye junto a la CA. Capa F3 "Cobertura".
+    - **[pendiente]** Terminar Tomar cobertura a voluntad; IA que busque o tome cobertura; bonificadores a Reflejos (áreas) y Sigilo sin uso todavía.
+    - Capturas `docs/capturas/cobertura/01` (créditos) a `04`.
 - **M5 — Contenido del slice:** mapas, NPCs, diálogos, arte final.
 
 ## 9. Preguntas abiertas

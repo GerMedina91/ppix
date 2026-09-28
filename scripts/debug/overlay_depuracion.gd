@@ -19,6 +19,7 @@ func _ready() -> void:
 	registrar(CapaDepuracionOclusion.new())
 	registrar(CapaDepuracionRangos.new())
 	registrar(CapaDepuracionVision.new())
+	registrar(CapaDepuracionCobertura.new())
 
 
 func registrar(capa: CapaDepuracion) -> void:

@@ -1,7 +1,8 @@
 class_name CapaDepuracionVision
 extends CapaDepuracion
-## En combate: línea de visión del actor activo a la casilla bajo el cursor, con las casillas que
-## atraviesa. Verde si hay línea; rojo si está bloqueada. Base para depurar cobertura (después de M3).
+## En combate: línea de visión del actor activo a la casilla bajo el cursor. La recta es la de centro a centro,
+## con las casillas que atraviesa (la que decide la cobertura); verde si se puede apuntar (algún segmento entre
+## centros y esquinas pasa, ver LineaVision), rojo si no.
 
 const COLOR_VISIBLE: Color = Color(0.3, 1.0, 0.4)
 const COLOR_BLOQUEADA: Color = Color(1.0, 0.3, 0.3)

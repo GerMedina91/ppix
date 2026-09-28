@@ -24,7 +24,7 @@ func _textos(combate: Combate) -> Array:
 func test_la_bruja_ve_sus_conjuros_con_costo_y_espacios() -> void:
 	var combate: Combate = _combate("res://data/builds/bruja.tres")
 	assert_array(_textos(combate)).is_equal(["Proyectil telequinético ◆◆", "Aturdir ◆◆", "Mal de ojo ◆",
-		"Debilitar ◆◆ (1)", "Miedo ◆◆ (1)", "Golpe no letal ◆", "Recordar conocimiento ◆"])
+		"Debilitar ◆◆ (1)", "Miedo ◆◆ (1)", "Golpe no letal ◆", "Recordar conocimiento ◆", "Tomar cobertura ◆"])
 
 
 func test_despues_de_un_maleficio_no_se_ofrece_otro_y_aparecen_sostener_y_arcadas() -> void:
@@ -65,7 +65,7 @@ func test_sostener_y_arcadas_no_piden_objetivo() -> void:
 	var combate: Combate = _combate("res://data/builds/bruja.tres")
 	combate.turno_actual().condiciones.aplicar(EfectoCondicion.new(Condiciones.Tipo.INDISPUESTO, 1, 15))
 	var modo: ModoAccion = ModoAccion.new()
-	assert_bool(modo.elegir(combate, combate.turno_actual(), 7).is_valid()).is_true()  # Arcadas, al final
+	assert_bool(modo.elegir(combate, combate.turno_actual(), 8).is_valid()).is_true()  # Arcadas, al final
 	assert_object(modo.elegido).is_null()
 
 

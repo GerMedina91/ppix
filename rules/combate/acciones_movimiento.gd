@@ -117,6 +117,7 @@ func motivo_paso_imposible(actor: Combatiente, destino: Vector2i) -> String:
 func mover_paso(actor: Combatiente, destino: Vector2i) -> Array[EventoCombate]:
 	var desde: Vector2i = actor.celda
 	actor.celda = destino
+	actor.tomando_cobertura = false
 	var camino: Array[Vector2i] = [destino]
 	return [_combate().emitir(EventoCombate.new(EventoCombate.Tipo.MOVIMIENTO, actor.id,
 		{"desde": desde, "camino": camino, "tipo": "paso"}))]
@@ -150,6 +151,7 @@ func _avanzar_zancada(actor: Combatiente, camino: Array[Vector2i], indice: int, 
 					func() -> Array[EventoCombate]: return _avanzar_zancada(actor, camino, siguiente, true, despues)))
 				return eventos
 		actor.celda = camino[i]
+		actor.tomando_cobertura = false
 		recorrido.append(camino[i])
 		i += 1
 		resuelto = false

@@ -9,7 +9,7 @@ extends RefCounted
 ## con click en la propia casilla.
 ## Solo arma intenciones: el Combate valida y resuelve.
 
-enum Tipo { CONJURO, ACCION, SOSTENER, ARCADAS }
+enum Tipo { CONJURO, ACCION, SOSTENER, ARCADAS, COBERTURA }
 
 const _PIP: String = "◆"
 
@@ -36,6 +36,9 @@ static func opciones(combate: Combate, actor: Combatiente) -> Array[Dictionary]:
 	for id: StringName in AccionesConObjetivo.disponibles(actor):
 		lista.append({"tipo": Tipo.ACCION, "accion": id, "texto": AccionesConObjetivo.texto(id),
 			"motivo": SinObjetivos.de_accion(combate, actor, id)})
+	if actor.acciones_restantes >= 1:
+		lista.append({"tipo": Tipo.COBERTURA, "texto": "%s ◆" % AccionesEspeciales.ACCION_TOMAR_COBERTURA,
+			"motivo": combate.especiales.motivo_tomar_cobertura_imposible(actor)})
 	if not combate.conjuros.por_sostener(actor).is_empty() and actor.acciones_restantes >= AccionesConjuro.COSTO_SOSTENER:
 		var sostenido: EfectoSostenido = combate.conjuros.por_sostener(actor)[0]
 		lista.append({"tipo": Tipo.SOSTENER, "texto": "Sostener %s ◆" % sostenido.conjuro.nombre})
@@ -132,6 +135,8 @@ func elegir(combate: Combate, actor: Combatiente, indice: int) -> Callable:
 			return combate.sostener
 		Tipo.ARCADAS:
 			return combate.arcadas
+		Tipo.COBERTURA:
+			return combate.especiales.tomar_cobertura
 		Tipo.ACCION:
 			accion = lista[indice].accion
 			return Callable()

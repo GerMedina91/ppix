@@ -86,6 +86,8 @@ static func _texto(evento: EventoCombate, combate: Combate) -> String:
 		EventoCombate.Tipo.RESULTADO_ESPECIAL:
 			return _resultado_especial(evento, combate)
 		EventoCombate.Tipo.ACCION_ESPECIAL:
+			if not evento.datos.has("objetivo"):
+				return "%s usa %s" % [actor, evento.datos.accion]
 			return "%s usa %s sobre %s" % [actor, evento.datos.accion, nombre(combate, evento.datos.objetivo)]
 		EventoCombate.Tipo.ARCADAS:
 			var a: ResultadoPrueba = evento.datos.resultado
@@ -116,8 +118,9 @@ static func _efecto_conjuro(evento: EventoCombate, combate: Combate) -> String:
 		var levanta: String = " y se levanta" if evento.datos.get("levanta", false) else ""
 		return "%s recupera %d PG%s" % [objetivo, evento.datos.curacion, levanta]
 	if r != null and conjuro.es_ataque():
-		texto = "%s → %s (%s): %s = %d contra CA %d: %s" % [actor, objetivo, conjuro.nombre,
-			_tirada_con_desglose(r), r.total, r.cd, GradoExito.nombre(r.grado)]
+		texto = "%s → %s (%s): %s = %d contra CA %d%s: %s" % [actor, objetivo, conjuro.nombre,
+			_tirada_con_desglose(r), r.total, r.cd, _cobertura(evento.datos.get("cobertura", Cobertura.Nivel.NINGUNA)),
+			GradoExito.nombre(r.grado)]
 	elif r != null:
 		texto = "%s: %s %d contra CD %d: %s" % [objetivo, Estadisticas.nombre_salvacion(evento.datos.salvacion),
 			r.total, r.cd, GradoExito.nombre(r.grado)]
@@ -191,8 +194,8 @@ static func _golpe(atacante: String, objetivo: String, resultado: ResultadoGolpe
 	var texto_tirada: String = str(r.natural)
 	if r.tiradas.size() > 1:
 		texto_tirada = "%s (de %s)" % [r.natural, ", ".join(r.tiradas.map(func(t: int) -> String: return str(t)))]
-	var texto: String = "%s → %s: %s (%s) = %d contra CA %d: %s" % [
-		atacante, objetivo, texto_tirada, ", ".join(partes), r.total, r.cd, GradoExito.nombre(r.grado)]
+	var texto: String = "%s → %s: %s (%s) = %d contra CA %d%s: %s" % [
+		atacante, objetivo, texto_tirada, ", ".join(partes), r.total, r.cd, _cobertura(resultado.cobertura), GradoExito.nombre(r.grado)]
 	if resultado.flanqueando:
 		texto += " [flanqueo]"
 	if resultado.no_letal:
@@ -204,3 +207,10 @@ static func _golpe(atacante: String, objetivo: String, resultado: ResultadoGolpe
 		if resultado.debilidad > 0:
 			texto += " (+%d debilidad)" % resultado.debilidad
 	return texto
+
+
+## " (cobertura normal +2)" junto a la CA, o "" sin cobertura.
+static func _cobertura(nivel: Cobertura.Nivel) -> String:
+	if nivel == Cobertura.Nivel.NINGUNA:
+		return ""
+	return " (%s +%d)" % [Cobertura.NOMBRES[nivel], Cobertura.BONO_CA[nivel]]

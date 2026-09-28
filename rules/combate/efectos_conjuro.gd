@@ -81,6 +81,12 @@ static func _ataque(combate: Combate, actor: Combatiente, conjuro: DefinicionCon
 		prueba.modificadores.append(Modificador.new(pam, Modificador.Tipo.SIN_TIPO, "ataque múltiple"))
 	var defensa: Prueba = objetivo.defensa_contra(false)
 	defensa.modificadores.append_array(bonificadores_ca)
+	var cobertura: Cobertura.Nivel = Cobertura.de(actor, objetivo, combate.participantes, combate.vision())
+	datos["cobertura"] = cobertura
+	var por_cobertura: Modificador = Cobertura.modificador_ca(cobertura)
+	if por_cobertura != null:
+		defensa.modificadores.append(por_cobertura)
+	actor.tomando_cobertura = false  # un ataque termina Tomar cobertura
 	var resultado: ResultadoPrueba = prueba.resolver(combate.dados(), defensa.cd())
 	actor.ataques_en_turno += 1
 	datos.resultado = resultado

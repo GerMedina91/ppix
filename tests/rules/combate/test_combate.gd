@@ -202,7 +202,8 @@ func test_golpe_fuera_de_alcance_informa_el_motivo() -> void:
 
 func test_golpe_sin_linea_de_vision_informa_el_motivo() -> void:
 	var grilla: GrillaMapa = _grilla()
-	grilla.set_transitable(Vector2i(5, 2), false)
+	for y in 8:
+		grilla.set_transitable(Vector2i(5, y), false)  # un muro entero (una sola pared solo daría cobertura)
 	var participantes: Array[Combatiente] = [_pj(&"pj", Vector2i(2, 2), DIST), _enemigo(&"e", Vector2i(8, 2))]
 	var combate: Combate = Combate.new(participantes, grilla, DadosFijos.new([19, 1]))
 	combate.iniciar()

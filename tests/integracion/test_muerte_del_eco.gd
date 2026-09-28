@@ -24,6 +24,7 @@ func before_test() -> void:
 	GameState.recuerdos.inventario.agregar_suelto(_suelto)
 	GameState.recuerdos.inventario.integrados.append(_integrado)
 	_runner = scene_runner(ESCENA)
+	(_runner.find_child("PosicionamientoPrevio") as PosicionamientoPrevio).omitir = true  # (test_posicionamiento_previo)
 	_party = _runner.find_child("Party")
 	_control = _runner.find_child("ControladorCombate")
 

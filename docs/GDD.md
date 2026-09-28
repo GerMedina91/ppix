@@ -299,6 +299,10 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
     - La ficha del objetivo muestra la cobertura frente al que está en turno; el registro la incluye junto a la CA. Capa F3 "Cobertura".
     - **[pendiente]** Terminar Tomar cobertura a voluntad; IA que busque o tome cobertura; bonificadores a Reflejos (áreas) y Sigilo sin uso todavía.
     - Capturas `docs/capturas/cobertura/01` (créditos) a `04`.
+  - **Posicionamiento previo hecho:** al dispararse un encuentro, antes de tirar iniciativa, `PosicionamientoPrevio` deja reubicar a cada miembro (click en el miembro y en una casilla resaltada). **Decidido:** hasta 10 pies caminando por la grilla (diagonales 5/10, sin cortar esquinas ni atravesar criaturas), casilla pisable, libre y no al lado de un enemigo (`Posicionamiento`, en rules/). "Empezar combate" termina (u omite) la fase; los enemigos no se mueven.
+    - No es una regla de PF2e: representa el instante antes de notarse; la iniciativa (Percepción) no depende de la posición. **Sin sorpresa en el slice** (no hay Evitar ser notado ni iniciativa con Sigilo).
+    - Guardado: al dispararse el encuentro (si se cierra durante el posicionamiento, al cargar se vuelve a posicionar desde las casillas guardadas) y después del posicionamiento (el estado previo al primer turno, con el mismo RNG).
+    - Capturas `docs/capturas/cobertura/05` a `07`.
 - **M5 — Contenido del slice:** mapas, NPCs, diálogos, arte final.
 
 ## 9. Preguntas abiertas

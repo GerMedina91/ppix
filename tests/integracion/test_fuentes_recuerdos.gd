@@ -15,6 +15,7 @@ func before_test() -> void:
 	GameState.nueva_partida()
 	GameState.reiniciar_dados(11)
 	_runner = scene_runner(ESCENA)
+	(_runner.find_child("PosicionamientoPrevio") as PosicionamientoPrevio).omitir = true  # (test_posicionamiento_previo)
 	_party = _runner.find_child("Party")
 	_control = _runner.find_child("ControladorCombate")
 	_panel = _runner.find_child("PanelOpciones")

@@ -28,6 +28,7 @@ var _encuentro_actual: Encuentro
 @onready var _fundido: Fundido = $Fundido
 @onready var _muerte: GestorMuerte = $GestorMuerte
 @onready var _fuentes: FuentesRecuerdos = $FuentesRecuerdos
+@onready var _posicionamiento: PosicionamientoPrevio = $PosicionamientoPrevio
 
 
 func _ready() -> void:
@@ -78,8 +79,12 @@ func _al_llegar_lider(celda: Vector2i) -> void:
 func _iniciar_combate(encuentro: Encuentro) -> void:
 	_id_encuentro_actual = encuentro.id
 	_encuentro_actual = encuentro
-	# Se guarda el estado previo al primer turno: si se cierra en medio, el combate vuelve a empezar.
+	# Se guarda al dispararse (si se cierra durante el posicionamiento, se vuelve a posicionar) y después del
+	# posicionamiento, el estado previo al primer turno: si se cierra en medio, el combate vuelve a empezar.
 	GameState.combate_pendiente = encuentro.id
+	EventBus.cambio_irreversible.emit("encuentro disparado")
+	_party.entrar_en_combate()
+	await _posicionamiento.posicionar(encuentro, _mapa, _party)
 	EventBus.cambio_irreversible.emit("inicio de combate")
 	_combate.iniciar(encuentro, _mapa, _party, _camara)
 

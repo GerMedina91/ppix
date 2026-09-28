@@ -31,6 +31,7 @@ func _orden(control: ControladorCombate) -> Array:
 
 func test_un_combate_cortado_vuelve_a_empezar_igual_al_cargar() -> void:
 	var runner: GdUnitSceneRunner = scene_runner(ESCENA)
+	(runner.find_child("PosicionamientoPrevio") as PosicionamientoPrevio).omitir = true  # (test_posicionamiento_previo)
 	var party: ControlParty = runner.find_child("Party")
 	var control: ControladorCombate = runner.find_child("ControladorCombate")
 	party.ir_a_celda(Vector2i(19, 5))
@@ -44,6 +45,7 @@ func test_un_combate_cortado_vuelve_a_empezar_igual_al_cargar() -> void:
 	assert_bool(SaveSystem.cargar()).is_true()
 	assert_str(GameState.combate_pendiente).is_equal("encuentro_prueba")
 	var otro: GdUnitSceneRunner = scene_runner(ESCENA)
+	(otro.find_child("PosicionamientoPrevio") as PosicionamientoPrevio).omitir = true  # (test_posicionamiento_previo)
 	var control2: ControladorCombate = otro.find_child("ControladorCombate")
 	assert_bool(await _esperar(otro, func() -> bool: return control2.en_curso())).is_true()
 	assert_array(_orden(control2)).is_equal(orden)
@@ -58,6 +60,7 @@ func test_la_perdida_pendiente_se_vuelve_a_preguntar_al_cargar() -> void:
 	GameState.perdida_pendiente = true
 	GameState.recien_cargada = true
 	var runner: GdUnitSceneRunner = scene_runner(ESCENA)
+	(runner.find_child("PosicionamientoPrevio") as PosicionamientoPrevio).omitir = true  # (test_posicionamiento_previo)
 	var panel: PanelPerdida = runner.find_child("PanelPerdida")
 	assert_bool(await _esperar(runner, func() -> bool: return panel.abierto())).is_true()
 	panel.elegir(GameState.recuerdos.inventario.integrados[0])
@@ -73,6 +76,7 @@ func test_la_perdida_pendiente_se_vuelve_a_preguntar_al_cargar() -> void:
 func test_vender_al_tasador_guarda_enseguida() -> void:
 	GameState.recuerdos.inventario.agregar_suelto(load("res://data/recuerdos/destreza_sigilo.tres"))
 	var runner: GdUnitSceneRunner = scene_runner(ESCENA)
+	(runner.find_child("PosicionamientoPrevio") as PosicionamientoPrevio).omitir = true  # (test_posicionamiento_previo)
 	var pantalla: PantallaTasador = runner.find_child("PantallaTasador")
 	await runner.simulate_frames(2)
 	pantalla.abrir()

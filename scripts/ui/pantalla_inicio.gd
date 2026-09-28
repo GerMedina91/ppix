@@ -4,6 +4,8 @@ extends CanvasLayer
 ## confirmación si pisa la existente: hay una sola ranura). Aspecto del EstiloHud.
 
 const ESCENA_MUNDO: String = "res://scenes/world/mundo.tscn"
+## Banco de rendimiento: en web se abre con `?banco` en la URL (M5-prep c).
+const ESCENA_BANCO: String = "res://scenes/debug/banco_rendimiento.tscn"
 const TITULO: String = "TODO_LORE: título del juego"
 const CONFIRMACION: String = "Empezar de nuevo borra la partida guardada."
 
@@ -14,6 +16,9 @@ var _mensaje: Label
 
 
 func _ready() -> void:
+	if OS.has_feature("web") and str(JavaScriptBridge.eval("window.location.search")).contains("banco"):
+		get_tree().change_scene_to_file.call_deferred(ESCENA_BANCO)
+		return
 	var columna: VBoxContainer = ConstruccionUi.panel_centrado(ConstruccionUi.raiz(self, estilo), 260, 0.5)
 	columna.add_child(ConstruccionUi.titulo(TITULO, estilo))
 	_botones = VBoxContainer.new()
@@ -52,3 +57,4 @@ func _mostrar_menu() -> void:
 	ConstruccionUi.vaciar(_botones)
 	_botones.add_child(ConstruccionUi.boton("Continuar", continuar, "" if SaveSystem.hay_partida() else "no hay partida guardada"))
 	_botones.add_child(ConstruccionUi.boton("Nueva partida", nueva_partida.bind(false)))
+	_botones.add_child(BotonPantallaCompleta.new())

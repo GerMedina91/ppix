@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/debug/banco_rendimiento.gd" id="1_banco"]
+
+[node name="BancoRendimiento" type="Node"]
+script = ExtResource("1_banco")

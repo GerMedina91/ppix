@@ -16,6 +16,8 @@ Build de prueba para navegador. **No se sube a ningún sitio**: se prueba con un
 - Salida: `build/web/index.html` (`build/` está en `.gitignore`).
 
 ## Generar el build
+Una sola vez, para que el editor no importe lo que se exporta (si no, las imágenes del build se importan y
+podrían entrar al paquete): crear `build/.gdignore` (vacío). El preset además excluye `build/*`.
 ```
 "%LOCALAPPDATA%\Programs\Godot\Godot_v4.7.2-stable_win64_console.exe" --headless --path . --export-release "Web" build/web/index.html
 ```
@@ -44,3 +46,44 @@ Chromium (Playwright) contra el servidor local, ventana de 1100×700:
   `addons/dialogue_manager/nodes/*` (el juego usa su propia caja de diálogo).
 - **No excluir `addons/dialogue_manager/test_scene.tscn`:** `settings.gd` del plugin la precarga; sin ella el
   autoload `DialogueManager` no compila en el navegador (se probó).
+- **`build/` dentro del proyecto:** el editor importaba las imágenes del build (`.import`). Se resuelve con
+  `build/.gdignore` y `build/*` en el filtro de exclusión.
+
+## Prueba completa (2026-09-28, M5-prep c)
+Máquina de desarrollo (sesión remota: la pantalla limita todo a ~30 FPS, también en escritorio). "Chrome" es el
+Chromium de Playwright; Firefox 146 sin ventana (`-headless`, perfil temporal). Resultados del banco de
+rendimiento.
+
+### Banco de rendimiento
+`scenes/debug/banco_rendimiento.tscn`: en web se abre con `?banco` en la URL; en escritorio, corriendo la escena.
+Mide `PrevisionTurno` (la operación más pesada: alcance por Zancadas y Golpes) en el peor caso sintético
+(actor con Velocidad 30 en el centro del mapa B, rodeado; 20 cálculos) y en 12 decisiones reales del combate
+de prueba (5 cálculos cada una), y los FPS. Muestra el resumen en pantalla y lo manda al servidor local
+(`GET /banco?...`, queda en su registro; el 404 es esperado).
+
+| PrevisionTurno (ms) | Combate: media / máx | Peor caso: media / máx |
+|---|---|---|
+| Escritorio (Windows) | 4,07 / 6,75 | 5,19 / 5,48 |
+| Chrome (web) | 4,50 / 6,60 | 7,87 / 13,70 |
+| Firefox (web, sin ventana) | 4,32 / 6,00 | 8,20 / 12,00 |
+
+- **Por debajo de ~16 ms por decisión en todos los casos** (el umbral pedido): no hace falta optimizar ahora.
+  El peor caso en web tarda ~1,5× lo de escritorio y tiene picos (13,7 ms en Chrome).
+- Firefox redondea los tiempos a 1 ms (reduce la precisión de los temporizadores).
+- **FPS:** combate 29 de media (mín. 26) en Chrome y 28 (mín. 23) en Firefox; escritorio 31. Todo topa en ~32
+  por la sesión remota, así que no mide el techo real. Los mínimos de 1-2 FPS en exploración son el cambio de
+  mapa (fundido y carga).
+
+### Pantalla completa
+Botón "Pantalla completa" en la pantalla de inicio y en la exploración (arriba a la derecha). En Chrome entra y
+sale con clicks reales; el navegador solo lo acepta desde una acción del jugador (por eso es un botón).
+
+### Tamaño
+| Archivo | Sin comprimir | gzip | brotli |
+|---|---|---|---|
+| `index.wasm` (motor) | 39,51 MB | 10,05 MB | 7,10 MB |
+| `index.pck` (juego) | 0,78 MB | 0,54 MB | 0,52 MB |
+| Total | 40,6 MB | 10,7 MB | 7,7 MB |
+
+Lo que se descarga depende de que el servidor comprima (gzip o brotli). El motor es casi todo: un build del
+motor a medida (sin 3D ni módulos que no se usan) podría achicarlo, a evaluar si hace falta.

@@ -24,7 +24,7 @@ func test_con_partida_nueva_partida_pide_confirmacion() -> void:
 	SaveSystem.guardar()
 	var inicio: PantallaInicio = auto_free(load("res://scenes/ui/inicio.tscn").instantiate())
 	add_child(inicio)
-	assert_array(Array(inicio.botones())).is_equal(["Continuar", "Nueva partida"])
+	assert_array(Array(inicio.botones())).is_equal(["Continuar", "Nueva partida", "Pantalla completa"])
 	inicio.nueva_partida()
 	assert_array(Array(inicio.botones())).is_equal(["Sí, empezar de nuevo", "No"])
 	assert_bool(SaveSystem.hay_partida()).is_true()

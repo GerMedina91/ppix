@@ -4,8 +4,8 @@ RPG táctico de fantasía oscura en pixel art, no lineal, con reglas de Pathfind
 El diseño completo está en `docs/GDD.md`. Consultalo antes de implementar cualquier mecánica o contenido.
 
 ## Stack
-- Motor: Godot 4.x (última estable). Lenguaje: GDScript con tipado estático siempre (`var hp: int`, `func f() -> void`).
-- Tests: gdUnit4 (`addons/gdUnit4`). La lógica de reglas se testea sin escenas. Correr todos: `pwsh tests/run_tests.ps1` (usa `GODOT_BIN` o la instalación en `%LOCALAPPDATA%\Programs\Godot`). Los rápidos (sin `tests/integracion/`, que carga el mundo completo) con `-Rapidos`: en cada paso; todos antes de cada push.
+- Motor: Godot 4.7.2, renderer Compatibility. Lenguaje: GDScript con tipado estático siempre (`var hp: int`, `func f() -> void`).
+- Tests: gdUnit4 (`addons/gdUnit4`). La lógica de reglas se testea sin escenas; lo que carga el mundo completo va en `tests/integracion/`. Correr todos: `pwsh tests/run_tests.ps1` (usa `GODOT_BIN` o la instalación en `%LOCALAPPDATA%\Programs\Godot`). Los rápidos (sin `tests/integracion/`, que carga el mundo completo) con `-Rapidos`: en cada paso; todos antes de cada push.
 - Control de versiones: git. Un commit por feature o cambio coherente, con mensaje descriptivo en español.
 
 ## Configuración de render (no modificar sin consultar)
@@ -16,23 +16,29 @@ El diseño completo está en `docs/GDD.md`. Consultalo antes de implementar cual
 - Personajes: placeholder 32×56 px, con los pies en el centro del rombo; tamaño final a definir con el sprite canónico del Eco. Retratos de diálogo: 96–128 px (capa de UI aparte).
 - Vista isométrica.
 - Y-sort activo desde el principio: party, paredes y objetos comparten una jerarquía con `y_sort_enabled`. El suelo se dibuja debajo, sin y-sort.
-- Paredes en su propia capa, separada del suelo, para poder hacerlas transparentes cuando la party pasa detrás (previsto, no implementado).
+- Paredes en su propia capa, separada del suelo. Transparencia implementada: las paredes con el dato `se_transparenta` se vuelven semitransparentes cuando tapan a un actor del grupo `mantener_visible` (opacidad en `ConfigExploracion`).
 
 ## Estructura de carpetas
 ```
 res://
   core/        # autoloads mínimos: GameState, EventBus, SaveSystem
   rules/       # motor de reglas PF2e: lógica pura, SIN nodos ni escenas
-  data/        # Resources (.tres): clases, ascendencias, dotes, items, conjuros, monstruos, recuerdos
-  scenes/      # escenas por dominio: world/, combat/, ui/, characters/
+  data/        # Resources (.tres): clases, builds, capacidades, armas, conjuros, criaturas, recuerdos, sueños, config
+  scenes/      # escenas por dominio: world/ (mundo y mapas), ui/, characters/ (el combate se arma en el mapa, sin escena propia)
   scripts/     # scripts de escena (presentación)
   assets/      # sprites, tilesets, audio, fuentes (NO editar ni generar sin pedido explícito)
-  dialogue/    # diálogos (formato a definir)
-  tests/
-  addons/      # plugins de terceros (gdUnit4, Dialogue Manager). No editar a mano.
+  dialogue/    # diálogos de Dialogue Manager (archivos .dialogue)
+  tests/       # espejo de las carpetas de código; tests/integracion/ = escenas completas del mundo (lentos)
+  addons/      # plugins de terceros (hoy gdUnit4; Dialogue Manager cuando se integre). No editar a mano.
 docs/
-  GDD.md
+  GDD.md         # diseño y registro de decisiones
+  GLOSARIO.md    # terminología obligatoria
+  lore/          # lore definido por el director (verdad.md y companeros.md son SPOILER; estilo.md: nombres)
+  verificacion/  # reglas verificadas en Archives of Nethys antes de implementarlas
+  capturas/      # capturas de cada hito (docs/capturas/<hito>/)
+  propuestas/    # comparaciones y propuestas para decidir
 ```
+- Escena principal: `scenes/ui/inicio.tscn` (Continuar / Nueva partida). El mundo es `scenes/world/mundo.tscn`; los mapas, `scenes/world/mapas/`.
 
 ## Arquitectura
 - Separación estricta: `rules/` calcula (tiradas, grados de éxito, acciones, condiciones); las escenas solo presentan y envían intenciones.

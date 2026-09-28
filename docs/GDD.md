@@ -340,6 +340,8 @@ Objetivo: 10–15 minutos jugables que demuestren los pilares.
     - Los mapas de prueba A y B siguen en el catálogo solo para los tests (`tests/escenas/mundo_prueba.tscn` empieza en el A); desde el slice no se llega a ellos.
     - Capturas `docs/capturas/m5/02` a `12` (los tres mapas, el combate 1 y la decisión con un inconsciente, la acción de miedo en el combate 3, la visión y el fin).
     - Tests: `tests/world/test_mapas_del_slice.gd` (presupuesto de cada encuentro, reparto y total vendible, Lumbres, recorridos obligados por las zonas de encuentro, todo alcanzable en Kardel, inicio en Kardel) y `tests/integracion/test_slice.gd` (arranque, humanos inconscientes con la decisión, fin del slice).
+  - **c) hecho — banco de rendimiento con los mapas del slice** (`docs/export_web.md`): `PrevisionTurno` en los tres combates, media 1-3,3 ms y máximo 4 ms en escritorio, Chrome y Firefox; el peor caso sintético sigue por debajo de 16 ms (máx. 14 ms en Chrome, en el mapa B). No hace falta optimizar.
+  - **M5 cerrado (2026-09-28)** con arte placeholder. **Pendientes:** todo el texto (`TODO_LORE`: nombres de las criaturas y su acción de miedo, vecinos, Tasador, visión); arte (sprites, tiles, el árbol con cara); la IA no busca cobertura ni lanza conjuros; derribo, vigorosa y barrido sin implementar; el panel del inconsciente muestra el nombre del nodo.
 
 ## 9. Preguntas abiertas
 - Título del juego.

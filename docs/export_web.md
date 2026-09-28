@@ -100,3 +100,20 @@ La visión nueva (decisión A: hasta 25 segmentos entre centros y esquinas por p
 - Sigue por debajo de ~16 ms, pero el pico del peor caso en Chrome (15,9 ms, un solo cálculo de 20; mediana
   6,3) quedó al borde. Las medias casi no cambiaron: el costo nuevo aparece solo cuando hay paredes entre las
   casillas. Sin optimizar (a la espera del director).
+
+## Banco con los mapas del slice (2026-09-28, M5)
+El banco ahora mide los **tres combates del slice** (12 decisiones como máximo, 5 cálculos cada una; la party pasa
+sus turnos, así que los combates 2 y 3 terminan antes con la derrota: 6 y 3 decisiones) y el peor caso sintético
+también en el claro del corazón del Monte, el mapa más grande. En escritorio: `-- salir` cierra al terminar.
+
+| PrevisionTurno (ms), media / máx | Combate 1 | Combate 2 | Combate 3 | Peor caso (mapa B) | Peor caso (corazón) |
+|---|---|---|---|---|---|
+| Escritorio (Windows) | 1,85 / 3,30 | 1,06 / 1,34 | 3,02 / 3,75 | 5,37 / 8,50 | 3,79 / 4,77 |
+| Chrome (web) | 1,92 / 2,30 | 1,16 / 1,50 | 3,34 / 3,70 | 7,45 / 14,00 | 4,42 / 7,40 |
+| Firefox (web, sin ventana) | 1,93 / 3,00 | 1,20 / 2,00 | 3,20 / 4,00 | 7,30 / 12,00 | 4,05 / 5,00 |
+
+- **Muy por debajo de ~16 ms** en todos los combates del slice (máximo 4 ms). Los mapas reales son más baratos
+  que el peor caso sintético: pasillos y claros con pocas casillas alcanzables. Sin optimizar.
+- FPS en combate: Chrome 54 de media (mín. 36), Firefox 34 (mín. 30), escritorio 39 (mín. 24; la sesión remota
+  limita). El mínimo de exploración es el cambio de mapa.
+- Captura: `docs/capturas/m5/13_banco_chrome.png`.

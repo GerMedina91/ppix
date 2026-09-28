@@ -29,7 +29,7 @@ res://
   assets/      # sprites, tilesets, audio, fuentes (NO editar ni generar sin pedido explícito)
   dialogue/    # diálogos de Dialogue Manager (archivos .dialogue)
   tests/       # espejo de las carpetas de código; tests/integracion/ = escenas completas del mundo (lentos)
-  addons/      # plugins de terceros (hoy gdUnit4; Dialogue Manager cuando se integre). No editar a mano.
+  addons/      # plugins de terceros (gdUnit4, Dialogue Manager 4.1.0). No editar a mano.
 docs/
   GDD.md         # diseño y registro de decisiones
   GLOSARIO.md    # terminología obligatoria
@@ -44,7 +44,7 @@ docs/
 - Separación estricta: `rules/` calcula (tiradas, grados de éxito, acciones, condiciones); las escenas solo presentan y envían intenciones.
 - Todo el contenido de juego (stats, items, dotes, recuerdos) vive en `data/` como Resources. Nada de números mágicos en scripts.
 - Comunicación entre sistemas por señales o `EventBus`. Evitar referencias directas entre escenas lejanas.
-- Autoloads: solo los listados en `core/`. No agregar nuevos sin consultar.
+- Autoloads: solo los listados en `core/`, más `DialogueManager`, que registra el plugin. No agregar nuevos sin consultar.
 - RNG centralizado y con semilla, para poder reproducir combates en tests.
 
 ## Convenciones

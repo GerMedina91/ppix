@@ -20,3 +20,6 @@ Thumbs.db
 
 # Reportes de gdUnit4
 /reports/
+
+# Pruebas de navegador (Playwright)
+.playwright-mcp/

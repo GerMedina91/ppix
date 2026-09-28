@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=18
+type="Resource"
+uid="uid://psrv4b0tyhu8"
+path="res://.godot/imported/companeros.dialogue-eee3659f27f40564df71f8fa1eef766e.tres"
+
+[deps]
+
+source_file="res://dialogue/companeros.dialogue"
+dest_files=["res://.godot/imported/companeros.dialogue-eee3659f27f40564df71f8fa1eef766e.tres"]
+
+[params]
+
+defaults=true

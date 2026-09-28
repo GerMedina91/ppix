@@ -1,0 +1,16 @@
+~ presentacion
+Tasador: TODO_LORE: el Tasador se presenta la primera vez.
+Tasador: TODO_LORE: explica el trueque de recuerdos.
+- Comerciar
+	$> estado.comerciar()
+- Irse
+=> END
+
+~ charla
+Tasador: TODO_LORE: charla con el Tasador.
+- (TODO_LORE) preguntar por los fragmentos [if estado.vio_recuerdo("doliente_1") or estado.vio_recuerdo("doliente_2") /] [#motivo=todavía no viste ningún fragmento]
+	Tasador: TODO_LORE: respuesta sobre los fragmentos.
+- Volver a comerciar
+	$> estado.comerciar()
+- Irse
+=> END

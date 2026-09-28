@@ -17,6 +17,7 @@ config/features=PackedStringArray("4.7", "GL Compatibility")
 
 [autoload]
 
+DialogueManager="*res://addons/dialogue_manager/dialogue_manager.gd"
 EventBus="*res://core/event_bus.gd"
 GameState="*res://core/game_state.gd"
 SaveSystem="*res://core/save_system.gd"
@@ -32,7 +33,7 @@ window/stretch/scale_mode="integer"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/gdUnit4/plugin.cfg")
+enabled=PackedStringArray("res://addons/dialogue_manager/plugin.cfg", "res://addons/gdUnit4/plugin.cfg")
 
 [importer_defaults]
 
@@ -153,6 +154,10 @@ abrir_recuerdos={
 "events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":16,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":82,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
 ]
 }
+
+[internationalization]
+
+locale/translations_pot_files=PackedStringArray("res://tests/utiles/prueba.dialogue", "res://dialogue/companeros.dialogue", "res://dialogue/tasador.dialogue")
 
 [rendering]
 

@@ -48,6 +48,7 @@ func _llenar_estado() -> void:
 	GameState.mundo.dejar_cuerpo(&"Miembro2", &"mapa_prueba_b", Vector2i(12, 9), true)
 	GameState.mundo.tomar_objeto(&"mapa_prueba_a", &"RecuerdoMedicina")
 	GameState.suenos_vistos.append(&"sueno_placeholder_1")
+	GameState.marcas[&"tasador_presentado"] = true
 
 
 func test_ida_y_vuelta_del_estado_completo_con_el_rng() -> void:

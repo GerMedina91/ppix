@@ -38,6 +38,7 @@
 [ext_resource type="Script" path="res://scripts/ui/pantalla_recuerdos.gd" id="34_prec"]
 [ext_resource type="Script" path="res://scripts/ui/hud_exploracion.gd" id="35_hexp"]
 [ext_resource type="Script" path="res://scripts/world/interacciones_mundo.gd" id="36_inte"]
+[ext_resource type="Script" path="res://scripts/ui/caja_dialogo.gd" id="37_caja"]
 
 [node name="Mundo" type="Node2D" unique_id=459014428]
 y_sort_enabled = true
@@ -144,7 +145,7 @@ script = ExtResource("35_hexp")
 estilo = ExtResource("17_estil")
 party = NodePath("../Party")
 
-[node name="InteraccionesMundo" type="Node" parent="." node_paths=PackedStringArray("mundo", "party", "fuentes", "tasador", "recuerdos", "panel_punto", "hud")]
+[node name="InteraccionesMundo" type="Node" parent="." node_paths=PackedStringArray("mundo", "party", "fuentes", "tasador", "recuerdos", "panel_punto", "hud", "caja")]
 script = ExtResource("36_inte")
 mundo = NodePath("..")
 party = NodePath("../Party")
@@ -153,4 +154,9 @@ tasador = NodePath("../PantallaTasador")
 recuerdos = NodePath("../PantallaRecuerdos")
 panel_punto = NodePath("../PanelPuntoEstable")
 hud = NodePath("../HudExploracion")
+caja = NodePath("../CajaDialogo")
 suenos = ExtResource("18_suen")
+
+[node name="CajaDialogo" type="CanvasLayer" parent="."]
+script = ExtResource("37_caja")
+estilo = ExtResource("17_estil")

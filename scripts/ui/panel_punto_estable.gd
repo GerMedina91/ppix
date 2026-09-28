@@ -5,6 +5,8 @@ extends CanvasLayer
 
 signal descanso_pedido(punto: PuntoEstable)
 signal cerrado
+## "Hablar con…" un compañero vivo (id del miembro).
+signal hablar_pedido(id_miembro: StringName)
 
 const TITULO: String = "Punto estable"
 const EXPLICACION: String = "Descansar recupera PG, espacios de conjuro y puntos de foco, y quita herido.\nAl morir, el Eco reaparece en el último punto estable donde descansó."
@@ -15,6 +17,7 @@ const DESCANSADO: String = "La party descansó."
 var _punto: PuntoEstable
 var _texto: Label
 var _descansar: Button
+var _hablar: VBoxContainer
 
 
 func _ready() -> void:
@@ -27,11 +30,27 @@ func abierto() -> bool:
 	return visible
 
 
-func abrir(punto: PuntoEstable) -> void:
+## `companeros`: [{"id": StringName, "nombre": String}] de los compañeros vivos, para "Hablar con…".
+func abrir(punto: PuntoEstable, companeros: Array[Dictionary] = []) -> void:
 	_punto = punto
 	_texto.text = EXPLICACION
 	_descansar.visible = true
+	ConstruccionUi.vaciar(_hablar)
+	for companero: Dictionary in companeros:
+		_hablar.add_child(ConstruccionUi.boton("Hablar con %s" % companero.nombre, hablar.bind(companero.id)))
 	visible = true
+
+
+func punto() -> PuntoEstable:
+	return _punto
+
+
+func hablar(id_miembro: StringName) -> void:
+	hablar_pedido.emit(id_miembro)
+
+
+func opciones() -> PackedStringArray:
+	return ConstruccionUi.textos_de_botones(_hablar)
 
 
 ## Tras descansar: lo confirma (con el sueño, si hubo) y deja solo Seguir.
@@ -84,7 +103,8 @@ func _construir() -> void:
 	_descansar = _boton("Descansar", descansar)
 	botones.add_child(_descansar)
 	botones.add_child(_boton("Seguir", cerrar))
-	for hijo: Control in [titulo, _texto, botones]:
+	_hablar = VBoxContainer.new()
+	for hijo: Control in [titulo, _texto, botones, _hablar]:
 		columna.add_child(hijo)
 	panel.add_child(columna)
 	raiz.add_child(panel)

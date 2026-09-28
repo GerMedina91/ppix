@@ -36,6 +36,9 @@ var mundo: EstadoMundo = EstadoMundo.new()
 ## Sueños que ya se vieron al descansar (no se repiten).
 var suenos_vistos: Array[StringName] = []
 
+## Marcas que ponen los diálogos y el mundo (p. ej. "tasador_presentado": ya se habló con el Tasador).
+var marcas: Dictionary[StringName, bool] = {}
+
 ## RNG centralizado de las reglas. `reiniciar_dados()` fija la semilla (reproducible en tests).
 var semilla: int = 0
 var dados: Dados = Dados.new(0)
@@ -62,6 +65,7 @@ func nueva_partida() -> void:
 		recuerdos.tasador.agregar_al_stock(recuerdo)
 	mundo = EstadoMundo.new()
 	suenos_vistos.clear()
+	marcas.clear()
 
 
 ## Todo el estado, listo para JSON. El estado del RNG es un entero de 64 bits: va como texto (JSON usa double).
@@ -81,6 +85,7 @@ func a_diccionario() -> Dictionary:
 		"recuerdos": recuerdos.a_diccionario(),
 		"mundo": mundo.a_diccionario(),
 		"suenos_vistos": suenos_vistos.map(func(id: StringName) -> String: return String(id)),
+		"marcas": marcas.keys().map(func(id: StringName) -> String: return String(id)),
 		"dados": {"semilla": str(semilla), "estado": str(dados.estado())},
 	}
 
@@ -104,6 +109,9 @@ func cargar_diccionario(datos: Dictionary, catalogo: CatalogoRecuerdos) -> void:
 	suenos_vistos.clear()
 	for id: Variant in datos.get("suenos_vistos", []):
 		suenos_vistos.append(StringName(id))
+	marcas.clear()
+	for id: Variant in datos.get("marcas", []):
+		marcas[StringName(id)] = true
 	if datos.has("dados"):
 		reiniciar_dados(String(datos.dados.semilla).to_int())
 		dados.restaurar_estado(String(datos.dados.estado).to_int())

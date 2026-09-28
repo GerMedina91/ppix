@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=18
+type="Resource"
+uid="uid://f8hnyy1a5g8l"
+path="res://.godot/imported/tasador.dialogue-13ceef2d31b64bef0086f22698124c75.tres"
+
+[deps]
+
+source_file="res://dialogue/tasador.dialogue"
+dest_files=["res://.godot/imported/tasador.dialogue-13ceef2d31b64bef0086f22698124c75.tres"]
+
+[params]
+
+defaults=true

@@ -31,6 +31,7 @@ func _recuerdo(nombre: String) -> DefinicionRecuerdo:
 
 
 func test_el_tasador_vende_y_compra_con_credito() -> void:
+	GameState.marcas[&"tasador_presentado"] = true  # la presentación se prueba en test_dialogos
 	GameState.recuerdos.inventario.agregar_suelto(_recuerdo("destreza_sigilo"))
 	GameState.recuerdos.inventario.agregar_suelto(_recuerdo("doliente_2"))
 	var pantalla: PantallaTasador = _runner.find_child("PantallaTasador")

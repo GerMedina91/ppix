@@ -5,6 +5,8 @@ extends CanvasLayer
 ## reglas están en Tasador (rules/). Esc o click derecho (`cancelar_accion`) cierra.
 
 signal cerrada
+## Botón "Hablar": una charla con el Tasador (después de la presentación).
+signal hablar_pedido
 
 const TITULO: String = "Tasador"
 const NOMBRES_TIPO: Dictionary[DefinicionRecuerdo.Tipo, String] = {
@@ -35,7 +37,10 @@ func _ready() -> void:
 	columna.add_child(_sueltos)
 	_mensaje = ConstruccionUi.etiqueta("")
 	columna.add_child(_mensaje)
-	columna.add_child(ConstruccionUi.boton("Cerrar (Esc)", cerrar))
+	var botones: HBoxContainer = HBoxContainer.new()
+	botones.add_child(ConstruccionUi.boton("Hablar", func() -> void: hablar_pedido.emit()))
+	botones.add_child(ConstruccionUi.boton("Cerrar (Esc)", cerrar))
+	columna.add_child(botones)
 	visible = false
 
 

@@ -24,7 +24,12 @@ Software de terceros que va dentro del build del juego y los avisos que hay que 
 - **gdUnit4** (MIT, Mike Schulze): solo para tests; el preset de exportación excluye `addons/gdUnit4/`.
 - Plantillas de exportación de Godot: son el motor (cubiertas arriba).
 
+## En el juego
+- **Pantalla de créditos** (`PantallaCreditos`, botón "Créditos" en la pantalla de inicio): aviso ORC
+  (`data/creditos/orc_aviso.txt`, borrador), Godot con su licencia y sus componentes (desde
+  `Engine.get_license_text()`, `get_copyright_info()` y `get_license_info()`), Dialogue Manager
+  (`data/creditos/dialogue_manager_licencia.txt`). El preset web incluye `data/creditos/*.txt`.
+
 ## Pendiente
-- Pantalla de créditos en el juego (desde la pantalla de inicio) con: el aviso ORC, Godot y sus componentes
-  (desde `Engine.get_*_info()`), Dialogue Manager y los créditos propios.
+- Créditos propios (equipo, arte, música): TODO_LORE.
 - Revisar esta lista cada vez que se sume un plugin, una fuente tipográfica, audio o arte de terceros.

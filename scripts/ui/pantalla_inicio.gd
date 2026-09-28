@@ -1,7 +1,7 @@
 class_name PantallaInicio
 extends CanvasLayer
-## Pantalla de inicio (M4g, placeholder): Continuar (si hay partida guardada) y Nueva partida (con
-## confirmación si pisa la existente: hay una sola ranura). Aspecto del EstiloHud.
+## Pantalla de inicio (M4g, placeholder): Continuar (si hay partida guardada), Nueva partida (con
+## confirmación si pisa la existente: hay una sola ranura), pantalla completa y créditos. Aspecto del EstiloHud.
 
 const ESCENA_MUNDO: String = "res://scenes/world/mundo.tscn"
 ## Banco de rendimiento: en web se abre con `?banco` en la URL (M5-prep c).
@@ -12,6 +12,7 @@ const CONFIRMACION: String = "Empezar de nuevo borra la partida guardada."
 @export var estilo: EstiloHud
 
 var _botones: VBoxContainer
+var _creditos: PantallaCreditos
 var _mensaje: Label
 
 
@@ -25,6 +26,9 @@ func _ready() -> void:
 	columna.add_child(_botones)
 	_mensaje = ConstruccionUi.etiqueta("")
 	columna.add_child(_mensaje)
+	_creditos = PantallaCreditos.new()
+	_creditos.estilo = estilo
+	add_child(_creditos)
 	_mostrar_menu()
 
 
@@ -58,3 +62,8 @@ func _mostrar_menu() -> void:
 	_botones.add_child(ConstruccionUi.boton("Continuar", continuar, "" if SaveSystem.hay_partida() else "no hay partida guardada"))
 	_botones.add_child(ConstruccionUi.boton("Nueva partida", nueva_partida.bind(false)))
 	_botones.add_child(BotonPantallaCompleta.new())
+	_botones.add_child(ConstruccionUi.boton("Créditos", abrir_creditos))
+
+
+func abrir_creditos() -> void:
+	_creditos.abrir()
